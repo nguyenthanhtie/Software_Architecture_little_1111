@@ -4,16 +4,27 @@
     Layout = "~/Areas/KhachHang/Views/Shared/_Layout_KhachHang.cshtml";
 }
 
-<div class="main-container">
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3 col-lg-3">
-            @await Html.PartialAsync("_CustomerSidebar")
-        </div>
+<style>
+    .main-container {
+        max-width: 2300px;
+        margin: 0 auto;
+        padding: 20px 15px;
+    }
+    
+    .order-management-container {
+        background: #f8f9fa;
+        min-height: calc(100vh - 200px);
+        padding: 20px 0;
+    }
+</style>
 
-        <!-- Main Content -->
-        <div class="col-md-9 col-lg-9">
-            <div class="p-4">
+<div class="order-management-container">
+    <div class="main-container">
+        <div class="row justify-content-center">
+
+            <!-- Main Content -->
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="p-4">
                 <div class="card h-100 position-relative">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Đơn hàng của tôi</h5>
@@ -178,6 +189,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>
