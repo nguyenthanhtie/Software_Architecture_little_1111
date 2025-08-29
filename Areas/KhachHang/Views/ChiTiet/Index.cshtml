@@ -1,0 +1,405 @@
+﻿@using Final_VS1.Data
+@model Final_VS1.Data.SanPham
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/KhachHang/Views/Shared/_Layout_KhachHang.cshtml";
+    var productId = ViewBag.ProductId ?? 1;
+}
+
+@section Styles {
+    <link href="~/css/KhachHang/chitiet-sanpham.css" rel="stylesheet" asp-append-version="true">
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 350px;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            background: #28a745;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            margin-bottom: 10px;
+            padding: 12px 16px;
+            position: relative;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: none;
+            opacity: 1;
+            color: white;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            margin-right: 12px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 8px;
+            opacity: 0.8;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            width: 100%;
+            animation: progress 4s linear;
+        }
+
+        @@keyframes progress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+    </style>
+}
+
+<!-- Breadcrumb -->
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-area="KhachHang" asp-controller="TrangChu" asp-action="Index">Trang chủ</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-area="KhachHang" asp-controller="DanhMuc" asp-action="Index" asp-route-id="@Model?.IdDanhMuc">
+                    @Model?.IdDanhMucNavigation?.TenDanhMuc
+                </a>
+            </li>
+            <li class="breadcrumb-item active">@Model?.TenSanPham</li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Product Detail -->
+<div class="container">
+    <div class="product-detail-section">
+        <div class="row">
+            <!-- Product Images -->
+            <div class="col-lg-6">
+                <div class="product-images">
+                    @{
+                        var mainImage = Model?.AnhSanPhams?.FirstOrDefault(a => 
+                            !string.IsNullOrEmpty(a.LoaiAnh) && 
+                            (a.LoaiAnh.Trim().ToLower() == "chinh" || a.LoaiAnh.Trim().ToLower() == "chính"))?.DuongDan 
+                            ?? Model?.AnhSanPhams?.FirstOrDefault()?.DuongDan 
+                            ?? "/images/noimage.jpg";
+                    }
+                    <div class="main-image">
+                        <img id="mainImage" src="@mainImage" alt="@Model?.TenSanPham">
+                    </div>
+                    <div class="thumbnails">
+                        @if (Model?.AnhSanPhams != null)
+                        {
+                            foreach (var anh in Model.AnhSanPhams)
+                            {
+                                <div class="thumbnail @(anh.DuongDan == mainImage ? "active" : "")" 
+                                     onclick="changeMainImage('@anh.DuongDan')">
+                                    <img src="@anh.DuongDan" 
+                                         alt="@Model.TenSanPham thumbnail">
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-lg-6">
+                <div class="product-info">
+                    <h1 class="product-title">@Model?.TenSanPham</h1>
+                    <div class="product-meta">
+                        <p class="sku">SKU: @Model?.Sku</p>
+                        <p class="stock-status @(Model?.SoLuongTonKho > 0 ? "in-stock" : "out-of-stock")">
+                            @(Model?.SoLuongTonKho > 0 ? "Còn hàng" : "Hết hàng")
+                        </p>
+                    </div>
+                    <div class="product-price">
+                        @if (Model?.GiaBan != null)
+                        {
+                            <span class="price">@Model.GiaBan.Value.ToString("#,##0") đ</span>
+                        }
+                    </div>
+                    <div class="product-quantity">
+                        <label for="productQuantity">Số lượng:</label>
+                        <div class="quantity-controls">
+                            <button type="button" onclick="decreaseQuantity()">-</button>
+                            <input type="number" id="productQuantity" value="1" min="1" max="@Model?.SoLuongTonKho" readonly>
+                            <button type="button" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        @if (Model?.SoLuongTonKho > 0)
+                        {
+                            <button class="add-to-cart" onclick="addToCart(@Model.IdSanPham)">
+                                Thêm vào giỏ hàng
+                            </button>
+                            <button class="buy-now" onclick="buyNow(@Model.IdSanPham)">
+                                Mua ngay
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="out-of-stock-btn" onclick="showOutOfStockModal()">
+                                Hết hàng
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Description -->
+<div class="container">
+    <div class="product-details-section">
+        <div class="product-description">
+            <h6 class="description-title">MÔ TẢ SẢN PHẨM</h6>
+            @if (!string.IsNullOrWhiteSpace(Model?.MoTa))
+            {
+                <div class="description-content">@Html.Raw(Model.MoTa)</div>
+            }
+            else
+            {
+                <p>Chưa có mô tả cho sản phẩm này</p>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model?.CachSuDung))
+            {
+                <h6 class="usage-title mt-4">HƯỚNG DẪN SỬ DỤNG</h6>
+                <div class="usage-content">@Html.Raw(Model.CachSuDung)</div>
+            }
+        </div>
+    </div>
+
+    <!-- Suggested Products -->
+    <div class="suggested-products-section">
+        <h2 class="suggested-title">Sản Phẩm Gợi Ý</h2>
+        <div class="suggested-products-grid">
+            @if (ViewBag.SanPhamGoiY != null)
+            {
+                foreach (var sp in ViewBag.SanPhamGoiY)
+                {
+                    var anhSanPhamsList = sp.AnhSanPhams as IEnumerable<Final_VS1.Data.AnhSanPham>;
+                    var anhSp = anhSanPhamsList?.FirstOrDefault(a =>
+                        !string.IsNullOrEmpty(a.LoaiAnh) &&
+                        (a.LoaiAnh.Trim().ToLower() == "chinh" || a.LoaiAnh.Trim().ToLower() == "chính"))?.DuongDan
+                        ?? anhSanPhamsList?.FirstOrDefault()?.DuongDan
+                        ?? "/images/noimage.jpg";
+
+                    <div class="product-card">
+                        <a href="@Url.Action("Index", "ChiTiet", new { id = sp.IdSanPham, area = "KhachHang" })">
+                            <div class="product-image">
+                                <img src="@anhSp" alt="@sp.TenSanPham">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title">@sp.TenSanPham</h3>
+                                <p class="product-price">@(sp.GiaBan?.ToString("#,##0") ?? "0") đ</p>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Out of Stock Modal -->
+<div id="outOfStockModal" class="custom-modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeOutOfStockModal()"></div>
+    <div class="modal-content-box">
+        <div class="modal-header">
+            <h5 class="modal-title">Thông báo</h5>
+            <button type="button" class="close-btn" onclick="closeOutOfStockModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p class="mb-3">Mặt hàng này đã hết, vui lòng chọn mặt hàng khác</p>
+            <div class="text-center">
+                <button type="button" class="btn btn-secondary" onclick="closeOutOfStockModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeMainImage(src) {
+            document.getElementById('mainImage').src = src;
+            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+            const clickedThumbnail = event.currentTarget;
+            clickedThumbnail.classList.add('active');
+        }
+
+        function increaseQuantity() {
+            var input = document.getElementById('productQuantity');
+            var max = parseInt(input.max);
+            var value = parseInt(input.value);
+            if (value < max) {
+                input.value = value + 1;
+            } else {
+                showNotification('Số lượng đã đạt tối đa có sẵn', 'warning');
+            }
+        }
+
+        function decreaseQuantity() {
+            var input = document.getElementById('productQuantity');
+            var value = parseInt(input.value);
+            if (value > 1) {
+                input.value = value - 1;
+            }
+        }
+
+        function showNotification(message, type = 'success', title = '', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '<i class="fas fa-check-circle"></i>',
+                error: '<i class="fas fa-times-circle"></i>',
+                warning: '<i class="fas fa-exclamation-circle"></i>',
+                info: '<i class="fas fa-info-circle"></i>'
+            };
+            
+            const toastTitle = title || (type === 'success' ? 'Thành công' : type === 'error' ? 'Lỗi' : 'Thông báo');
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type] || icons.info}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${toastTitle}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+                <div class="toast-progress"></div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                closeToast(toast);
+            });
+            
+            setTimeout(() => {
+                closeToast(toast);
+            }, duration);
+        }
+
+        function closeToast(toast) {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
+
+        function addToCart(productId) {
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            const formData = new FormData();
+            formData.append('productId', productId);
+            formData.append('quantity', quantity);
+            
+            fetch('/KhachHang/Cart/AddToCart', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Đã thêm sản phẩm vào giỏ hàng');
+                    updateCartCount();
+                } else {
+                    showNotification(data.message || 'Có lỗi xảy ra', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+            });
+        }
+
+        function buyNow(productId) {
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            window.location.href = `/KhachHang/ChiTiet/MuaNgay?productId=${productId}&quantity=${quantity}`;
+        }
+
+        function showOutOfStockModal() {
+            document.getElementById('outOfStockModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOutOfStockModal() {
+            document.getElementById('outOfStockModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateCartCount() {
+            fetch('/KhachHang/Cart/GetCartCount', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const cartCountElement = document.getElementById('cartCount');
+                if (cartCountElement) {
+                    cartCountElement.textContent = data.count;
+                }
+            })
+            .catch(error => {
+                console.error('Error updating cart count:', error);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+        });
+    </script>
+}

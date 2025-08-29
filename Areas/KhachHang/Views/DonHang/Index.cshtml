@@ -1,0 +1,405 @@
+@model Final_VS1.Areas.KhachHang.ViewModels.DonHangViewModel
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+    Layout = "~/Areas/KhachHang/Views/Shared/_Layout_KhachHang.cshtml";
+}
+
+<div class="main-container">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-3">
+            @await Html.PartialAsync("_CustomerSidebar")
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-9">
+            <div class="p-4">
+                <div class="card h-100 position-relative">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Đơn hàng của tôi</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-pills order-status-tabs mb-4" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link @(string.IsNullOrEmpty(Model.CurrentFilter) ? "active" : "")" 
+                                   href="@Url.Action("Index", "DonHang", new { area = "KhachHang" })">
+                                    Tất cả <span class="badge">@Model.TotalOrders</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.CurrentFilter == "Chờ xác nhận" ? "active" : "")" 
+                                   href="@Url.Action("Index", "DonHang", new { area = "KhachHang", status = "Chờ xác nhận" })">
+                                    Chờ xác nhận <span class="badge">@Model.PendingOrders</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.CurrentFilter == "Đang xử lý" ? "active" : "")" 
+                                   href="@Url.Action("Index", "DonHang", new { area = "KhachHang", status = "Đang xử lý" })">
+                                    Đang xử lý <span class="badge">@Model.ProcessingOrders</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.CurrentFilter == "Đã xác nhận" ? "active" : "")" 
+                                   href="@Url.Action("Index", "DonHang", new { area = "KhachHang", status = "Đã xác nhận" })">
+                                    Đã xác nhận <span class="badge">@Model.ConfirmedOrders</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.CurrentFilter == "Đang giao" ? "active" : "")" 
+                                   href="@Url.Action("Index", "DonHang", new { area = "KhachHang", status = "Đang giao" })">
+                                    Đang giao <span class="badge">@Model.ShippingOrders</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.CurrentFilter == "Hoàn thành" ? "active" : "")" 
+                                   href="@Url.Action("Index", "DonHang", new { area = "KhachHang", status = "Hoàn thành" })">
+                                    Hoàn thành <span class="badge">@Model.DeliveredOrders</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(Model.CurrentFilter == "Đã hủy" ? "active" : "")" 
+                                   href="@Url.Action("Index", "DonHang", new { area = "KhachHang", status = "Đã hủy" })">
+                                    Đã hủy <span class="badge">@Model.CancelledOrders</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Orders List -->
+                        <div id="ordersContainer">
+                            @if (Model.DonHangs?.Any() == true)
+                            {
+                                foreach (var order in Model.DonHangs)
+                                {
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div class="h5 mb-0">
+                                                    Đơn hàng #@order.IdDonHang
+                                                    <span class="badge bg-primary ms-2">@order.TrangThai</span>
+                                                </div>
+                                                <div class="text-success h5 mb-0">
+                                                    @order.TongTien?.ToString("N0") ₫
+                                                </div>
+                                            </div>
+
+                                            @if (order.ChiTietDonHangs?.Any() == true)
+                                            {
+                                                <div class="product-list">
+                                                    @foreach (var item in order.ChiTietDonHangs)
+                                                    {
+                                                        <div class="product-item mb-2">
+                                                            <div class="row align-items-center">
+                                                                <div class="col-auto">
+                                                                    <div class="product-image-container">
+                                                                        <img src="@(item.IdSanPhamNavigation?.AnhSanPhams?.FirstOrDefault()?.DuongDan ?? "/images/noimage.jpg")" 
+                                                                             class="product-image" alt="@item.IdSanPhamNavigation?.TenSanPham" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <h6 class="product-name">@item.IdSanPhamNavigation?.TenSanPham</h6>
+                                                                    <div class="product-qty-price">
+                                                                        Số lượng: @item.SoLuong x @item.GiaLucDat?.ToString("N0")₫
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="product-total">
+                                                                        @((item.SoLuong * item.GiaLucDat)?.ToString("N0"))₫
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+
+                                            <div class="mt-3 border-top pt-3">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-person me-1"></i>
+                                                            Người nhận: @order.HoTenNguoiNhan
+                                                        </small><br />
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-telephone me-1"></i>
+                                                            SĐT: @order.SoDienThoai
+                                                        </small>
+                                                    </div>
+                                                    <div class="col-md-6 text-md-end">
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-calendar me-1"></i>
+                                                            Ngày đặt: @order.NgayDat?.ToString("dd/MM/yyyy HH:mm")
+                                                        </small><br />
+                                                        @if (order.TrangThai == "Chờ xác nhận")
+                                                        {
+                                                            <button type="button" class="btn btn-outline-danger btn-sm mt-2"
+                                                                    onclick="cancelOrder(@order.IdDonHang)">
+                                                                <i class="bi bi-x-circle me-1"></i>Hủy đơn hàng
+                                                            </button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center py-5">
+                                    <i class="bi bi-bag-x display-1 text-muted mb-3"></i>
+                                    <h5 class="text-muted">
+                                        @if (!string.IsNullOrEmpty(Model.CurrentFilter))
+                                        {
+                                            @:Không tìm thấy đơn hàng nào trong trạng thái này
+                                        }
+                                        else
+                                        {
+                                            @:Bạn chưa có đơn hàng nào
+                                        }
+                                    </h5>
+                                    <p class="text-muted">
+                                        @if (!string.IsNullOrEmpty(Model.CurrentFilter))
+                                        {
+                                            @:Hãy thử tìm kiếm với trạng thái khác
+                                        }
+                                        else
+                                        {
+                                            @:Hãy mua sắm để trải nghiệm dịch vụ của chúng tôi
+                                        }
+                                    </p>
+                                    @if (string.IsNullOrEmpty(Model.CurrentFilter))
+                                    {
+                                        <a href="@Url.Action("Index", "SanPham", new { area = "KhachHang" })" class="btn btn-primary">
+                                            <i class="bi bi-cart-plus me-1"></i>Mua sắm ngay
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="notificationContainer"></div>
+
+@section Styles {
+    <style>
+        /* Order Status Tabs */
+        .order-status-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 8px;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        [data-bs-theme="dark"] .order-status-tabs {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        }
+
+        .order-status-tabs .nav-link {
+            border-radius: 8px !important;
+            padding: 8px 12px !important;
+            margin: 0 !important;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 100px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        /* Tab Colors */
+        .order-status-tabs .nav-item:nth-child(1) .nav-link {
+            background: linear-gradient(45deg, #6c757d, #495057);
+            color: white;
+        }
+        
+        .order-status-tabs .nav-item:nth-child(2) .nav-link {
+            background: linear-gradient(45deg, #ffc107, #ffb300);
+            color: #212529;
+        }
+        
+        .order-status-tabs .nav-item:nth-child(3) .nav-link {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            color: white;
+        }
+        
+        .order-status-tabs .nav-item:nth-child(4) .nav-link {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+        }
+        
+        .order-status-tabs .nav-item:nth-child(5) .nav-link {
+            background: linear-gradient(45deg, #6f42c1, #563d7c);
+            color: white;
+        }
+        
+        .order-status-tabs .nav-item:nth-child(6) .nav-link {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            color: white;
+        }
+        
+        .order-status-tabs .nav-item:nth-child(7) .nav-link {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        /* States */
+        .order-status-tabs .nav-link:not(.active) {
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
+        
+        .order-status-tabs .nav-link.active {
+            opacity: 1;
+            transform: scale(1.02);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+        }
+        
+        .order-status-tabs .nav-link:hover {
+            opacity: 1;
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Badge styling */
+        .order-status-tabs .nav-link .badge {
+            background: rgba(255,255,255,0.2) !important;
+            color: inherit !important;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            margin-left: 6px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Product Items */
+        .product-list .product-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .product-list .product-item:hover {
+            background: #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        [data-bs-theme="dark"] .product-list .product-item {
+            background: #2d3748;
+        }
+        
+        [data-bs-theme="dark"] .product-list .product-item:hover {
+            background: #3a4558;
+        }
+
+        .product-image-container {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: inherit;
+        }
+        
+        .product-qty-price {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        
+        .product-total {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #198754;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .order-status-tabs {
+                padding: 8px;
+                gap: 4px;
+            }
+            
+            .order-status-tabs .nav-link {
+                font-size: 0.75rem;
+                padding: 6px 10px !important;
+                min-width: 80px;
+            }
+            
+            .product-image-container {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function cancelOrder(orderId) {
+            if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+                fetch('/KhachHang/DonHang/CancelOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ Id: orderId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('success', 'Hủy đơn hàng thành công');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification('error', data.message || 'Có lỗi xảy ra khi hủy đơn hàng');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('error', 'Có lỗi xảy ra khi hủy đơn hàng');
+                });
+            }
+        }
+
+        function showNotification(type, message) {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            container.appendChild(notification);
+
+            setTimeout(() => notification.remove(), 5000);
+        }
+    </script>
+}

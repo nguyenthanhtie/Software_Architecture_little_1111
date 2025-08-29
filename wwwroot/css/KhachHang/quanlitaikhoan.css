@@ -1,0 +1,2935 @@
+:root {
+  --nature-green: #2d5016;
+  --nature-green-light: #4a7c59;
+  --nature-green-dark: #1b3409;
+  --nature-green-accent: #74c69d;
+  --nature-green-soft: #95d5b2;
+  --nature-green-pale: #b7e4c7;
+  --nature-green-very-pale: #d8f3dc;
+  --bs-primary: var(--nature-green);
+  --bs-primary-rgb: 45, 80, 22;
+  --bs-success: var(--nature-green-light);
+  --bs-success-rgb: 74, 124, 89;
+}
+
+body {
+  transition: all 0.3s ease;
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-very-pale) 0%,
+    #ffffff 100%
+  );
+  position: relative;
+  overflow-x: hidden;
+  height: auto; /* Allow the height to adjust dynamically */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+[data-bs-theme="dark"] body {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-dark) 0%,
+    #1a1a1a 100%
+  );
+}
+
+/* Simple background effects */
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.aurora {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(116, 198, 157, 0.2),
+    rgba(149, 213, 178, 0.2),
+    rgba(183, 228, 199, 0.2),
+    rgba(216, 243, 220, 0.2)
+  );
+  animation: aurora 12s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+@keyframes aurora {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.5;
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+    opacity: 0.6;
+  }
+  75% {
+    transform: rotate(270deg) scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+.organic-pattern {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(
+    circle,
+    rgba(116, 198, 157, 0.15) 0%,
+    rgba(149, 213, 178, 0.1) 40%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  animation: organicFloat 8s ease-in-out infinite;
+}
+
+.organic-pattern:nth-child(2) {
+  top: 20%;
+  left: 10%;
+  animation-delay: -2s;
+  width: 250px;
+  height: 250px;
+}
+.organic-pattern:nth-child(3) {
+  top: 40%;
+  right: 15%;
+  animation-delay: -4s;
+  width: 200px;
+  height: 200px;
+}
+.organic-pattern:nth-child(4) {
+  bottom: 20%;
+  left: 30%;
+  animation-delay: -6s;
+  width: 280px;
+  height: 280px;
+}
+
+@keyframes organicFloat {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-15px) rotate(90deg) scale(1.1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg) scale(0.9);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translateY(-15px) rotate(270deg) scale(1.05);
+    opacity: 0.7;
+  }
+}
+
+.leaf,
+.flower-petal,
+.nature-element {
+  position: absolute;
+  font-size: 1.5rem;
+  animation: naturalFall 15s linear infinite;
+  opacity: 0.8;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes naturalFall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg) translateX(0px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg) translateX(50px);
+    opacity: 0;
+  }
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100px;
+  width: 30px;
+  height: 30px;
+  background: rgba(116, 198, 157, 0.3);
+  border-radius: 50%;
+  animation: bubbleRise 12s linear infinite;
+  border: 1px solid rgba(149, 213, 178, 0.5);
+}
+
+.bubble:nth-child(1) {
+  left: 5%;
+  animation-delay: 0s;
+  width: 25px;
+  height: 25px;
+}
+.bubble:nth-child(2) {
+  left: 15%;
+  animation-delay: -3s;
+  width: 35px;
+  height: 35px;
+}
+.bubble:nth-child(3) {
+  left: 25%;
+  animation-delay: -6s;
+  width: 20px;
+  height: 20px;
+}
+.bubble:nth-child(4) {
+  left: 45%;
+  animation-delay: -2s;
+  width: 40px;
+  height: 40px;
+}
+.bubble:nth-child(5) {
+  left: 65%;
+  animation-delay: -5s;
+  width: 28px;
+  height: 28px;
+}
+.bubble:nth-child(6) {
+  left: 85%;
+  animation-delay: -8s;
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes bubbleRise {
+  0% {
+    transform: translateY(0) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+    transform: translateY(-10vh) scale(1) rotate(45deg);
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-120vh) scale(0.5) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Remove ripple effects */
+.ripple {
+  display: none !important;
+}
+
+/* Remove wave animations */
+.wave-container {
+  display: none !important;
+}
+
+/* Remove floating particles */
+.particle {
+  display: none !important;
+}
+
+/* Remove sparkle effects */
+.sparkle {
+  display: none !important;
+}
+
+/* Remove geometric shapes */
+.geo-shape {
+  display: none !important;
+}
+
+/* Remove floating icons */
+.floating-icons {
+  display: none !important;
+}
+
+/* Remove organic patterns */
+.organic-pattern {
+  display: none !important;
+}
+
+/* Remove aurora effect */
+.aurora {
+  display: none !important;
+}
+
+/* Card Components */
+.card {
+  box-shadow: 0 0.5rem 1rem rgba(45, 80, 22, 0.1);
+  border: 1px solid var(--nature-green-pale);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+[data-bs-theme="dark"] .card {
+  background: rgba(26, 26, 26, 0.95);
+  border: 1px solid var(--nature-green-dark);
+}
+
+.form-section {
+  display: none;
+}
+
+.form-section.active {
+  display: block;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(
+    45deg,
+    var(--nature-green),
+    var(--nature-green-light)
+  );
+  border: none;
+  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(
+    45deg,
+    var(--nature-green-dark),
+    var(--nature-green)
+  );
+  transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+  border-color: var(--nature-green);
+  color: var(--nature-green);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--nature-green);
+  border-color: var(--nature-green);
+}
+
+/* Profile Avatar */
+.profile-avatar {
+  width: 180px;
+  height: 180px;
+  background: linear-gradient(
+    45deg,
+    var(--nature-green),
+    var(--nature-green-light)
+  );
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 4.5rem;
+  margin: 0 auto 20px;
+  box-shadow: 0 12px 30px rgba(45, 80, 22, 0.3);
+  position: relative;
+  overflow: hidden;
+  border: 4px solid var(--nature-green-accent);
+  cursor: default;
+}
+
+.profile-avatar.has-image {
+  background: none !important;
+}
+
+.profile-avatar.has-image i {
+  display: none !important;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  min-height: 400px;
+  background: linear-gradient(
+    180deg,
+    var(--nature-green-very-pale),
+    var(--nature-green-pale)
+  );
+  border-right: 1px solid var(--nature-green-soft);
+  color: var(--nature-green-dark);
+  position: sticky; /* Thêm dòng này */
+  top: 0; /* Thêm dòng này */
+  height: 100px;
+  z-index: 100; /* Đảm bảo nổi trên nền */
+  overflow-y: auto; /* Cho phép cuộn nội dung sidebar nếu vượt quá chiều cao */
+}
+[data-bs-theme="dark"] .sidebar {
+  background: linear-gradient(180deg, var(--nature-green-dark), #1a1a1a);
+  color: var(--nature-green-pale);
+}
+
+.sidebar h5 {
+  color: var(--nature-green) !important;
+  font-weight: 700;
+}
+
+[data-bs-theme="dark"] .sidebar h5 {
+  color: var(--nature-green-accent) !important;
+}
+
+/* Navigation */
+.nav-link {
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: all 0.3s ease;
+  color: var(--nature-green-dark) !important;
+  font-weight: 500;
+}
+
+[data-bs-theme="dark"] .nav-link {
+  color: var(--nature-green-pale) !important;
+}
+
+.nav-link:hover {
+  background-color: var(--nature-green-soft) !important;
+  color: white !important;
+  transform: translateX(5px);
+}
+
+.nav-link.active {
+  background: none !important; /* Không có nền */
+  color: var(--nature-green) !important; /* Đổi màu chữ */
+  font-weight: 700;
+  box-shadow: none !important;
+}
+
+.nav-link.text-danger {
+  color: #dc3545 !important;
+}
+
+.nav-link.text-danger:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+/* Forms */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--nature-green);
+  box-shadow: 0 0 0 0.25rem rgba(45, 80, 22, 0.25);
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+/* Password Strength Meter */
+.strength-meter {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--nature-green-very-pale);
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.strength-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.strength-weak {
+  background-color: #d32f2f;
+}
+.strength-medium {
+  background-color: #ff9800;
+}
+.strength-strong {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Theme Toggle Button */
+.btn-theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1050;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  box-shadow: 0 4px 8px rgba(45, 80, 22, 0.3);
+  background: var(--nature-green) !important;
+  border-color: var(--nature-green) !important;
+}
+
+/* Utility Classes */
+.text-primary {
+  color: var(--nature-green) !important;
+}
+.link-primary {
+  color: var(--nature-green) !important;
+}
+.link-primary:hover {
+  color: var(--nature-green-light) !important;
+}
+
+a {
+  color: var(--nature-green);
+}
+a:hover {
+  color: var(--nature-green-light);
+}
+
+/* Card Headers */
+.card-header {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-very-pale),
+    var(--nature-green-pale)
+  );
+  border-bottom: 1px solid var(--nature-green-soft);
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+
+[data-bs-theme="dark"] .card-header {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-dark),
+    rgba(26, 26, 26, 0.8)
+  );
+}
+
+/* Profile and Password Form Styling */
+#profile-info .card-header,
+#change-password .card-header {
+  padding: 0.5rem 0.75rem !important;
+  min-height: 40px;
+}
+
+#profile-info .card-header h6,
+#change-password .card-header h6 {
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.2px !important;
+  font-weight: 600;
+  margin: 0;
+}
+
+#profile-info .card-body,
+#change-password .card-body {
+  padding: 0.75rem !important;
+  min-height: 280px;
+}
+
+#profile-info .form-label,
+#change-password .form-label {
+  margin-bottom: 0.2rem !important;
+  font-size: 0.85rem !important;
+  font-weight: 600;
+}
+
+#profile-info .mb-1,
+#change-password .mb-1 {
+  margin-bottom: 0.4rem !important;
+}
+
+#profile-info .form-control,
+#profile-info .form-select,
+#change-password .form-control {
+  padding: 0.3rem 0.5rem !important;
+  font-size: 0.85rem;
+  min-height: 32px;
+}
+
+/* Làm nhỏ biểu tượng mắt trong form đổi mật khẩu */
+#change-password .btn-outline-secondary i {
+  font-size: 0.7rem !important;
+}
+
+/* Đảm bảo nút có kích thước phù hợp */
+#change-password .btn-outline-secondary {
+  padding: 0.3rem 0.4rem !important;
+  min-width: 32px !important;
+}
+
+/* Password toggle button styling - Higher specificity */
+#change-password .input-group .btn-outline-secondary {
+  padding: 0.3rem 0.4rem !important;
+  min-width: 32px !important;
+  border-left: none !important;
+}
+
+#change-password .input-group .btn-outline-secondary i,
+#toggleCurrentPassword i,
+#toggleNewPasswordChange i,
+#toggleConfirmPasswordChange i {
+  font-size: 0.7rem !important;
+  line-height: 1 !important;
+}
+
+/* Specific targeting for Bootstrap icons */
+#change-password .bi-eye,
+#change-password .bi-eye-slash {
+  font-size: 0.7rem !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Force small size for all eye icons in password fields */
+button[id*="toggle"] i.bi {
+  font-size: 0.7rem !important;
+  transform: scale(0.8) !important;
+}
+
+/* Modal */
+.modal-header {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-very-pale),
+    var(--nature-green-pale)
+  );
+  border-bottom: 1px solid var(--nature-green-soft);
+}
+
+[data-bs-theme="dark"] .modal-header {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-dark),
+    rgba(26, 26, 26, 0.9)
+  );
+}
+
+.modal-content {
+  border: 1px solid var(--nature-green-pale);
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: white !important;
+}
+
+[data-bs-theme="dark"] .modal-content {
+  border-color: var(--nature-green-dark);
+  background: rgba(26, 26, 26, 0.95);
+}
+
+/* Autocomplete */
+.autocomplete-container {
+  position: relative;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--nature-green-pale);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
+}
+
+.autocomplete-dropdown.show {
+  display: block;
+}
+
+.autocomplete-item {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f3f4;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+  background-color: var(--nature-green-very-pale);
+  color: var(--nature-green-dark);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    min-height: auto;
+  }
+
+  .autocomplete-dropdown.show {
+    display: block;
+  }
+
+  .autocomplete-item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f3f4;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+  }
+
+  .autocomplete-item:hover,
+  .autocomplete-item.selected {
+    background-color: var(--nature-green-very-pale);
+    color: var(--nature-green-dark);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar {
+      min-height: auto;
+    }
+  }
+  #profile-info .d-flex.gap-2,
+  #change-password .d-flex.gap-2 {
+    margin-top: 0.5rem !important; /* Slightly increased from 0.4rem */
+  }
+
+  /* Button styling improvements */
+  #profile-info .btn,
+  #change-password .btn {
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.85rem !important;
+    border-radius: 6px !important;
+    font-weight: 500;
+    min-height: 32px;
+  }
+
+  #profile-info .btn-primary,
+  #change-password .btn-primary {
+    min-width: 100px;
+  }
+
+  #profile-info .btn-outline-secondary,
+  #change-password .btn-outline-secondary {
+    min-width: 80px;
+  }
+
+  /* Compact profile card body */
+  .col-md-5 .card-body {
+    padding: 0.75rem !important;
+    min-height: 280px;
+  }
+
+  .col-md-5 .card-body h5 {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.4rem !important;
+    font-weight: 600;
+  }
+
+  .col-md-5 .card-body .text-muted {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .col-md-5 .card-body .btn-sm {
+    padding: 0.3rem 0.6rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .col-md-5 .card-body .row h6 {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.2rem !important;
+    font-weight: 600;
+  }
+
+  .col-md-5 .card-body .row small {
+    font-size: 0.7rem !important;
+  }
+
+  /* Compact form check elements */
+  #profile-info .form-check {
+    margin-bottom: 0.3rem !important;
+  }
+
+  #profile-info .form-check-label,
+  #change-password .form-check-label {
+    font-size: 0.85rem !important;
+  }
+
+  /* Make input groups consistent */
+  #profile-info .input-group,
+  #change-password .input-group {
+    margin-bottom: 0.4rem !important;
+  }
+
+  /* Small text styling */
+  #profile-info small,
+  #change-password small {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  /* Gender radio buttons spacing */
+  #profile-info .d-flex.gap-4 {
+    gap: 1.5rem !important;
+    margin-top: 0.3rem !important;
+  }
+
+  /* Notification section spacing */
+  #profile-info .border.rounded.p-1 {
+    padding: 0.4rem !important;
+    margin-top: 0.3rem !important;
+  }
+
+  /* Button container spacing */
+  #profile-info .d-flex.gap-2,
+  #change-password .d-flex.gap-2 {
+    margin-top: 0.6rem !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Modal */
+  .modal-header {
+    background: linear-gradient(
+      135deg,
+      var(--nature-green-very-pale),
+      var(--nature-green-pale)
+    );
+    border-bottom: 1px solid var(--nature-green-soft);
+  }
+
+  [data-bs-theme="dark"] .modal-header {
+    background: linear-gradient(
+      135deg,
+      var(--nature-green-dark),
+      rgba(26, 26, 26, 0.9)
+    );
+  }
+
+  .modal-content {
+    border: 1px solid var(--nature-green-pale);
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: white !important;
+  }
+
+  [data-bs-theme="dark"] .modal-content {
+    border-color: var(--nature-green-dark);
+    background: rgba(26, 26, 26, 0.95);
+  }
+
+  /* Modal fixes */
+  .modal {
+    z-index: 1055 !important;
+  }
+
+  .modal-backdrop {
+    z-index: 1050 !important;
+  }
+
+  .modal-dialog {
+    z-index: 1060 !important;
+  }
+
+  .modal-content {
+    z-index: 1065 !important;
+    background-color: white !important;
+  }
+
+  .modal-body .form-control,
+  .modal-body .form-select {
+    background-color: white !important;
+    z-index: 10000 !important;
+    position: relative !important;
+    pointer-events: auto !important;
+  }
+
+  .modal-body .form-control:focus,
+  .modal-body .form-select:focus {
+    background-color: white !important;
+    z-index: 10001 !important;
+  }
+
+  /* Form Range */
+  .form-range {
+    accent-color: var(--nature-green);
+  }
+
+  /* Crop Modal Styles */
+  .crop-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  #cropCanvas {
+    border: 2px solid var(--nature-green-soft);
+    border-radius: 15px;
+    cursor: move;
+    max-width: 100%;
+    transition: all 0.2s ease;
+    background-color: #f8f9fa;
+  }
+
+  #cropCanvas:hover {
+    border-color: var(--nature-green);
+    box-shadow: 0 4px 12px rgba(45, 80, 22, 0.2);
+  }
+
+  /* Toast Notifications - New positioning */
+  .toast-container {
+    position: fixed !important;
+    top: 50px !important;
+    right: 20px !important;
+    z-index: 9999 !important;
+    max-width: 350px !important;
+  }
+
+  .toast {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 12px !important;
+    min-width: 300px !important;
+  }
+
+  .toast.show {
+    animation: slideInRight 0.4s ease-out;
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .toast-header {
+    background: linear-gradient(
+      135deg,
+      var(--nature-green-very-pale),
+      var(--nature-green-pale)
+    ) !important;
+    border-bottom: 1px solid var(--nature-green-soft) !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+
+  .toast-body {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 0 0 12px 12px !important;
+    font-size: 0.9rem !important;
+    padding: 1rem !important;
+  }
+
+  [data-bs-theme="dark"] .toast-header {
+    background: linear-gradient(
+      135deg,
+      var(--nature-green-dark),
+      rgba(26, 26, 26, 0.9)
+    ) !important;
+  }
+
+  [data-bs-theme="dark"] .toast-body {
+    background: rgba(26, 26, 26, 0.95) !important;
+    color: var(--nature-green-pale) !important;
+  }
+
+  /* Custom Notification Container - Top Center */
+  #notificationContainer {
+    position: fixed !important;
+    top: 80px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10000 !important;
+    width: 400px !important;
+    pointer-events: none !important;
+  }
+
+  /* Notification Animations */
+  @keyframes slideInTop {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+      scale: 0.95;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  @keyframes slideOutTop {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+      scale: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+      scale: 0.95;
+    }
+  }
+
+  /* Enhanced notification styling */
+  #notificationContainer .alert {
+    pointer-events: auto !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(10px) !important;
+    font-weight: 500 !important;
+    margin-bottom: 0.5rem !important;
+    padding: 1rem 1.25rem !important;
+    animation: slideInTop 0.4s ease-out;
+  }
+
+  #notificationContainer .alert .bi {
+    font-size: 1.3rem !important;
+    margin-right: 0.75rem !important;
+  }
+
+  /* Success notification special styling */
+  #notificationContainer .alert-success {
+    background: linear-gradient(135deg, #28a745, #20c997) !important;
+    border-left: 4px solid #fff !important;
+    color: white !important;
+  }
+
+  /* Error notification special styling */
+  #notificationContainer .alert-danger {
+    background: linear-gradient(135deg, #dc3545, #fd7e14) !important;
+    border-left: 4px solid #fff !important;
+    color: white !important;
+  }
+
+  /* Warning notification special styling */
+  #notificationContainer .alert-warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14) !important;
+    border-left: 4px solid #fff !important;
+    color: #212529 !important;
+  }
+
+  #notificationContainer .alert-warning .btn-close {
+    filter: invert(1) !important;
+  }
+
+  /* Info notification special styling */
+  #notificationContainer .alert-info {
+    background: linear-gradient(135deg, #17a2b8, #6f42c1) !important;
+    border-left: 4px solid #fff !important;
+    color: white !important;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #notificationContainer {
+      width: 90% !important;
+      max-width: 350px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #notificationContainer {
+      width: 95% !important;
+      top: 70px !important;
+    }
+
+    #notificationContainer .alert {
+      padding: 0.75rem 1rem !important;
+      font-size: 0.9rem !important;
+    }
+
+    #notificationContainer .alert .bi {
+      font-size: 1.1rem !important;
+      margin-right: 0.5rem !important;
+    }
+  }
+
+  .collapse {
+    transition: opacity 0.3s ease, height 0s;
+    display: block; /* Ensure the section occupies space even when hidden */
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .collapse.show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  #profileAvatar {
+    transition: none; /* Prevent resizing or animation when toggling sections */
+  }
+
+  #changePasswordSection {
+    height: auto; /* Ensure the height does not affect the layout */
+  }
+
+  .col-md-5 .card,
+  .col-md-7 .card {
+    min-height: 400px !important;
+    max-height: 400px !important;
+    height: 400px !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .col-md-5 .card-body,
+  .col-md-7 .card-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+  }
+
+  .collapse {
+    transition: opacity 0.3s ease, height 0s;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    height: 0 !important; /* Không chiếm chiều cao khi ẩn */
+  }
+
+  .collapse.show {
+    visibility: visible;
+    opacity: 1;
+    height: auto !important; /* Hiện nội dung nhưng không thay đổi khung cha */
+  }
+
+  #changePasswordSection {
+    min-height: 0 !important;
+    max-height: 220px !important;
+    overflow: auto;
+    transition: opacity 0.3s ease;
+  }
+
+  /* New styles to lock the height of the page and sections */
+  body {
+    height: 100vh; /* Lock the height of the page */
+    overflow: hidden; /* Prevent scrolling */
+  }
+
+  #dashboardSection {
+    /* Ensure consistent height for the main section */
+    height: calc(100vh - 60px); /* Adjust for any fixed headers or footers */
+    overflow: hidden; /* Prevent content overflow */
+    display: flex;
+    flex-direction: column;
+  }
+
+  #changePasswordSection {
+    height: 220px; /* Fixed height for the "Đổi mật khẩu" section */
+    overflow: hidden; /* Prevent content overflow */
+    transition: height 0.3s ease; /* Smooth transition for height changes */
+  }
+
+  #changePasswordSection.collapse {
+    height: 0 !important; /* Collapse height when hidden */
+    visibility: hidden; /* Hide content */
+    opacity: 0; /* Fade out */
+  }
+
+  #changePasswordSection.collapse.show {
+    height: 220px !important; /* Restore height when shown */
+    visibility: visible;
+    opacity: 1;
+  }
+
+  body {
+    /* ...existing styles... */
+    height: auto; /* Allow the height to adjust dynamically */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+
+  #dashboardSection {
+    /* Ensure consistent layout for the main section */
+    height: auto; /* Allow dynamic height */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+}
+
+/* Căn đều container cách hai bên 150px */
+.main-container {
+  margin-left: 150px;
+  margin-right: 150px;
+}
+/* Responsive: giảm khoảng cách khi màn hình nhỏ */
+@media (max-width: 1200px) {
+  .main-container {
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+}
+@media (max-width: 768px) {
+  .main-container {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+/* Hiệu ứng slide cho submenu */
+.submenu-slide {
+  max-height: 500px;
+  opacity: 1;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.submenu-hidden {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(-10px);
+}
+
+/* Đảm bảo submenu có thể nhìn thấy khi slide */
+.submenu-slide .nav-link {
+  transition: opacity 0.2s ease-in-out 0.1s;
+  opacity: 1;
+}
+
+.submenu-hidden .nav-link {
+  transition: opacity 0.1s ease-in-out;
+  opacity: 0;
+}
+
+/* Optimized Address Form Styles - Ultra Compact & Clean */
+#addAddressSection {
+  border: 1px solid var(--nature-green-pale);
+  border-radius: 10px;
+  animation: slideInFromTop 0.3s ease-out;
+  max-width: 100%;
+}
+
+#addAddressSection .card-header {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-very-pale),
+    var(--nature-green-pale)
+  );
+  border-bottom: 1px solid var(--nature-green-soft);
+  padding: 0.6rem 0.8rem; /* Further reduced */
+  min-height: 45px;
+}
+
+#addAddressSection .card-header h5 {
+  font-size: 1rem; /* Reduced from default */
+  margin: 0;
+  font-weight: 600;
+}
+
+#addAddressSection .card-body {
+  padding: 0.8rem; /* Further reduced */
+}
+
+/* Ultra Compact Form Labels */
+#addAddressSection .form-label {
+  font-weight: 600;
+  color: var(--nature-green-dark);
+  margin-bottom: 0.25rem; /* Further reduced */
+  font-size: 0.8rem; /* Further reduced */
+  line-height: 1.2;
+}
+
+#addAddressSection .form-label.required::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Ultra Compact Form Controls */
+#addAddressSection .form-control,
+#addAddressSection .form-select {
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  padding: 0.4rem 0.6rem; /* Further reduced */
+  font-size: 0.8rem; /* Further reduced */
+  transition: all 0.2s ease;
+  min-height: 34px; /* Reduced height */
+  line-height: 1.3;
+}
+
+#addAddressSection .form-control:focus,
+#addAddressSection .form-select:focus {
+  border-color: var(--nature-green);
+  box-shadow: 0 0 0 0.15rem rgba(45, 80, 22, 0.1);
+}
+
+#addAddressSection textarea.form-control {
+  resize: vertical;
+  min-height: 55px; /* Further reduced */
+  max-height: 80px;
+}
+
+/* Ultra Compact Row Spacing */
+#addAddressSection .row {
+  margin-bottom: 0;
+}
+
+#addAddressSection .mb-3 {
+  margin-bottom: 0.6rem !important; /* Further reduced */
+}
+
+#addAddressSection .mb-4 {
+  margin-bottom: 0.8rem !important; /* Further reduced */
+}
+
+/* Ultra Compact Address Type Buttons */
+#addAddressSection .btn-group .btn {
+  padding: 0.4rem 0.6rem; /* Further reduced */
+  font-size: 0.75rem; /* Further reduced */
+  font-weight: 500;
+  min-height: 34px;
+}
+
+#addAddressSection .btn-check:checked + .btn {
+  background-color: var(--nature-green);
+  border-color: var(--nature-green);
+  color: white;
+}
+
+#addAddressSection .btn-outline-primary {
+  border-color: var(--nature-green);
+  color: var(--nature-green);
+}
+
+#addAddressSection .btn-outline-primary:hover {
+  background-color: var(--nature-green);
+  border-color: var(--nature-green);
+  color: white;
+}
+
+/* Ultra Compact Default Address Checkbox */
+#addAddressSection .form-check {
+  padding: 0.35rem; /* Further reduced */
+  background: var(--nature-green-very-pale);
+  border-radius: 5px;
+  border: 1px solid var(--nature-green-pale);
+  text-align: center;
+}
+
+#addAddressSection .form-check-input {
+  transform: scale(0.9); /* Slightly smaller checkbox */
+}
+
+#addAddressSection .form-check-input:checked {
+  background-color: var(--nature-green);
+  border-color: var(--nature-green);
+}
+
+#addAddressSection .form-check-label {
+  font-weight: 500;
+  color: var(--nature-green-dark);
+  cursor: pointer;
+  font-size: 0.75rem; /* Further reduced */
+  line-height: 1.3;
+}
+
+#addAddressSection .form-check-label i {
+  color: #ffc107;
+  font-size: 0.7rem;
+}
+
+/* Form Validation - Ultra Compact */
+#addAddressSection .was-validated .form-control:invalid,
+#addAddressSection .was-validated .form-select:invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.1);
+}
+
+#addAddressSection .was-validated .form-control:valid,
+#addAddressSection .was-validated .form-select:valid {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.15rem rgba(40, 167, 69, 0.1);
+}
+
+#addAddressSection .invalid-feedback {
+  font-size: 0.7rem; /* Further reduced */
+  color: #dc3545;
+  margin-top: 0.15rem; /* Further reduced */
+}
+
+/* Ultra Compact Action Buttons */
+#addAddressSection .btn {
+  border-radius: 5px;
+  font-weight: 500;
+  padding: 0.45rem 0.9rem; /* Further reduced */
+  font-size: 0.8rem; /* Further reduced */
+  transition: all 0.2s ease;
+  min-height: 36px;
+}
+
+#addAddressSection .btn-primary {
+  background-color: var(--nature-green);
+  border-color: var(--nature-green);
+}
+
+#addAddressSection .btn-primary:hover {
+  background-color: var(--nature-green-dark);
+  border-color: var(--nature-green-dark);
+  transform: translateY(-1px);
+}
+
+#addAddressSection .btn-outline-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+#addAddressSection .btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+/* Close button optimization */
+#addAddressSection .btn-sm {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+}
+
+/* Action buttons container */
+#addAddressSection .d-flex.gap-2 {
+  gap: 0.5rem !important;
+  margin-top: 0.5rem;
+}
+
+/* Autocomplete dropdown optimization */
+#addAddressSection .autocomplete-dropdown {
+  font-size: 0.8rem;
+  max-height: 180px; /* Reduced */
+}
+
+#addAddressSection .autocomplete-item {
+  padding: 0.4rem 0.6rem; /* Reduced */
+  font-size: 0.8rem;
+}
+
+/* Responsive - Ultra Compact Mobile */
+@media (max-width: 768px) {
+  #addAddressSection .card-body {
+    padding: 0.6rem; /* Further reduced for mobile */
+  }
+
+  #addAddressSection .col-md-6 {
+    margin-bottom: 0.4rem; /* Further reduced */
+  }
+
+  #addAddressSection .btn-group {
+    flex-direction: column;
+    gap: 0.2rem; /* Further reduced */
+  }
+
+  #addAddressSection .btn-group .btn {
+    border-radius: 5px !important;
+    padding: 0.35rem 0.6rem; /* Further reduced for mobile */
+    font-size: 0.7rem;
+  }
+
+  #addAddressSection .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 0.4rem !important; /* Further reduced */
+  }
+
+  #addAddressSection .form-check {
+    margin-top: 0.4rem; /* Further reduced */
+  }
+
+  #addAddressSection .form-control,
+  #addAddressSection .form-select {
+    padding: 0.35rem 0.5rem; /* Further reduced for mobile */
+    font-size: 0.75rem;
+    min-height: 32px;
+  }
+
+  #addAddressSection textarea.form-control {
+    min-height: 50px; /* Further reduced for mobile */
+  }
+}
+
+/* Ultra compact for small screens */
+@media (max-width: 576px) {
+  #addAddressSection .card-header {
+    padding: 0.5rem 0.6rem;
+  }
+
+  #addAddressSection .card-header h5 {
+    font-size: 0.9rem;
+  }
+
+  #addAddressSection .card-body {
+    padding: 0.5rem;
+  }
+
+  #addAddressSection .form-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.2rem;
+  }
+
+  #addAddressSection .btn {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.75rem;
+    min-height: 34px;
+  }
+}
+
+/* Address Card Animation - Giảm thêm chiều cao với button group cải thiện */
+.address-card {
+  transition: all 0.3s ease;
+  animation: slideInFromBottom 0.4s ease-out;
+  margin-bottom: 0.4rem !important;
+}
+
+.address-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(45, 80, 22, 0.15);
+}
+
+.address-card .card-body {
+  padding: 0.4rem !important;
+}
+
+.address-card .card-title {
+  color: var(--nature-green-dark);
+  font-weight: 600;
+  font-size: 1rem !important;
+  margin-bottom: 0.2rem !important;
+  line-height: 1.1 !important;
+}
+
+.address-card .card-text {
+  color: #6c757d;
+  font-size: 0.9rem !important;
+  line-height: 1.1 !important;
+  margin-bottom: 0.15rem !important;
+}
+
+.address-card .text-muted {
+  font-size: 0.85rem !important;
+  line-height: 1.1 !important;
+}
+
+.address-card .badge {
+  font-size: 0.65rem !important;
+  padding: 0.15rem 0.3rem !important;
+  line-height: 1 !important;
+}
+
+/* Cải thiện button group - căn đều và đẹp hơn */
+.address-card .btn-group-vertical {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: 2px !important; /* Khoảng cách đều giữa các button */
+  min-width: 32px !important;
+  height: auto !important;
+}
+
+.address-card .btn-group-vertical .btn {
+  padding: 0.25rem 0.35rem !important;
+  font-size: 0.75rem !important;
+  margin-bottom: 0 !important; /* Remove margin, use gap instead */
+  min-width: 32px !important;
+  height: 26px !important; /* Chiều cao cố định cho tất cả button */
+  line-height: 1 !important;
+  border-radius: 4px !important; /* Bo góc nhẹ */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+}
+
+/* Hover effects cho từng button */
+.address-card .btn-outline-primary:hover {
+  background-color: var(--nature-green) !important;
+  border-color: var(--nature-green) !important;
+  color: white !important;
+  transform: scale(1.05) !important;
+}
+
+.address-card .btn-outline-danger:hover {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: white !important;
+  transform: scale(1.05) !important;
+}
+
+.address-card .btn-outline-warning:hover {
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: #212529 !important;
+  transform: scale(1.05) !important;
+}
+
+/* Icon trong button */
+.address-card .btn i {
+  font-size: 0.75rem !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Đảm bảo button container căn giữa */
+.address-card .d-flex.justify-content-between .flex-shrink-0 {
+  display: flex !important;
+  align-items: flex-start !important;
+  margin-left: 0.5rem !important;
+}
+
+/* Responsive cho address cards */
+@media (max-width: 768px) {
+  .address-card .card-body {
+    padding: 0.3rem !important;
+  }
+
+  .address-card .card-title {
+    font-size: 0.95rem !important;
+    margin-bottom: 0.15rem !important;
+  }
+
+  .address-card .card-text {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.1rem !important;
+  }
+
+  .address-card .btn-group-vertical {
+    min-width: 28px !important;
+    gap: 1px !important;
+  }
+
+  .address-card .btn-group-vertical .btn {
+    padding: 0.2rem 0.3rem !important;
+    font-size: 0.7rem !important;
+    height: 24px !important;
+    min-width: 28px !important;
+  }
+
+  .address-card .btn i {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Shadow effects cho button group */
+.address-card .btn-group-vertical {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-bs-theme="dark"] .address-card .btn-group-vertical {
+  background: rgba(26, 26, 26, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Focus states cho accessibility */
+.address-card .btn:focus {
+  outline: 2px solid var(--nature-green) !important;
+  outline-offset: 1px !important;
+  z-index: 1 !important;
+}
+
+#ordersSubMenu .nav-link {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 8px;
+}
+
+#ordersSubMenu .badge {
+  margin-left: auto !important;
+  min-width: 28px;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Badge mặc định ở góc dưới bên trái của address-card, tránh che nội dung */
+.default-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  z-index: 2;
+  font-size: 0.7rem !important;
+  padding: 0.18rem 0.5rem !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(45, 80, 22, 0.12);
+  pointer-events: none;
+  opacity: 0.95;
+  background: var(--nature-green) !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* Icon mặc định phía dưới button group */
+.default-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  min-height: 22px;
+}
+.default-icon-container i.bi-star-fill {
+  color: #ffc107 !important;
+  font-size: 1rem !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+}
+
+/* Label "Mặc định" phía dưới button group */
+.default-label-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  min-height: 22px;
+}
+.default-label {
+  background: var(--nature-green);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 2px 12px;
+  box-shadow: 0 2px 8px rgba(45, 80, 22, 0.1);
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+/* Tăng chiều ngang sidebar mà không sửa HTML - giảm nhỏ hơn nữa */
+.col-md-3.col-lg-2.sidebar {
+  flex: 0 0 18% !important;
+  max-width: 18% !important;
+  min-width: 160px !important;
+}
+
+/* Điều chỉnh cột nội dung chính tương ứng */
+.col-md-9.col-lg-10 {
+  flex: 0 0 82% !important;
+  max-width: 82% !important;
+}
+
+/* Dịch nhẹ các mục trong ordersSubMenu sang trái */
+#ordersSubMenu {
+  /* giảm indent tổng thể */
+  padding-left: 0 !important;
+}
+
+/* Các nav-link trong submenu: giảm padding trái và kéo sang trái 6px */
+#ordersSubMenu .nav-link {
+  padding-left: 0.4rem !important; /* giảm khoảng cách trái */
+  margin-left: 0 !important;
+  transform: translateX(-6px); /* dịch sang trái 6px — giảm/ tăng nếu cần */
+  transition: transform 0.12s ease;
+}
+
+/* Nếu có lớp ms-3, override để không gây thụt lề */
+#ordersSubMenu .nav-link.ms-3 {
+  margin-left: 0 !important;
+  padding-left: 0.4rem !important;
+  transform: translateX(-6px);
+}
+
+/* Nếu muốn chỉ dịch ít hơn, thay -6px bằng -3px; nếu muốn nhiều hơn, -8px etc. */
+/* Giữ white-space nowrap để không xuống dòng */
+#ordersSubMenu .nav-link,
+#ordersSubMenu .nav-link > span {
+  white-space: nowrap !important;
+}
+
+/* Order Cards Styling */
+.order-card {
+  transition: all 0.3s ease;
+  animation: slideInFromBottom 0.4s ease-out;
+  margin-bottom: 1rem !important;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(45, 80, 22, 0.15);
+}
+
+.order-card .card-header {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-very-pale),
+    var(--nature-green-pale)
+  );
+  border-bottom: 1px solid var(--nature-green-soft);
+}
+
+.order-status-badge {
+  font-size: 0.75rem !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 6px !important;
+}
+
+/* Count badges in sidebar */
+.count-badge {
+  background: var(--nature-green) !important;
+  color: white !important;
+  font-size: 0.7rem !important;
+  padding: 0.2rem 0.4rem !important;
+  border-radius: 10px !important;
+  min-width: 20px !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+}
+
+/* Loading animation */
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Refresh button styling */
+.btn-refresh-order-outline {
+  border: 1px solid var(--nature-green) !important;
+  color: var(--nature-green) !important;
+  background: transparent !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-refresh-order-outline:hover {
+  background: var(--nature-green) !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-refresh-order-small {
+  padding: 0.4rem 0.8rem !important;
+  font-size: 0.85rem !important;
+  border-radius: 6px !important;
+}
+
+/* Product image in order items */
+.order-product-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+/* Modal styling for order details */
+.modal-lg {
+  max-width: 900px !important;
+}
+
+#orderDetailModal .table {
+  font-size: 0.9rem;
+}
+
+#orderDetailModal .table img {
+  border: 1px solid #dee2e6;
+}
+
+/* Responsive adjustments for order cards */
+@media (max-width: 768px) {
+  .order-card .card-body .row {
+    flex-direction: column;
+  }
+
+  .order-card .col-md-8,
+  .order-card .col-md-4 {
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .order-card .btn-group-vertical {
+    flex-direction: row !important;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .order-card .btn-group-vertical .btn {
+    flex: 1;
+  }
+}
+
+/* Empty state styling */
+.empty-orders {
+  color: #6c757d;
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.empty-orders i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Status badge colors */
+.badge.bg-warning {
+  color: #000 !important;
+}
+
+/* Loading spinner container */
+#loadingPlaceholder {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modern Address Card Redesign - Clean & Elegant */
+.address-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInFromBottom 0.4s ease-out;
+  margin-bottom: 1rem !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(45, 80, 22, 0.1) !important;
+}
+
+[data-bs-theme="dark"] .address-card {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  border: 1px solid rgba(116, 198, 157, 0.2) !important;
+}
+
+.address-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 30px rgba(45, 80, 22, 0.15);
+  border-color: var(--nature-green-accent) !important;
+}
+
+.address-card .card {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.address-card .card-body {
+  padding: 1.25rem !important;
+  position: relative;
+}
+
+/* Modern Header Design */
+.address-card .card-title {
+  color: var(--nature-green-dark) !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.3 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.address-card .card-title::before {
+  content: "👤";
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+/* Badge Styling - Modern Pills */
+.address-card .badge {
+  font-size: 0.75rem !important;
+  padding: 0.3rem 0.6rem !important;
+  border-radius: 20px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.2px !important;
+  margin-right: 0.4rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.25rem !important;
+}
+
+.address-card .badge.bg-primary {
+  background: linear-gradient(
+    45deg,
+    var(--nature-green),
+    var(--nature-green-light)
+  ) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.address-card .badge.bg-secondary {
+  background: linear-gradient(45deg, #6c757d, #545b62) !important;
+  color: white !important;
+}
+
+.address-card .badge.bg-success {
+  background: linear-gradient(45deg, #28a745, #20c997) !important;
+  color: white !important;
+  position: relative !important;
+}
+
+.address-card .badge.bg-success::before {
+  content: "⭐";
+  font-size: 0.7rem;
+  margin-right: 0.2rem;
+}
+
+/* Address Text Styling */
+.address-card .card-text {
+  color: #495057 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+  margin-bottom: 0.8rem !important;
+  padding: 0.5rem 0 !important;
+  position: relative !important;
+}
+
+[data-bs-theme="dark"] .address-card .card-text {
+  color: #adb5bd !important;
+}
+
+.address-card .card-text i.bi-geo-alt {
+  color: var(--nature-green-accent) !important;
+  font-size: 1rem !important;
+  margin-right: 0.5rem !important;
+}
+
+/* Action Buttons - Modern Floating Design */
+.address-card .btn-group-vertical {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.4rem !important;
+  z-index: 10 !important;
+  opacity: 0.7 !important;
+  transition: all 0.3s ease !important;
+}
+
+.address-card:hover .btn-group-vertical {
+  opacity: 1 !important;
+  transform: translateX(-2px) !important;
+}
+
+.address-card .btn-group-vertical .btn {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  border: 2px solid transparent !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Edit Button */
+.address-card .btn-outline-primary {
+  background: linear-gradient(45deg, #007bff, #0056b3) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.address-card .btn-outline-primary:hover {
+  background: linear-gradient(
+    45deg,
+    var(--nature-green),
+    var(--nature-green-dark)
+  ) !important;
+  transform: scale(1.1) rotate(5deg) !important;
+  box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3) !important;
+}
+
+/* Delete Button */
+.address-card .btn-outline-danger {
+  background: linear-gradient(45deg, #dc3545, #c82333) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.address-card .btn-outline-danger:hover {
+  background: linear-gradient(45deg, #e74c3c, #c0392b) !important;
+  transform: scale(1.1) rotate(-5deg) !important;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
+}
+
+/* Quick Edit Button */
+.address-card .btn-outline-secondary {
+  background: linear-gradient(45deg, #6c757d, #545b62) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.address-card .btn-outline-secondary:hover {
+  background: linear-gradient(45deg, #ffc107, #e0a800) !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3) !important;
+}
+
+/* Button Icons */
+.address-card .btn i {
+  font-size: 0.85rem !important;
+  line-height: 1 !important;
+  transition: transform 0.2s ease !important;
+}
+
+.address-card .btn:hover i {
+  transform: scale(1.1) !important;
+}
+
+/* Content Layout Improvements */
+.address-card .d-flex.justify-content-between {
+  align-items: flex-start !important;
+  gap: 1rem !important;
+}
+
+.address-card .flex-grow-1 {
+  padding-right: 3rem !important; /* Space for floating buttons */
+}
+
+/* Badge Container Styling */
+.address-card .d-flex.align-items-center {
+  flex-wrap: wrap !important;
+  gap: 0.3rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Default Address Special Styling */
+.address-card[data-default="true"] {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-very-pale) 0%,
+    #ffffff 100%
+  ) !important;
+  border: 2px solid var(--nature-green-accent) !important;
+  position: relative !important;
+}
+
+.address-card[data-default="true"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--nature-green),
+    var(--nature-green-accent)
+  );
+  border-radius: 12px 12px 0 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .address-card .card-body {
+    padding: 1rem !important;
+  }
+
+  .address-card .flex-grow-1 {
+    padding-right: 2.5rem !important;
+  }
+
+  .address-card .btn-group-vertical {
+    top: 0.8rem !important;
+    right: 0.8rem !important;
+    gap: 0.3rem !important;
+  }
+
+  .address-card .btn-group-vertical .btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .address-card .btn i {
+    font-size: 0.75rem !important;
+  }
+
+  .address-card .card-title {
+    font-size: 1rem !important;
+  }
+
+  .address-card .card-text {
+    font-size: 0.9rem !important;
+  }
+
+  .address-card .badge {
+    font-size: 0.7rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .address-card .d-flex.align-items-center {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+  }
+
+  .address-card .badge {
+    margin-right: 0.2rem !important;
+  }
+
+  .address-card .card-title::before {
+    display: none;
+  }
+}
+
+/* Loading Animation Enhancement */
+@keyframes slideInFromBottom {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+    scale: 0.95;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* Hover Glow Effect */
+.address-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 12px;
+  opacity: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(45, 80, 22, 0.1),
+    rgba(116, 198, 157, 0.1)
+  );
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.address-card:hover::after {
+  opacity: 1;
+}
+
+/* Address Search Container Enhancement */
+.address-search-container {
+  margin-bottom: 1.5rem !important;
+  position: relative;
+}
+
+.address-search-container .input-group {
+  border-radius: 25px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.address-search-container .input-group:focus-within {
+  border-color: var(--nature-green-accent);
+  box-shadow: 0 4px 20px rgba(45, 80, 22, 0.15);
+}
+
+.address-search-container .input-group-text {
+  background: linear-gradient(
+    45deg,
+    var(--nature-green-very-pale),
+    var(--nature-green-pale)
+  ) !important;
+  border: none !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.address-search-container .form-control {
+  border: none !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 0.95rem !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.address-search-container .form-control:focus {
+  box-shadow: none !important;
+  background: white !important;
+}
+
+/* Slightly increase size/spacing for the "Thêm Địa Chỉ Mới" card */
+#addAddressSection {
+  max-width: 960px; /* tăng chiều ngang nhẹ */
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 12px;
+}
+
+#addAddressSection .card-header {
+  padding: 0.8rem 1rem; /* hơi rộng hơn */
+}
+
+#addAddressSection .card-body {
+  padding: 1.1rem; /* tăng đệm bên trong */
+}
+
+/* inputs / textarea hơi lớn hơn để dễ thao tác */
+#addAddressSection .form-control,
+#addAddressSection .form-select,
+#addAddressSection textarea.form-control {
+  font-size: 0.92rem;
+  padding: 0.55rem 0.75rem;
+  min-height: 40px;
+}
+
+/* nút lưu to hơn một chút */
+#addAddressSection .btn-primary,
+#addAddressSection .btn {
+  font-size: 0.92rem;
+  padding: 0.55rem 1rem;
+  min-height: 42px;
+}
+
+/* Centered btn-group for address type */
+#addAddressSection .btn-group-centered {
+  display: inline-flex;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+/* Ensure the radio labels in the centered group have consistent min-width and spacing */
+#addAddressSection .btn-group-centered .btn {
+  min-width: 110px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.88rem;
+}
+
+/* Make the centered group responsive on small screens */
+@media (max-width: 576px) {
+  #addAddressSection .btn-group-centered {
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  #addAddressSection .btn-group-centered .btn {
+    min-width: 90px;
+    font-size: 0.82rem;
+  }
+}
+
+/* Layout: căn đều theo hàng ngang cho phần "Loại địa chỉ" */
+#addAddressSection .address-type-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* phân bố đều không gian ngang */
+  gap: 1rem;
+  flex-wrap: nowrap;
+}
+
+/* Giữ phần left (label + buttons) chiếm nhiều không gian, phần right (checkbox) canh phải */
+#addAddressSection .address-type-row > .col-md-6:first-child {
+  flex: 1 1 70%;
+  min-width: 320px; /* tránh quá nhỏ */
+  display: flex;
+  align-items: center;
+}
+
+/* Phần checkbox ở bên phải, không giãn */
+#addAddressSection .address-type-row > .col-md-6:last-child {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Mở rộng vùng chứa btn-group để phân bố đều trong cột giữa */
+#addAddressSection .btn-group-centered {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* đảm bảo các nút vẫn ở chính giữa vùng giữa */
+  gap: 0.6rem;
+}
+
+/* Nếu muốn các nút đều nhau về chiều ngang, giới hạn min-width nhỏ hơn */
+#addAddressSection .btn-group-centered .btn {
+  min-width: 100px; /* điều chỉnh nếu cần lớn/nhỏ hơn */
+}
+
+/* Responsive: khi màn hình nhỏ, cho phép wrap và căn lại */
+@media (max-width: 768px) {
+  #addAddressSection .address-type-row {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  #addAddressSection .address-type-row > .col-md-6:first-child,
+  #addAddressSection .address-type-row > .col-md-6:last-child {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+  #addAddressSection .btn-group-centered {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* Centered Button Group Styling for Address Type - Horizontal Layout */
+.btn-group-centered {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0 !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+}
+
+.btn-group-centered .btn {
+  flex: 1 !important;
+  text-align: center !important;
+  border-radius: 0 !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+}
+
+.btn-group-centered .btn:first-child {
+  border-top-left-radius: 0.375rem !important;
+  border-bottom-left-radius: 0.375rem !important;
+}
+
+.btn-group-centered .btn:last-child {
+  border-top-right-radius: 0.375rem !important;
+  border-bottom-right-radius: 0.375rem !important;
+}
+
+.btn-group-centered .btn-check:checked + .btn {
+  background-color: #0d6efd !important;
+  color: white !important;
+  border-color: #0d6efd !important;
+}
+
+/* Horizontal layout for address type row - all in one line */
+#addAddressSection .address-type-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+}
+
+/* Label column - takes up minimal space */
+#addAddressSection .address-type-row .col-md-6:first-child {
+  flex: 0 0 auto !important;
+  min-width: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+/* Button group takes center space */
+#addAddressSection .address-type-row .btn-group-centered {
+  flex: 1 !important;
+  max-width: 400px !important;
+  margin: 0 1rem !important;
+}
+
+/* Checkbox column - takes up minimal space on the right */
+#addAddressSection .address-type-row .col-md-6:last-child {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+}
+
+/* Make label inline and compact */
+#addAddressSection .address-type-row .form-label {
+  margin-bottom: 0 !important;
+  white-space: nowrap !important;
+  font-size: 0.9rem !important;
+  margin-right: 0.5rem !important;
+}
+
+/* Responsive: still maintain horizontal layout on smaller screens */
+@media (max-width: 768px) {
+  #addAddressSection .address-type-row {
+    gap: 0.5rem !important;
+  }
+
+  #addAddressSection .btn-group-centered {
+    max-width: 300px !important;
+    margin: 0 0.5rem !important;
+  }
+
+  .btn-group-centered .btn {
+    font-size: 0.8rem !important;
+    padding: 6px 8px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  #addAddressSection .address-type-row {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  #addAddressSection .address-type-row .col-md-6:first-child,
+  #addAddressSection .address-type-row .col-md-6:last-child {
+    flex: 1 1 100% !important;
+    justify-content: center !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  #addAddressSection .btn-group-centered {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Fix cho button group address type - tăng khoảng cách và giảm icon */
+.btn-group-centered .btn {
+  flex: 1 !important;
+  text-align: center !important;
+  border-radius: 0 !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+  padding: 8px 15px !important; /* Tăng padding ngang */
+  font-size: 0.85rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem !important; /* Khoảng cách giữa icon và text */
+}
+
+/* Giảm kích thước icon để không che text */
+.btn-group-centered .btn i {
+  font-size: 0.75rem !important; /* Giảm kích thước icon */
+  flex-shrink: 0 !important; /* Không cho icon co lại */
+}
+
+/* Đảm bảo text không bị ẩn */
+.btn-group-centered .btn span {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Tăng min-width cho các button */
+#addAddressSection .btn-group-centered .btn {
+  min-width: 120px !important; /* Tăng từ 100px lên 120px */
+  max-width: none !important;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .btn-group-centered .btn {
+    font-size: 0.8rem !important;
+    padding: 6px 12px !important;
+    gap: 0.3rem !important;
+  }
+
+  .btn-group-centered .btn i {
+    font-size: 0.7rem !important;
+  }
+
+  #addAddressSection .btn-group-centered .btn {
+    min-width: 110px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  #addAddressSection .btn-group-centered .btn {
+    min-width: 100px !important;
+    font-size: 0.75rem !important;
+    padding: 5px 10px !important;
+  }
+
+  .btn-group-centered .btn i {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* Tăng cỡ chữ toàn trang */
+body {
+  font-size: 1.1rem !important; /* Tăng từ 1rem lên 1.1rem */
+  line-height: 1.6 !important;
+}
+
+/* Tăng cỡ chữ cho các thành phần form */
+.form-control,
+.form-select {
+  font-size: 1rem !important; /* Tăng từ 0.9rem */
+  padding: 0.6rem 0.8rem !important;
+}
+
+.form-label {
+  font-size: 1rem !important; /* Tăng từ 0.85rem */
+}
+
+/* Tăng cỡ chữ cho buttons */
+.btn {
+  font-size: 1rem !important;
+  padding: 0.6rem 1rem !important;
+}
+
+/* Tăng cỡ chữ cho address cards */
+.address-card .card-title {
+  font-size: 1.25rem !important; /* Tăng từ 1.1rem */
+}
+
+.address-card .card-text {
+  font-size: 1.05rem !important; /* Tăng từ 0.95rem */
+}
+
+.address-card .badge {
+  font-size: 0.85rem !important; /* Tăng từ 0.75rem */
+  padding: 0.4rem 0.7rem !important;
+}
+
+/* Tăng cỡ chữ cho sidebar */
+.sidebar .nav-link {
+  font-size: 1rem !important;
+}
+
+.sidebar h5 {
+  font-size: 1.3rem !important;
+}
+
+/* Tăng cỡ chữ cho address type buttons */
+.btn-group-centered .btn {
+  font-size: 1rem !important; /* Tăng từ 0.85rem */
+  padding: 10px 18px !important;
+}
+
+/* Tăng cỡ chữ cho add address section */
+#addAddressSection .form-control,
+#addAddressSection .form-select {
+  font-size: 1rem !important;
+  padding: 0.6rem 0.8rem !important;
+  min-height: 44px !important;
+}
+
+#addAddressSection .form-label {
+  font-size: 0.95rem !important;
+}
+
+#addAddressSection .btn {
+  font-size: 1rem !important;
+  padding: 0.6rem 1.1rem !important;
+  min-height: 44px !important;
+}
+
+/* Responsive - duy trì kích thước lớn hơn trên mobile */
+@media (max-width: 768px) {
+  body {
+    font-size: 1.05rem !important;
+  }
+
+  .btn-group-centered .btn {
+    font-size: 0.95rem !important;
+    padding: 8px 15px !important;
+  }
+
+  .address-card .card-title {
+    font-size: 1.15rem !important;
+  }
+
+  .address-card .card-text {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  body {
+    font-size: 1rem !important;
+  }
+
+  .btn-group-centered .btn {
+    font-size: 0.9rem !important;
+    padding: 7px 12px !important;
+  }
+}
+
+/* Customer Sidebar Styles */
+.customer-sidebar {
+  background: linear-gradient(
+    180deg,
+    var(--nature-green-very-pale),
+    var(--nature-green-pale)
+  );
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(45, 80, 22, 0.1);
+  border: 1px solid var(--nature-green-pale);
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
+[data-bs-theme="dark"] .customer-sidebar {
+  background: linear-gradient(180deg, var(--nature-green-dark), #1a1a1a);
+  border: 1px solid var(--nature-green-dark);
+}
+
+.sidebar-header {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green) 0%,
+    var(--nature-green-light) 100%
+  );
+  color: white;
+  padding: 1.25rem;
+  text-align: center;
+  position: relative;
+}
+
+.sidebar-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+}
+
+.sidebar-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-header .user-avatar {
+  width: 35px;
+  height: 35px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-nav {
+  padding: 1rem;
+}
+
+.sidebar-nav .nav {
+  gap: 0.25rem;
+}
+
+.sidebar-nav .nav-link {
+  color: var(--nature-green-dark) !important;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-bs-theme="dark"] .sidebar-nav .nav-link {
+  color: var(--nature-green-pale) !important;
+}
+
+.sidebar-nav .nav-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: var(--nature-green);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+  border-radius: 0 3px 3px 0;
+}
+
+.sidebar-nav .nav-link:hover {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green-soft) 0%,
+    var(--nature-green-pale) 100%
+  );
+  color: var(--nature-green-dark) !important;
+  transform: translateX(8px);
+  box-shadow: 0 2px 8px rgba(45, 80, 22, 0.15);
+}
+
+.sidebar-nav .nav-link:hover::before {
+  transform: scaleY(1);
+}
+
+.sidebar-nav .nav-link.active {
+  background: linear-gradient(
+    135deg,
+    var(--nature-green) 0%,
+    var(--nature-green-light) 100%
+  );
+  color: white !important;
+  font-weight: 600;
+  transform: translateX(8px);
+  box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
+}
+
+.sidebar-nav .nav-link.active::before {
+  transform: scaleY(1);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar-nav .nav-link.active i {
+  transform: scale(1.1);
+}
+
+.sidebar-nav .nav-link i {
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-nav .nav-link.text-danger {
+  color: #dc3545 !important;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(220, 53, 69, 0.2);
+  padding-top: 1rem;
+}
+
+.sidebar-nav .nav-link.text-danger:hover {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white !important;
+}
+
+/* Notification Badge */
+.nav-link .badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+/* Icon Animations */
+.sidebar-nav .nav-link:hover i {
+  animation: iconBounce 0.6s ease;
+}
+
+@keyframes iconBounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .customer-sidebar {
+    position: static;
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-header {
+    padding: 1rem;
+  }
+
+  .sidebar-header h4 {
+    font-size: 1rem;
+  }
+
+  .sidebar-nav {
+    padding: 0.75rem;
+  }
+
+  .sidebar-nav .nav-link {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .sidebar-nav .nav-link:hover,
+  .sidebar-nav .nav-link.active {
+    transform: translateX(4px);
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar-nav .nav-link {
+    padding: 0.5rem 0.7rem;
+    gap: 0.5rem;
+  }
+
+  .sidebar-nav .nav-link i {
+    font-size: 1rem;
+  }
+
+  .sidebar-header .user-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+}
+
+/* Smooth transitions for theme switching */
+.customer-sidebar,
+.sidebar-nav .nav-link {
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    color 0.3s ease;
+}

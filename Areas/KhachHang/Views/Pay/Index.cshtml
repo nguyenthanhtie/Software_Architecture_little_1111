@@ -1,0 +1,413 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/KhachHang/Views/Shared/_Layout_KhachHang.cshtml";
+}
+@section Styles {
+    <link href="~/css/KhachHang/thanhtoan.css" rel="stylesheet" asp-append-version="true">
+    <style>
+        .order-confirmation-info {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .confirmation-message h5 {
+            color: #198754;
+        }
+        
+        .delivery-info {
+            background: #ffffff !important;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .delivery-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .delivery-info i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        [data-bs-theme="dark"] .order-confirmation-info {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            border-color: #4a5568;
+        }
+        
+        [data-bs-theme="dark"] .delivery-info {
+            background: #2d3748 !important;
+            border-color: #4a5568;
+        }
+    </style>
+}
+
+@Html.AntiForgeryToken()
+
+<div class="payment-container" style="padding:0 !important; margin:0 !important;">
+    <!-- Modern Back Button -->
+    <a href="#" id="backToCartBtn" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        <span>Quay lại giỏ hàng</span>
+    </a>
+
+    <!-- Hero Header -->
+    <div class="payment-header">
+        <h1>Thanh Toán Đơn Hàng</h1>
+        <p>Hoàn tất đơn hàng của bạn với quy trình thanh toán an toàn và nhanh chóng</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Order Confirmation -->
+            <div class="modern-card">
+                <div class="section-title">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Xác Nhận Đơn Hàng</span>
+                </div>
+                <div class="order-confirmation-info">
+                    <div class="confirmation-message">
+                        <h5 class="fw-bold mb-3" style="color: var(--text-primary);">
+                            <i class="fas fa-shopping-bag me-2"></i>
+                            Đơn hàng của bạn đã sẵn sàng
+                        </h5>
+                        <p class="text-muted mb-3">
+                            Vui lòng kiểm tra lại thông tin đơn hàng bên phải và nhấn "Xác nhận đặt hàng" để hoàn tất.
+                        </p>
+                        <div class="delivery-info bg-light p-3 rounded">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-truck me-2 text-primary"></i>
+                                Thông tin giao hàng
+                            </h6>
+                            <p class="mb-1">
+                                <i class="fas fa-clock me-2 text-success"></i>
+                                Thời gian giao hàng: 2-3 ngày làm việc
+                            </p>
+                            <p class="mb-1">
+                                <i class="fas fa-money-bill-wave me-2 text-info"></i>
+                                Thanh toán khi nhận hàng (COD)
+                            </p>
+                            <p class="mb-0">
+                                <i class="fas fa-shield-alt me-2 text-warning"></i>
+                                Kiểm tra hàng trước khi thanh toán
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Methods (Hidden but required for processing) -->
+            <div style="display: none;">
+                <label class="payment-option">
+                    <input type="radio" name="payment" checked>
+                    <span>COD</span>
+                </label>
+                <!-- Hidden address container for JavaScript compatibility -->
+                <div id="addressList" style="display: none;">
+                    <label>
+                        <input type="radio" name="address" value="1" checked>
+                        <span>Default Address</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <div class="section-title">
+                    <i class="fas fa-receipt"></i>
+                    <span>Chi Tiết Đơn Hàng</span>
+                </div>
+
+                <div id="orderItemsContainer" style="max-height: 350px; overflow-y: auto; margin-bottom: 2rem;">
+                    <!-- Products will be rendered by JS -->
+                </div>
+
+                <div class="summary-details">
+                    <div class="summary-row">
+                        <span>Tạm tính:</span>
+                        <span class="fw-bold" id="subtotalAmount">0₫</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Phí vận chuyển:</span>
+                        <span class="fw-bold">30.000₫</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Tổng cộng:</span>
+                        <span id="totalAmount">0₫</span>
+                    </div>
+                </div>
+
+                <button id="completeOrderBtn" class="complete-order-btn">
+                    <i class="fas fa-check-circle" style="margin-right: 0.75rem;"></i>
+                    <span>Xác Nhận Đặt Hàng</span>
+                </button>
+
+                <div class="text-center" style="margin-top: 1rem;">
+                    <small class="text-muted">
+                        <i class="fas fa-lock" style="margin-right: 0.5rem;"></i>
+                        Thông tin được bảo mật 100%
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Force reload JavaScript by adding timestamp -->
+<script>
+    // Đặt flag để JavaScript biết trang đã được load
+    window.pageLoaded = true;
+    
+    // Clear any cached JavaScript
+    console.log('Payment page loaded at:', new Date().toISOString());
+    
+    // Debug ViewBag values
+    console.log('ViewBag.IsBuyNow:', @Json.Serialize(ViewBag.IsBuyNow));
+    @if (ViewBag.BuyNowItem != null)
+    {
+        <text>console.log('ViewBag.BuyNowItem exists');</text>
+    }
+    else
+    {
+        <text>console.log('ViewBag.BuyNowItem is null');</text>
+    }
+    
+    // Đảm bảo event listener được đăng ký ngay khi DOM sẵn sàng
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM Content Loaded - Setting up event listeners');
+        
+        // Đảm bảo nút "Xác nhận đặt hàng" có event listener
+        const completeBtn = document.getElementById('completeOrderBtn');
+        if (completeBtn) {
+            console.log('Found completeOrderBtn, adding event listener');
+            completeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Complete order button clicked!');
+                
+                // Kiểm tra xem hàm processOrder có tồn tại không
+                if (typeof processOrder === 'function') {
+                    console.log('Calling processOrder function...');
+                    processOrder();
+                } else {
+                    console.error('processOrder function not found');
+                    alert('Chức năng đặt hàng đang được tải. Vui lòng thử lại sau vài giây.');
+                }
+            });
+        } else {
+            console.error('completeOrderBtn not found!');
+        }
+    });
+    
+    // Fallback processOrder function nếu thanhtoan.js chưa load
+    function processOrder() {
+        console.log('Fallback processOrder called');
+        
+        if (typeof window.processOrderFromJS === 'function') {
+            // Nếu hàm từ thanhtoan.js đã sẵn sàng
+            window.processOrderFromJS();
+            return;
+        }
+        
+        // Fallback: gửi form đơn giản
+        const orderItems = window.isBuyNow && window.buyNowData ? [window.buyNowData] : [];
+        
+        if (orderItems.length === 0) {
+            alert('Không có sản phẩm nào để đặt hàng');
+            return;
+        }
+        
+        // Tạo form ẩn để submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '@Url.Action("ProcessOrder", "Pay", new { area = "KhachHang" })';
+        
+        // Thêm anti-forgery token
+        const token = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (token) {
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = '__RequestVerificationToken';
+            tokenInput.value = token.value;
+            form.appendChild(tokenInput);
+        }
+        
+        // Thêm dữ liệu order
+        const orderInput = document.createElement('input');
+        orderInput.type = 'hidden';
+        orderInput.name = 'orderData';
+        orderInput.value = JSON.stringify({
+            PaymentMethod: 'COD',
+            IsBuyNow: window.isBuyNow || false,
+            OrderItems: orderItems
+        });
+        form.appendChild(orderInput);
+        
+        // Submit form
+        document.body.appendChild(form);
+        console.log('Submitting fallback order form...');
+        form.submit();
+    }
+    
+    // Xử lý dữ liệu "mua ngay" từ server
+    @if (ViewBag.IsBuyNow != null && (bool)ViewBag.IsBuyNow)
+    {
+        <text>
+        // Dữ liệu mua ngay từ server
+        try {
+            // Sử dụng Html.Raw để lấy JSON string đã được escape đúng cách
+            window.buyNowData = @Html.Raw(ViewBag.BuyNowItem);
+            window.isBuyNow = true;
+            console.log('Buy Now mode activated successfully');
+            console.log('Parsed buyNowData:', window.buyNowData);
+            
+            // Validate dữ liệu ngay lập tức
+            if (window.buyNowData && window.buyNowData.productId && window.buyNowData.name) {
+                console.log('BuyNow data is valid');
+            } else {
+                console.error('BuyNow data is invalid:', window.buyNowData);
+            }
+            
+            // Trigger reinitialization nếu JavaScript đã load
+            if (typeof initializeOrderDisplay === 'function') {
+                console.log('Reinitializing order display immediately...');
+                initializeOrderDisplay();
+            }
+        } catch (error) {
+            console.error('Error parsing buyNowData:', error);
+            console.log('ViewBag.BuyNowItem type:', typeof '@ViewBag.BuyNowItem');
+            console.log('ViewBag.BuyNowItem value:', '@ViewBag.BuyNowItem');
+            window.isBuyNow = false;
+        }
+        
+        // Cập nhật text của nút "Quay lại"
+        document.addEventListener('DOMContentLoaded', function() {
+            const backBtn = document.querySelector('#backToCartBtn span');
+            if (backBtn) {
+                backBtn.textContent = 'Quay lại sản phẩm';
+            }
+        });
+        </text>
+    }
+    else
+    {
+        <text>
+        window.isBuyNow = false;
+        console.log('Normal checkout mode');
+        </text>
+    }
+</script>
+
+<!-- Success Modal -->
+<div id="paymentSuccessModal" class="modern-modal d-none">
+    <div class="modal-content success-modal">
+        <button id="closeSuccessModalBtn" class="success-modal-close" onclick="closeSuccessModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-body">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="fw-bold" style="color: var(--text-primary); margin-bottom: 1rem;">
+                Thanh Toán Thành Công!
+            </h3>
+            <p class="text-muted" style="margin-bottom: 2rem; line-height: 1.6;">
+                Đơn hàng của bạn đã được xử lý thành công.<br>
+                Cảm ơn bạn đã tin tưởng và mua sắm tại cửa hàng!
+            </p>
+            <div style="background: var(--lighter); padding: 1rem; border-radius: var(--radius); margin-bottom: 2rem; border-left: 4px solid var(--primary);">
+                <i class="fas fa-shipping-fast" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                <small class="text-muted">Đơn hàng sẽ được giao trong 2-3 ngày làm việc</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MoMo QR Code Modal -->
+<div id="momoQrModal" class="modern-modal momo-qr-modal d-none">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fas fa-qrcode" style="background: linear-gradient(135deg, #a50064, #d82d8b); color: white;"></i>
+                <span>Thanh toán MoMo</span>
+            </div>
+        </div>
+        <div class="modal-body">
+            <h4 style="color: var(--text-primary); margin-bottom: 1rem; text-align: center;">Quét mã QR để thanh toán</h4>
+            
+            <div class="momo-qr-container">
+                <!-- Left side - QR Code -->
+                <div class="momo-qr-left">
+                    <div class="momo-qr-code-container">
+                        <img id="momoQrCode" src="~/Images/ThanhToan/momo.jpg" alt="QR Code MoMo">
+                    </div>
+                    <div style="text-align: center; margin-top: 0.5rem;">
+                        <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MoMo Logo" style="width: 60px; height: auto;" onerror="this.style.display='none'">
+                    </div>
+                </div>
+
+                <!-- Right side - Instructions -->
+                <div class="momo-qr-right">
+                    <div class="momo-instruction-compact">
+                        <h5><i class="fas fa-mobile-alt"></i> Hướng dẫn thanh toán</h5>
+                        <div class="instruction-steps">
+                            <span>1. Mở ứng dụng MoMo</span>
+                            <span>2. Chọn "Quét mã QR"</span>
+                            <span>3. Quét mã QR bên trái</span>
+                            <span>4. Xác nhận thanh toán</span>
+                        </div>
+                    </div>
+
+                    <div class="momo-info-compact">
+                        <h5><i class="fas fa-clock"></i> Thời gian hiệu lực</h5>
+                        <p>Mã QR có hiệu lực trong <strong>15 phút</strong></p>
+                    </div>
+
+                    <div class="momo-warning-compact">
+                        <h5><i class="fas fa-info-circle"></i> Lưu ý quan trọng</h5>
+                        <p>Sau khi thanh toán thành công, nhấn <strong>"Xác nhận"</strong> để hoàn tất đơn hàng.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons - Fixed position -->
+            <div class="momo-action-buttons">
+                @* <button id="cancelMomoPaymentBtn" class="btn-cancel-momo">
+                    <i class="fas fa-times"></i>
+                    <span>Hủy thanh toán</span>
+                </button> *@
+                <button id="confirmMomoPaymentBtn" class="btn-confirm-momo">
+                    <i class="fas fa-check"></i>
+                    <span>Xác nhận đã thanh toán</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alertModal" class="modern-modal d-none">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i id="alertModalIcon" class="fas fa-exclamation-circle"></i>
+                <span id="alertModalTitle">Thông báo</span>
+            </div>
+            <button class="close-button" id="alertModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="alertModalMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-save" id="alertModalOk"><i class="fas fa-check"></i> Đã hiểu</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/KhachHang/thanhtoan.js" asp-append-version="true"></script>
+}
+

@@ -1,0 +1,317 @@
+@model Final_VS1.Data.SanPham
+@{
+    var danhMucs = (ViewBag.DanhMucs as List<Final_VS1.Data.DanhMuc>) ?? new List<Final_VS1.Data.DanhMuc>();
+    var isNewProduct = Model.IdSanPham == 0;
+}
+
+<form id="addEditProductForm" method="post" asp-action="AddOrEdit" asp-controller="Sanpham" asp-area="Admin" autocomplete="off" enctype="multipart/form-data">
+    @if (!isNewProduct)
+    {
+        <input type="hidden" name="IdSanPham" value="@Model.IdSanPham" />
+    }
+    @Html.AntiForgeryToken()
+    
+    <div class="row">
+        <!-- Cột trái: Thông tin sản phẩm -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="tenSanPham" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
+                <input type="text" id="tenSanPham" name="TenSanPham" class="form-control" value="@Model.TenSanPham" required maxlength="100" />
+            </div>
+            
+            <div class="mb-3">
+                <label for="moTa" class="form-label">Mô tả</label>
+                <textarea id="moTa" name="MoTa" class="form-control" rows="4" maxlength="500">@Model.MoTa</textarea>
+                <div class="form-text">Tối đa 500 ký tự</div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="giaBan" class="form-label">Giá bán</label>
+                        <div class="input-group">
+                            <input type="number" id="giaBan" name="GiaBan" class="form-control" value="@Model.GiaBan" min="0" step="1000" />
+                            <span class="input-group-text">₫</span>
+                        </div>
+                        @if (Model.GiaBan > 0)
+                        {
+                            <small class="text-muted current-price">Giá hiện tại: <strong class="text-success">@Model.GiaBan.Value.ToString("N0") ₫</strong></small>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="soLuongTonKho" class="form-label">Số lượng tồn kho</label>
+                        <input type="number" id="soLuongTonKho" name="SoLuongTonKho" class="form-control" value="@Model.SoLuongTonKho" min="0" />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="sku" class="form-label">SKU</label>
+                        <input type="text" id="sku" name="Sku" class="form-control" value="@Model.Sku" maxlength="50" placeholder="Mã sản phẩm" />
+                        <div class="form-text">Mã định danh duy nhất</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="trangThai" class="form-label">Trạng thái</label>
+                        <select id="trangThai" name="TrangThai" class="form-select">
+                            @if (Model.TrangThai == true)
+                            {
+                                <option value="true" selected>Đang bán</option>
+                                <option value="false">Ngừng bán</option>
+                            }
+                            else
+                            {
+                                <option value="true">Đang bán</option>
+                                <option value="false" selected>Ngừng bán</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="idDanhMuc" class="form-label">Danh mục</label>
+                <select id="idDanhMuc" name="IdDanhMuc" class="form-select">
+                    <option value="">-- Chọn danh mục --</option>
+                    @foreach (var danhMuc in danhMucs)
+                    {
+                        @if (Model.IdDanhMuc == danhMuc.IdDanhMuc)
+                        {
+                            <option value="@danhMuc.IdDanhMuc" selected>
+                                @danhMuc.TenDanhMuc
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@danhMuc.IdDanhMuc">
+                                @danhMuc.TenDanhMuc
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="cachSuDung" class="form-label">Cách sử dụng</label>
+                <textarea id="cachSuDung" name="CachSuDung" class="form-control" rows="3" maxlength="1000">@Model.CachSuDung</textarea>
+                <div class="form-text">Hướng dẫn sử dụng sản phẩm</div>
+            </div>
+        </div>
+        
+        <!-- Cột phải: Hình ảnh sản phẩm -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Hình ảnh sản phẩm</label>
+                
+                <!-- Upload ảnh từ máy tính -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <i class="fas fa-upload me-2"></i>Tải ảnh từ máy tính
+                    </div>
+                    <div class="card-body">
+                        <input type="file" id="imageUpload" name="ImageFiles" class="form-control" multiple accept="image/*" />
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Chọn nhiều ảnh cùng lúc. Hỗ trợ: JPG, PNG, GIF, WEBP. Tối đa 5MB/ảnh.
+                        </div>
+                    </div>
+                </div>
+                
+            
+                
+                
+                <!-- Preview ảnh -->
+                <div class="card" id="imagePreviewContainer">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-images me-2"></i>Xem trước ảnh</span>
+                        @if (!isNewProduct && Model.AnhSanPhams.Any())
+                        {
+                            <small class="text-muted">Ảnh hiện tại: @Model.AnhSanPhams.Count</small>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <div id="imagePreview" class="row">
+                            @if (!isNewProduct && Model.AnhSanPhams.Any())
+                            {
+                                @foreach (var anh in Model.AnhSanPhams)
+                                {
+                                    <div class="col-4 mb-2 image-item existing-image">
+                                        <div class="position-relative">
+                                            <img src="@anh.DuongDan" class="img-thumbnail" style="width: 100%; height: 100px; object-fit: cover;" 
+                                                 onerror="this.src='/images/noimage.jpg'">
+                                            <div class="position-absolute top-0 end-0 p-1">
+                                                <button type="button" class="btn btn-danger btn-sm remove-existing-image" 
+                                                        data-image-id="@anh.IdAnh" data-image-url="@anh.DuongDan">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                            @if (anh.LoaiAnh == "Chinh" || anh.LoaiAnh == "Primary" || anh.LoaiAnh == "Main" || anh.LoaiAnh == "Chính")
+                                            {
+                                                <div class="position-absolute bottom-0 start-0 p-1">
+                                                    <span class="badge bg-primary">Ảnh chính</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div id="noImagesMessage" class="text-center text-muted py-3 @(!isNewProduct && Model.AnhSanPhams.Any() ? "d-none" : "")">
+                            <i class="fas fa-image fs-1 text-muted d-block mb-2"></i>
+                            <p>Chưa có ảnh nào được chọn</p>
+                            <small>Hãy tải ảnh lên từ máy tính</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-end mt-3">
+        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">
+            <i class="fas fa-times me-1"></i>Hủy
+        </button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+            <i class="fas fa-save me-1"></i>@(isNewProduct ? "Thêm sản phẩm" : "Cập nhật")
+        </button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        $('#tenSanPham').focus();
+        
+        // Xử lý định dạng giá khi nhập
+        $('#giaBan').on('input', function() {
+            const value = parseFloat($(this).val()) || 0;
+            const $currentPrice = $(this).closest('.mb-3').find('.current-price');
+            
+            if (value > 0) {
+                if ($currentPrice.length === 0) {
+                    $(this).closest('.input-group').after('<small class="text-muted current-price">Giá mới: <strong class="text-success">' + value.toLocaleString('vi-VN') + ' ₫</strong></small>');
+                } else {
+                    $currentPrice.html('Giá mới: <strong class="text-success">' + value.toLocaleString('vi-VN') + ' ₫</strong>');
+                }
+            } else {
+                $currentPrice.remove();
+            }
+        });
+
+        // Focus và select text khi click vào input giá
+        $('#giaBan').on('focus', function() {
+            $(this).select();
+        });
+
+        // Xử lý tải ảnh lên với validation
+        $('#imageUpload').on('change', function(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                files.forEach(file => {
+                    if (validateImageFile(file)) {
+                        previewImageFile(file);
+                    }
+                });
+            }
+        });
+
+        // Xử lý xóa ảnh hiện tại
+        $(document).on('click', '.remove-existing-image', function(e) {
+            e.preventDefault();
+            const $imageItem = $(this).closest('.image-item');
+            const imageId = $(this).data('image-id');
+            
+            // Add hidden input to track removed images
+            if (!$('input[name="RemovedImageIds"]').length) {
+                $('#addEditProductForm').append('<input type="hidden" name="RemovedImageIds" value="" />');
+            }
+            
+            let removedIds = $('input[name="RemovedImageIds"]').val();
+            removedIds = removedIds ? removedIds + ',' + imageId : imageId.toString();
+            $('input[name="RemovedImageIds"]').val(removedIds);
+            
+            $imageItem.remove();
+            updateNoImagesMessage();
+        });
+
+        // Xử lý xóa ảnh mới
+        $(document).on('click', '.remove-image', function(e) {
+            e.preventDefault();
+            const $imageItem = $(this).closest('.image-item');
+            $imageItem.remove();
+            updateNoImagesMessage();
+        });
+
+        // Functions
+        function validateImageFile(file) {
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (!allowedTypes.includes(file.type)) {
+                showAlert('File ' + file.name + ' không được hỗ trợ. Chỉ cho phép: JPG, PNG, GIF, WEBP', 'error');
+                return false;
+            }
+
+            if (file.size > maxSize) {
+                showAlert('File ' + file.name + ' quá lớn. Kích thước tối đa: 5MB', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        function previewImageFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                addImagePreview(e.target.result, file.name, false);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function addImagePreview(imageSrc, fileName, isExisting = false) {
+            const imageContainer = $('#imagePreview');
+            const isFirstImage = imageContainer.find('.image-item').length === 0;
+            
+            const imageItem = $(`
+                <div class="col-4 mb-2 image-item ${isExisting ? 'existing-image' : 'new-image'}">
+                    <div class="position-relative">
+                        <img src="${imageSrc}" class="img-thumbnail" style="width: 100%; height: 100px; object-fit: cover;" 
+                             title="${fileName || 'Image'}" onerror="this.src='/images/noimage.jpg'">
+                        <div class="position-absolute top-0 end-0 p-1">
+                            <button type="button" class="btn btn-danger btn-sm remove-image">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        ${isFirstImage ? '<div class="position-absolute bottom-0 start-0 p-1"><span class="badge bg-primary">Ảnh chính</span></div>' : ''}
+                    </div>
+                </div>
+            `);
+            
+            imageContainer.append(imageItem);
+            updateNoImagesMessage();
+        }
+
+        function updateNoImagesMessage() {
+            const hasImages = $('.image-item').length > 0;
+            $('#noImagesMessage').toggleClass('d-none', hasImages);
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertClass = type === 'error' ? 'alert-danger' : 
+                              type === 'success' ? 'alert-success' : 'alert-info';
+            const alertHtml = `<div class="alert ${alertClass} alert-dismissible fade show temp-alert" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>`;
+            
+            $('.temp-alert').remove();
+            $('#imagePreviewContainer').before(alertHtml);
+            
+            setTimeout(() => $('.temp-alert').fadeOut(), 5000);
+        }
+    });
+</script>

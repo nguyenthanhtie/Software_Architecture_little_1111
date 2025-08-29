@@ -1,0 +1,74 @@
+﻿@model Final_VS1.Models.DangNhapViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_Dang_Ki.cshtml";
+}
+
+<div id="loginSection" class="form-section active">
+    <div class="login-container">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                    <div class="card shadow">
+                        <div class="card-body p-4">
+                            <div class="text-center mb-4">
+                                <h2 class="card-title">Đăng Nhập</h2>
+                                <p class="text-muted">Vui lòng đăng nhập vào tài khoản của bạn</p>
+                            </div>
+                            @if (ViewBag.Error != null)
+                            {
+                                <div class="alert alert-danger text-center">@ViewBag.Error</div>
+                            }
+                            @if (TempData["Error"] != null)
+                            {
+                                <div class="alert alert-danger text-center">@TempData["Error"]</div>
+                            }
+                            @if (TempData["Success"] != null)
+                            {
+                                <div class="alert alert-success text-center">@TempData["Success"]</div>
+                            }
+                            <form asp-action="Index" asp-controller="DangNhap" method="post">
+                                @Html.AntiForgeryToken()
+                                @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl as string))
+                                {
+                                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                                }
+                                <div class="mb-3">
+                                    <label for="loginUsername" class="form-label">Email hoặc Tên đăng nhập</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                        <input asp-for="Username" class="form-control" id="loginUsername" required />
+                                    </div>
+                                    <span asp-validation-for="Username" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="loginPassword" class="form-label">Mật khẩu</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                        <input asp-for="Password" type="password" class="form-control" id="loginPassword" required />
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg">Đăng Nhập</button>
+                                </div>
+                            </form>
+                            <div class="text-center mt-3">
+                                <a asp-controller="Quen_MK" asp-action="Index" class="text-decoration-none">Quên mật khẩu?</a>
+                            </div>
+                            <div class="text-center mt-2">
+                                <span class="text-muted">Chưa có tài khoản? </span>
+                                <a asp-controller="DangKi" asp-action="Index" class="text-decoration-none">Đăng ký ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

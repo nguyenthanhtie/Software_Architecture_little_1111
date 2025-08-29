@@ -1,0 +1,776 @@
+/* ==================== HEADER STYLES ==================== */
+
+:root {
+    --primary-green: #2d5016;
+    --secondary-green: #4a7c59;
+    --light-green: #6b8e23;
+    --accent-green: #9acd32;
+    --light-bg: #f0f8e8;
+    --text-dark: #2c3e50;
+    --text-light: #ffffff;
+}
+
+/* Header Container */
+.header-container {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 15px rgba(45, 80, 22, 0.2);
+}
+
+/* Main Navbar */
+.main-navbar {
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green)) !important;
+    padding: 12px 0;
+    border-bottom: 2px solid var(--accent-green);
+}
+
+/* Brand Section */
+.navbar-brand {
+    color: var(--text-light) !important;
+    font-weight: bold;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Lobster', cursive;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    color: var(--accent-green) !important;
+    transform: scale(1.02);
+}
+
+.navbar-brand img {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--accent-green);
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+    transform: rotate(360deg);
+}
+
+/* Search Container */
+.search-container {
+    flex-grow: 1;
+    max-width: 500px;
+    margin: 0 20px;
+}
+
+.search-form {
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid var(--accent-green);
+    border-radius: 25px 0 0 25px;
+    outline: none;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: var(--light-green);
+    box-shadow: 0 0 10px rgba(154, 205, 50, 0.3);
+    background: white;
+}
+
+.search-btn {
+    padding: 12px 20px;
+    background: var(--accent-green);
+    border: 2px solid var(--accent-green);
+    border-radius: 100px 0 0 100px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.search-btn:hover {
+    background: var(--light-green);
+    border-color: var(--light-green);
+    transform: translateX(2px);
+}
+
+/* Navigation Links */
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-link {
+    color: var(--text-light) !important;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+.nav-link:hover {
+    color: var(--accent-green) !important;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+/* User Actions - Chưa đăng nhập */
+.user-actions-guest {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-login, .btn-register {
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid;
+}
+
+.btn-login {
+    background: transparent;
+    color: var(--text-light);
+    border-color: var(--text-light);
+}
+
+.btn-login:hover {
+    background: var(--text-light);
+    color: var(--primary-green);
+    transform: translateY(-2px);
+}
+
+.btn-register {
+    background: var(--accent-green);
+    color: var(--text-light);
+    border-color: var(--accent-green);
+}
+
+.btn-register:hover {
+    background: var(--light-green);
+    border-color: var(--light-green);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154, 205, 50, 0.4);
+}
+
+/* User Actions - Đã đăng nhập */
+.user-actions-logged {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Bootstrap Button Overrides for Cart and User */
+.user-actions-logged .btn {
+    border-radius: 25px;
+    font-weight: 500;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+}
+
+.user-actions-logged .btn-outline-success {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.user-actions-logged .btn-outline-success:hover {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+    transform: translateY(-2px);
+}
+
+.user-actions-logged .btn-outline-primary {
+    border-color: var(--text-light);
+    color: var(--text-light);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.user-actions-logged .btn-outline-primary:hover {
+    background-color: var(--text-light);
+    border-color: var(--text-light);
+    color: var(--primary-green);
+    transform: translateY(-2px);
+}
+
+/* User Avatar in Button */
+.user-avatar {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-green);
+}
+
+/* Cart Button Styling */
+.cart-button {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 25px !important;
+    padding: 8px 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    color: white !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    font-weight: 500 !important;
+}
+
+.cart-button:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Cart Count Badge */
+.cart-count-badge {
+    background: white !important;
+    color: #2d5016 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    min-width: 20px !important;
+    height: 20px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    margin-left: 8px !important;
+    border: 2px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.cart-count-badge:not([style*="display: none"]) {
+    display: inline-flex !important;
+}
+
+/* Remove old cart badge styles */
+#cartCount {
+    animation: none;
+}
+
+/* User Dropdown */
+.user-dropdown {
+    position: relative;
+}
+
+/* Remove conflicting dropdown styles and use Bootstrap's */
+.dropdown-menu {
+    background: white !important;
+    border-radius: 15px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+    min-width: 200px !important;
+    border: 1px solid var(--accent-green) !important;
+    margin-top: 8px !important;
+    /* Remove custom opacity/visibility rules that conflict with Bootstrap */
+}
+
+.dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 12px 20px !important;
+    color: var(--text-dark) !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none !important;
+}
+
+.dropdown-item:hover {
+    background-color: var(--light-bg) !important;
+    color: var(--primary-green) !important;
+    padding-left: 25px !important;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #ffe6e6 !important;
+    color: #e74c3c !important;
+}
+
+.dropdown-item i {
+    width: 18px !important;
+    text-align: center !important;
+}
+
+/* Logout Form Button */
+.dropdown-item[type="submit"] {
+    width: 100% !important;
+    text-align: left !important;
+    border: none !important;
+    background: none !important;
+    padding: 12px 20px !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Remove custom dropdown styles that conflict with Bootstrap */
+/* Remove or comment out these conflicting styles:
+.user-info, .dropdown-icon, .user-dropdown.active styles
+*/
+
+/* ==================== SIMPLE VERTICAL CATEGORY DROPDOWN STYLES ==================== */
+
+.category-dropdown {
+    position: relative;
+}
+
+/* Category Button - Simple Design */
+.category-btn {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    color: var(--text-light) !important;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s;
+}
+
+.category-btn:hover::before {
+    left: 100%;
+}
+
+.category-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.category-btn i {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+.category-btn span {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.category-btn .dropdown-arrow {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+    margin-left: 4px;
+}
+
+.category-btn[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.category-btn:hover i:first-child {
+    transform: scale(1.1);
+}
+
+/* Simple Dropdown Menu */
+.category-dropdown-menu {
+    background: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    padding: 8px 0 !important;
+    min-width: 280px !important;
+    margin-top: 8px !important;
+    max-height: 320px !important;
+    overflow-y: auto !important;
+    animation: dropdownShow 0.3s ease-out;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+@keyframes dropdownShow {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Custom Scrollbar for Category Dropdown */
+.category-dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.category-dropdown-menu::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 3px;
+    margin: 8px 0;
+}
+
+.category-dropdown-menu::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--accent-green), var(--light-green));
+    border-radius: 3px;
+    transition: background 0.3s ease;
+}
+
+.category-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--secondary-green), var(--primary-green));
+}
+
+/* Firefox Scrollbar */
+.category-dropdown-menu {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-green) #f8f9fa;
+}
+
+/* Mobile Responsive */
+@media (max-width: 991px) {
+    .category-dropdown-menu {
+        position: fixed !important;
+        left: 15px !important;
+        right: 15px !important;
+        top: auto !important;
+        transform: none !important;
+        margin-top: 8px !important;
+        max-width: none !important;
+        min-width: auto !important;
+        max-height: 50vh !important;
+    }
+    
+    .category-item {
+        padding: 14px 16px !important;
+    }
+    
+    .category-icon {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 16px !important;
+    }
+    
+    .category-name {
+        font-size: 15px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .category-dropdown-menu {
+        left: 10px !important;
+        right: 10px !important;
+        max-height: 60vh !important;
+    }
+    
+    .category-item {
+        padding: 12px 14px !important;
+    }
+    
+    .dropdown-header {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+}
+
+/* ==================== LOGOUT MODAL STYLES ==================== */
+
+/* Modal Backdrop */
+.logout-modal .modal-backdrop {
+    background-color: rgba(45, 80, 22, 0.6) !important;
+    backdrop-filter: blur(4px);
+}
+
+/* Modal Dialog */
+.logout-modal .modal-dialog {
+    max-width: 420px;
+    margin: 1.75rem auto;
+}
+
+/* Modal Content */
+.logout-modal .modal-content {
+    border: none !important;
+    border-radius: 20px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    position: relative;
+}
+
+.logout-modal .modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-green), var(--accent-green), var(--light-green));
+}
+
+/* Modal Header */
+.logout-modal .modal-header {
+    background: linear-gradient(135deg, var(--light-bg) 0%, rgba(154, 205, 50, 0.1) 100%) !important;
+    border-bottom: 1px solid rgba(154, 205, 50, 0.2) !important;
+    padding: 20px 25px 15px !important;
+    border-radius: 0 !important;
+}
+
+.logout-modal .modal-title {
+    color: var(--primary-green) !important;
+    font-weight: 600 !important;
+    font-size: 1.25rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 0 !important;
+}
+
+.logout-modal .modal-title i {
+    color: #f39c12 !important;
+    font-size: 1.4rem !important;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Modal Body */
+.logout-modal .modal-body {
+    padding: 25px !important;
+    text-align: center;
+    background: white;
+}
+
+.logout-modal .modal-body p {
+    color: var(--text-dark) !important;
+    font-size: 1.1rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 0 !important;
+    font-weight: 500;
+}
+
+/* Modal Footer (Custom styled div) */
+.logout-modal .modal-content > div:last-child {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+    border-top: 1px solid rgba(154, 205, 50, 0.2) !important;
+    padding: 20px 25px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 15px !important;
+}
+
+/* Button Styles */
+.logout-modal .btn {
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    padding: 12px 30px !important;
+    font-size: 0.95rem !important;
+    border: 2px solid !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+    /* min-width: 120px !important; */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.logout-modal .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.logout-modal .btn:hover::before {
+    left: 100%;
+}
+
+/* Cancel Button */
+.logout-modal .btn-cancel {
+    background: white !important;
+    color: #6c757d !important;
+    border-color: #dee2e6 !important;
+}
+
+.logout-modal .btn-cancel:hover {
+    background: #f8f9fa !important;
+    color: #495057 !important;
+    border-color: #adb5bd !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2) !important;
+}
+
+/* Confirm Button */
+.logout-modal .btn-confirm {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    color: white !important;
+    border-color: #dc3545 !important;
+}
+
+.logout-modal .btn-confirm:hover {
+    background: linear-gradient(135deg, #c82333, #a71e2a) !important;
+    border-color: #bd2130 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
+}
+
+.logout-modal .btn-confirm:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3) !important;
+}
+
+/* Button Icons */
+.logout-modal .btn i {
+    font-size: 0.9rem !important;
+    transition: transform 0.3s ease !important;
+}
+
+.logout-modal .btn:hover i {
+    transform: scale(1.1) !important;
+}
+
+/* Loading State for Confirm Button */
+.logout-modal .btn-confirm.loading {
+    pointer-events: none !important;
+    opacity: 0.8 !important;
+}
+
+.logout-modal .btn-confirm.loading i {
+    animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Modal Animation */
+.logout-modal.fade .modal-dialog {
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    transform: translate(0, -50px) scale(0.9);
+}
+
+.logout-modal.show .modal-dialog {
+    transform: translate(0, 0) scale(1);
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .logout-modal .modal-dialog {
+        margin: 1rem;
+        max-width: none;
+    }
+    
+    .logout-modal .modal-content > div:last-child {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .logout-modal .btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .logout-modal .modal-header {
+        padding: 18px 20px 12px;
+    }
+    
+    .logout-modal .modal-body {
+        padding: 20px;
+    }
+    
+    .logout-modal .modal-body p {
+        font-size: 1rem;
+    }
+    
+    .logout-modal .modal-title {
+        font-size: 1.15rem;
+    }
+}
+
+/* Enhanced Visual Effects */
+.logout-modal .modal-content {
+    animation: modalSlideIn 0.4s ease-out;
+}
+
+@keyframes modalSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Focus States */
+.logout-modal .btn:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(154, 205, 50, 0.3) !important;
+}
+
+.logout-modal .btn-confirm:focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3) !important;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .logout-modal .modal-dialog,
+    .logout-modal .btn,
+    .logout-modal .btn::before,
+    .logout-modal .modal-title i {
+        transition: none !important;
+        animation: none !important;
+    }
+}

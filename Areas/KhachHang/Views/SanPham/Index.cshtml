@@ -1,0 +1,836 @@
+﻿@using System.Collections.Generic
+@using System.Linq
+@using Final_VS1.Areas.KhachHang.Models
+@model List<SanPhamViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/KhachHang/Views/Shared/_Layout_KhachHang.cshtml";
+}
+@section Styles {
+    <link href="~/css/KhachHang/sanpham.css" rel="stylesheet" asp-append-version="true">
+}
+
+
+@Html.AntiForgeryToken()
+
+<div class="animated-background">
+    <div class="aurora"></div>
+    <div class="organic-pattern"></div>
+    <div class="organic-pattern"></div>
+    <div class="organic-pattern"></div>
+    <!-- Floating Leaves -->
+    <div class="leaf maple" style="left: 5%; animation-delay: 0s;">🍁</div>
+    <div class="leaf oak" style="left: 15%; animation-delay: -3s;">🍃</div>
+    <div class="leaf birch" style="left: 25%; animation-delay: -6s;">🌿</div>
+    <div class="leaf maple" style="left: 35%; animation-delay: -9s;">🍂</div>
+    <div class="leaf small" style="left: 45%; animation-delay: -12s;">🌱</div>
+    <div class="leaf oak" style="left: 55%; animation-delay: -2s;">🍃</div>
+    <div class="leaf birch" style="left: 65%; animation-delay: -5s;">🌿</div>
+    <div class="leaf maple" style="left: 75%; animation-delay: -8s;">🍁</div>
+    <div class="leaf small" style="left: 85%; animation-delay: -11s;">🌱</div>
+    <div class="leaf oak" style="left: 95%; animation-delay: -14s;">🍃</div>
+    <!-- Floating Bubbles -->
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+</div>
+<div class="container mt-4 pt-3">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <!-- Categories -->
+            <div class="sidebar">
+                <h5><i class="fas fa-list"></i> Danh Mục</h5>
+                <ul class="category-list">
+                    <li><a href="@Url.Action("Index", "SanPham", new { area = "KhachHang" })" class="@(ViewBag.CurrentCategory == null ? "active" : "")"><i class="fas fa-leaf"></i>Tất Cả Sản Phẩm</a></li>
+                    @if (ViewBag.DanhMucs != null)
+                    {
+                        @foreach (var danhMuc in (ViewBag.DanhMucs as List<Final_VS1.Data.DanhMuc>) ?? new List<Final_VS1.Data.DanhMuc>())
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "SanPham", new { area = "KhachHang", category = danhMuc.IdDanhMuc })" 
+                                class="@(ViewBag.CurrentCategory?.IdDanhMuc == danhMuc.IdDanhMuc ? "active" : "")">
+                                    @switch (danhMuc.IdDanhMuc)
+                                    {
+                                        case 1: <i class="fas fa-spa"></i> break;
+                                        case 2: <i class="fas fa-palette"></i> break;
+                                        case 3: <i class="fas fa-cut"></i> break;
+                                        case 4: <i class="fas fa-sun"></i> break;
+                                        case 5: <i class="fas fa-seedling"></i> break;
+                                        case 6: <i class="fas fa-heart"></i> break;
+                                        default: <i class="fas fa-box"></i> break;
+                                    }
+                                    @danhMuc.TenDanhMuc
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+
+            <!-- Price Filter -->
+            <div class="filter-section">
+                <h6><i class="fas fa-dollar-sign"></i> Khoảng Giá</h6>
+                <form asp-action="Index" asp-controller="SanPham" asp-area="KhachHang" method="get" id="priceForm">
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchQuery as string))
+                    {
+                        <input type="hidden" name="search" value="@ViewBag.SearchQuery" />
+                    }
+                    @if (ViewBag.CurrentCategory != null)
+                    {
+                        <input type="hidden" name="category" value="@(ViewBag.CurrentCategory as Final_VS1.Data.DanhMuc)?.DuongDanSeo" />
+                    }
+                    @if (!string.IsNullOrEmpty(ViewBag.SortBy as string))
+                    {
+                        <input type="hidden" name="sortBy" value="@ViewBag.SortBy" />
+                    }
+                    <div class="price-range-slider">
+                        <div class="price-display mb-3" id="priceRangeDisplay">
+                            0₫ - @((ViewBag.MaxPrice ?? 1000000).ToString("N0"))₫
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="priceSlider" min="0" max="1000000" step="50000" value="@(ViewBag.MaxPrice ?? 1000000)" class="price-slider-single" />
+                            <input type="hidden" name="minPrice" value="0" />
+                            <input type="hidden" name="maxPrice" id="maxPriceValue" value="@(ViewBag.MaxPrice ?? 1000000)" />
+                        </div>
+                        <div class="price-labels">
+                            <span>0₫</span>
+                            <span>1.000.000₫</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-success btn-sm w-100 mt-2">Áp dụng</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Controls Bar -->
+            <div class="controls-bar d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="me-3">Hiển thị @(Model?.Count ?? 0) sản phẩm</span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <form asp-action="Index" asp-controller="SanPham" asp-area="KhachHang" method="get" class="d-inline">
+                        @if (!string.IsNullOrEmpty(ViewBag.SearchQuery as string))
+                        {
+                            <input type="hidden" name="search" value="@ViewBag.SearchQuery" />
+                        }
+                        @if (ViewBag.CurrentCategory != null)
+                        {
+                            <input type="hidden" name="category" value="@(ViewBag.CurrentCategory as Final_VS1.Data.DanhMuc)?.DuongDanSeo" />
+                        }
+                        @if (ViewBag.MinPrice != null)
+                        {
+                            <input type="hidden" name="minPrice" value="@ViewBag.MinPrice" />
+                        }
+                        @if (ViewBag.MaxPrice != null)
+                        {
+                            <input type="hidden" name="maxPrice" value="@ViewBag.MaxPrice" />
+                        }
+                        <select name="sortBy" class="sort-dropdown" onchange="this.form.submit()">
+                            <option value="">Sắp xếp theo</option>
+                            <option value="newest" selected="@(ViewBag.SortBy as string == "newest")">Mới nhất</option>
+                            <option value="price-asc" selected="@(ViewBag.SortBy as string == "price-asc")">Giá thấp đến cao</option>
+                            <option value="price-desc" selected="@(ViewBag.SortBy as string == "price-desc")">Giá cao đến thấp</option>
+                            <option value="bestseller" selected="@(ViewBag.SortBy as string == "bestseller")">Bán chạy</option>
+                        </select>
+                    </form>
+                    <div class="view-toggle">
+                        <button class="view-btn grid-view active" onclick="toggleView('grid')"><i class="fas fa-th"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="row" id="products-container">
+                @if (Model != null && Model.Count > 0)
+                {
+                    @foreach (var sanPham in Model)
+                    {
+                        <div class="col-lg-4 col-md-6 mb-4 product-item">
+                            <div class="product-card">
+                                <a href="@Url.Action("Index", "ChiTiet", new { area = "KhachHang", id = sanPham.IdSanPham })" class="product-link">
+                                    <div class="product-image-container">
+                                        @{
+                                            var defaultImage = "/Images/noimage.jpg";
+                                            var anhChinh = defaultImage;
+                                            
+                                            if (sanPham.AnhChinhs != null && sanPham.AnhChinhs.Count > 0 && !string.IsNullOrEmpty(sanPham.AnhChinhs[0]))
+                                            {
+                                                anhChinh = sanPham.AnhChinhs[0];
+                                            }
+                                        }
+                                        <img src="@anhChinh" class="product-image" alt="@(sanPham.TenSanPham ?? "")" onerror="this.src='/Images/noimage.jpg'">>
+                                        @* Badge chỉ hiện cho sản phẩm mới trong 24h *@
+                                        @if (sanPham.NgayTao != null && sanPham.NgayTao >= DateTime.Now.AddHours(-24))
+                                        {
+                                            <span class="badge badge-new">Mới</span>
+                                        }
+                                    </div>
+                                    <div class="product-info">
+                                        <div class="product-name product-col">
+                                            @sanPham.TenSanPham
+                                        </div>
+                                        <div class="product-description product-col">
+                                            @(sanPham.MoTa?.Length > 80 ? sanPham.MoTa.Substring(0, 80) + "..." : sanPham.MoTa)
+                                        </div>
+                                        <div class="product-rating product-col">
+                                            @{
+                                                var diemDanhGia = sanPham.DiemDanhGia;
+                                                var soLuongDanhGia = sanPham.SoLuongDanhGia;
+                                            }
+                                                <!-- Đã loại bỏ phần sao đánh giá và số lượng đánh giá -->
+                                        </div>
+                                        <div class="product-price product-col">
+                                            <span class="current-price">@sanPham.GiaBan?.ToString("N0")₫</span>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="product-actions">
+                                    <button class="btn btn-success btn-sm flex-fill btn-add-to-cart" data-product-id="@sanPham.IdSanPham" onclick="addToCartFromProductList(@sanPham.IdSanPham)">
+                                        <i class="fas fa-shopping-cart me-1"></i>Thêm giỏ hàng
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Không tìm thấy sản phẩm nào</h5>
+                            <p class="text-muted">Hãy thử tìm kiếm với từ khóa khác hoặc điều chỉnh bộ lọc</p>
+                            <a href="@Url.Action("Index", "SanPham", new { area = "KhachHang" })" class="btn btn-success">Xem tất cả sản phẩm</a>
+                        </div>
+                    </div>
+                }
+
+
+
+
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" style="display: none;">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Đang tải sản phẩm...</p>
+            </div>
+
+            <!-- Modal yêu cầu đăng nhập -->
+<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content login-modal-content">
+            <div class="modal-header login-modal-header">
+                <h5 class="modal-title login-modal-title" id="loginRequiredLabel">
+                    <i class="fas fa-user-lock login-modal-icon"></i>
+                    YÊU CẦU ĐĂNG NHẬP
+                </h5>
+                <button type="button" class="btn-close login-modal-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body login-modal-body">
+                <div class="login-modal-icon-wrapper">
+                    <i class="fas fa-sign-in-alt login-modal-main-icon"></i>
+                </div>
+                <h6 class="login-modal-message">
+                    Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng
+                </h6>
+                <p class="login-modal-sub-message">
+                    Vui lòng đăng nhập hoặc đăng ký để tiếp tục mua sắm!
+                </p>
+            </div>
+            <div class="" style="display: flex; justify-content: center; gap: 15px; padding: 10px;">
+                <a href="/DangNhap?returnUrl=@(Context.Request.Path + Context.Request.QueryString)" class="btn-login-modal">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Đăng nhập</span>
+                </a>
+                <a href="@Url.Action("Index", "DangKi", new { area = "", returnUrl = Context.Request.Path + Context.Request.QueryString })" class="btn-register-modal">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Đăng ký</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- Pagination -->
+            <nav aria-label="Product pagination">
+                <ul class="pagination justify-content-center">
+                    @{
+                        var currentPage = ViewBag.CurrentPage ?? 1;
+                        var totalPages = ViewBag.TotalPages ?? 1;
+                        var totalProducts = ViewBag.TotalProducts ?? 0;
+                        
+                        // Tạo parameters cho URL để giữ lại filter
+                        var routeValues = new Dictionary<string, object>
+                        {
+                            ["area"] = "KhachHang"
+                        };
+                        
+                        if (!string.IsNullOrEmpty(ViewBag.CurrentSearch as string))
+                            routeValues["search"] = ViewBag.CurrentSearch;
+                        if (!string.IsNullOrEmpty(ViewBag.CurrentCategoryString as string))
+                            routeValues["category"] = ViewBag.CurrentCategoryString;
+                        if (ViewBag.CurrentMinPrice != null)
+                            routeValues["minPrice"] = ViewBag.CurrentMinPrice;
+                        if (ViewBag.CurrentMaxPrice != null)
+                            routeValues["maxPrice"] = ViewBag.CurrentMaxPrice;
+                        if (!string.IsNullOrEmpty(ViewBag.CurrentSortBy as string))
+                            routeValues["sortBy"] = ViewBag.CurrentSortBy;
+                    }
+                    
+                    <!-- Nút Previous -->
+                    @if (currentPage > 1)
+                    {
+                        var prevRouteValues = new Dictionary<string, object>(routeValues) { ["page"] = currentPage - 1 };
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", "SanPham", prevRouteValues)">Trước</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">Trước</span>
+                        </li>
+                    }
+                    
+                    <!-- Các số trang -->
+                    @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+                    {
+                        var pageRouteValues = new Dictionary<string, object>(routeValues) { ["page"] = i };
+                        
+                        if (i == currentPage)
+                        {
+                            <li class="page-item active">
+                                <span class="page-link">@i</span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", "SanPham", pageRouteValues)">@i</a>
+                            </li>
+                        }
+                    }
+                    
+                    <!-- Nút Next -->
+                    @if (currentPage < totalPages)
+                    {
+                        var nextRouteValues = new Dictionary<string, object>(routeValues) { ["page"] = currentPage + 1 };
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", "SanPham", nextRouteValues)">Sau</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">Sau</span>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/KhachHang/sanpham.js" asp-append-version="true"></script>
+    <style>
+        /* Login Modal Styles */
+        .login-modal-content {
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @@keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-modal-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 50%, #17a2b8 100%);
+            border: none;
+            padding: 25px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .login-modal-title {
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-modal-icon {
+            margin-right: 12px;
+            font-size: 20px;
+            animation: iconPulse 2s infinite;
+        }
+
+        @@keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .login-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .login-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: rotate(90deg);
+        }
+
+        .login-modal-body {
+            padding: 50px 40px;
+            text-align: center;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+            position: relative;
+        }
+
+        .login-modal-icon-wrapper {
+            margin-bottom: 25px;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @@keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .login-modal-main-icon {
+            font-size: 70px;
+            color: #28a745;
+            opacity: 0.9;
+            text-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+        }
+
+        .login-modal-message {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .login-modal-sub-message {
+            font-size: 16px;
+            color: #6c757d;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+
+        .login-modal-footer {
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-login-modal,
+        .btn-register-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login-modal {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-login-modal:hover {
+            background: linear-gradient(135deg, #218838, #1c7430);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-register-modal {
+            background: white;
+            color: #28a745;
+            border-color: #28a745;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-register-modal:hover {
+            background: #28a745;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-login-modal::before,
+        .btn-register-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-login-modal:hover::before,
+        .btn-register-modal:hover::before {
+            left: 100%;
+        }
+
+        .btn-login-modal i,
+        .btn-register-modal i {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-login-modal:hover i,
+        .btn-register-modal:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 576px) {
+            .login-modal-body {
+                padding: 30px 25px;
+            }
+            
+            .login-modal-footer {
+                padding: 20px 25px;
+                flex-direction: column;
+            }
+            
+            .btn-login-modal,
+            .btn-register-modal {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .login-modal-main-icon {
+                font-size: 50px;
+            }
+            
+            .login-modal-message {
+                font-size: 18px;
+            }
+        }
+
+        /* Modal backdrop animation */
+        .modal.fade .modal-dialog {
+            transition: transform 0.4s ease-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: none;
+        }
+    </style>
+    <script>
+        // Price slider functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceSlider = document.getElementById('priceSlider');
+            const priceDisplay = document.getElementById('priceRangeDisplay');
+            const maxPriceValue = document.getElementById('maxPriceValue');
+            
+            if (priceSlider && priceDisplay && maxPriceValue) {
+                // Set initial display
+                const initialValue = parseInt(priceSlider.value);
+                const formattedValue = initialValue.toLocaleString('vi-VN');
+                priceDisplay.textContent = `0₫ - ${formattedValue}₫`;
+                
+                priceSlider.addEventListener('input', function(e) {
+                    const value = parseInt(e.target.value);
+                    const formattedValue = value.toLocaleString('vi-VN');
+                    priceDisplay.textContent = `0₫ - ${formattedValue}₫`;
+                    maxPriceValue.value = value;
+                });
+            }
+        });
+
+        function addToCart(productId) {
+            // Logic thêm sản phẩm vào giỏ hàng
+            console.log('Thêm sản phẩm ' + productId + ' vào giỏ hàng');
+            // TODO: Implement AJAX call to add product to cart
+        }
+
+        // Function to add product to cart from product list
+        function addToCartFromProductList(productId) {
+            // Disable button to prevent double clicks
+            const button = document.querySelector(`[data-product-id="${productId}"]`);
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang thêm...';
+            }
+
+            fetch('@Url.Action("AddToCart", "Cart", new { area = "KhachHang" })', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                },
+                body: JSON.stringify({
+                    id: productId,
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Re-enable button first
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-shopping-cart me-1"></i>Thêm giỏ hàng';
+                }
+
+                if (data.success) {
+                    // Update cart count in header using global function
+                    if (typeof updateCartCount === 'function') {
+                        updateCartCount(data.cartCount);
+                    } else {
+                        // Fallback if function not available
+                        const cartCountElement = document.getElementById('cartCount');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = data.cartCount;
+                        }
+                    }
+                    
+                    // Show success message
+                    showSuccessMessage(data.message || 'Đã thêm sản phẩm vào giỏ hàng!');
+                } else if (data.requireLogin) {
+                    // Show login required modal
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+                    loginModal.show();
+                } else {
+                    // Show error message
+                    showErrorMessage(data.message || 'Có lỗi xảy ra khi thêm sản phẩm!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Re-enable button
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-shopping-cart me-1"></i>Thêm giỏ hàng';
+                }
+                showErrorMessage('Có lỗi xảy ra khi thêm sản phẩm!');
+            });
+        }
+
+        // Success message function
+        function showSuccessMessage(message) {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification success';
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add styles
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #28a745, #34ce57);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+                z-index: 9999;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                font-family: inherit;
+                font-size: 14px;
+                max-width: 300px;
+                border: 1px solid rgba(255,255,255,0.2);
+            `;
+            
+            // Style the content
+            const content = toast.querySelector('.toast-content');
+            content.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            
+            const icon = toast.querySelector('i');
+            icon.style.cssText = `
+                font-size: 16px;
+                flex-shrink: 0;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Error message function
+        function showErrorMessage(message) {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification error';
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Add styles
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #dc3545, #e74c3c);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+                z-index: 9999;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                font-family: inherit;
+                font-size: 14px;
+                max-width: 300px;
+                border: 1px solid rgba(255,255,255,0.2);
+            `;
+            
+            // Style the content
+            const content = toast.querySelector('.toast-content');
+            content.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            
+            const icon = toast.querySelector('i');
+            icon.style.cssText = `
+                font-size: 16px;
+                flex-shrink: 0;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // View toggle functionality
+        function toggleView(viewType) {
+            const productContainer = document.getElementById('products-container');
+            const gridBtn = document.querySelector('.view-btn.grid-view');
+            const listBtn = document.querySelector('.view-btn.list-view');
+            
+            if (viewType === 'grid') {
+                productContainer.classList.remove('list-view');
+                productContainer.classList.add('grid-view');
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+                
+                // Update product items for grid view
+                document.querySelectorAll('.product-item').forEach(item => {
+                    item.className = 'col-lg-4 col-md-6 mb-4 product-item';
+                });
+            } else if (viewType === 'list') {
+                productContainer.classList.remove('grid-view');
+                productContainer.classList.add('list-view');
+                listBtn.classList.add('active');
+                gridBtn.classList.remove('active');
+                
+                // Update product items for list view - compact text-only layout
+                document.querySelectorAll('.product-item').forEach(item => {
+                    item.className = 'col-12 mb-2 product-item';
+                });
+            }
+        }
+
+        // Initialize view toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default to grid view
+            toggleView('grid');
+        });
+    </script>
+}

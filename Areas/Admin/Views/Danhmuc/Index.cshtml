@@ -1,0 +1,303 @@
+@model List<Final_VS1.Data.DanhMuc>
+@{
+    ViewData["Title"] = "QUẢN LÝ DANH MỤC";
+    ViewData["Description"] = "Quản lý danh mục sản phẩm, tạo, sửa, xóa, sắp xếp thứ tự hiển thị, giao diện thân thiện SEO.";
+    ViewData["PageTitle"] = "QUẢN LÝ DANH MỤC";
+    ViewData["SearchPlaceholder"] = "Tìm kiếm danh mục...";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>QUẢN LÝ DANH MỤC SẢN PHẨM</span>
+        <div class="d-flex gap-2  filter-controls">
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Tìm kiếm danh mục..." style="width: 250px;">
+            <button class="btn btn-dark btn-sm" id="addCategoryBtn" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                <i class="fas fa-plus me-1"></i> Thêm danh mục
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="categoryTable" class="table table-hover" style="width:100%">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th width="5%"><i class="fas fa-sort"></i></th>
+                    <th width="10%">STT</th>
+                    <th width="25%">Tên danh mục</th>
+                    <th width="35%">Mô tả</th>
+                    <th width="20%">Sản phẩm</th>
+                </tr>
+            </thead>
+            <tbody id="categoryTableBody">
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var category in Model.OrderBy(x => x.ThuTuHienThi ?? 0))
+                    {
+                        <tr class="clickable-row" data-category-id="@category.IdDanhMuc" data-category-name="@category.TenDanhMuc" style="cursor: pointer;">
+                            <td class="text-center"><i class="fas fa-grip-vertical sortable-handle text-muted"></i></td>
+                            <td class="text-center">@(category.ThuTuHienThi ?? 0)</td>
+                            <td class="text-start">
+                                
+                                    <strong class="category-name">@category.TenDanhMuc</strong>
+                               
+                            </td>
+                            <td class="text-start"><span class="text-muted">@(category.MoTa ?? "Chưa có mô tả")</span></td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-info view-products" data-category-id="@category.IdDanhMuc" data-category-name="@category.TenDanhMuc" onclick="event.stopPropagation();">
+                                    <i class="fas fa-eye me-1"></i>@category.SanPhams.Count
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-4">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Chưa có danh mục nào</h5>
+                            <p class="text-muted">Bấm nút "Thêm danh mục" để tạo danh mục đầu tiên</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Modals {
+    <!-- Modal: Thêm danh mục -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCategoryModalLabel">Thêm danh mục mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCategoryForm">
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="categoryName" required maxlength="100">
+                            <div class="invalid-feedback">Vui lòng nhập tên danh mục.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryDescription" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="categoryDescription" rows="3" maxlength="255"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" form="addCategoryForm" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Thêm danh mục
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Sửa danh mục -->
+    <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCategoryModalLabel">Sửa danh mục</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCategoryForm">
+                        <input type="hidden" id="editCategoryId">
+                        <div class="mb-3">
+                            <label for="editCategoryName" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editCategoryName" required maxlength="100">
+                            <div class="invalid-feedback">Vui lòng nhập tên danh mục.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategoryDescription" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="editCategoryDescription" rows="3" maxlength="255"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" form="editCategoryForm" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Cập nhật
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Xem sản phẩm trong danh mục -->
+    <div class="modal fade" id="viewProductsModal" tabindex="-1" aria-labelledby="viewProductsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="d-flex align-items-center w-100">
+                        <h5 class="modal-title me-2 text-start">Sản phẩm trong danh mục:</h5>
+                        <span id="categoryNameDisplay" class="text-primary text-start" style="cursor: pointer;" title="Click để chỉnh sửa tên (Enter: lưu, Esc: hủy)"></span>
+                        <input type="text" id="categoryNameEdit" class="form-control form-control-sm me-2 d-none text-start" style="max-width: 200px; font-size: 20px;font-weight: bold;" placeholder="Tên danh mục">
+                        <input type="hidden" id="currentCategoryId">
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="productsList">
+                        <div class="text-center">
+                            <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                            <p class="mt-2">Đang tải danh sách sản phẩm...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex align-items-center flex-grow-1">
+                        <small class="text-muted me-2 text-start">Mô tả:</small>
+                        <small id="categoryDescDisplay" class="text-muted editable-title flex-grow-1 text-start" style="cursor: pointer;" title="Click để chỉnh sửa mô tả (Enter: lưu, Esc: hủy)"></small>
+                        <input type="text" id="categoryDescEdit" class="form-control form-control-sm me-2 d-none flex-grow-1 text-start" placeholder="Mô tả danh mục">
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-danger" id="deleteCategoryBtn" title="Xóa danh mục">
+                            <i class="fas fa-trash me-1"></i>Xóa
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Xác nhận xóa danh mục -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận xóa danh mục
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
+                        <h6>Bạn có chắc chắn muốn xóa danh mục này?</h6>
+                    </div>
+                    <div class="alert alert-warning">
+                        <strong>Danh mục:</strong> <span id="deleteCategoryName" class="fw-bold"></span>
+                    </div>
+                    <div id="deleteWarning" class="alert alert-danger d-none">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Cảnh báo:</strong> Danh mục này có <span id="productCount" class="fw-bold"></span> sản phẩm. 
+                        Bạn cần di chuyển hoặc xóa tất cả sản phẩm trước khi xóa danh mục.
+                    </div>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Hành động này không thể hoàn tác.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Hủy
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-1"></i>Xóa danh mục
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/ui-lightness/jquery-ui.css">
+    <style>
+        .sortable-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            visibility: visible !important;
+            height: 60px;
+        }
+        .ui-sortable-helper {
+            background: #ffffff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: rotate(2deg);
+        }
+        .sortable-handle {
+            cursor: grab;
+        }
+        .sortable-handle:active {
+            cursor: grabbing;
+        }
+        
+        .product-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border: 1px solid #e3e6f0;
+        }
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .product-image {
+            transition: transform 0.2s ease-in-out;
+        }
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        .product-description {
+            flex: 1;
+            margin-right: 8px;
+        }
+        .product-price {
+            flex-shrink: 0;
+        }
+        .card-title {
+            font-size: 0.9rem;
+        }
+        .product-card .card-body {
+            padding: 0.75rem;
+        }
+        .editable-title:hover {
+            background-color: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        #deleteCategoryBtn:hover {
+            background-color: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        .modal-footer .d-flex:first-child {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .modal-footer .editable-title {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .modal-footer #categoryDescEdit {
+            white-space: nowrap;
+        }
+     
+        #categoryNameDisplay {
+
+            font-size: 28px;
+            font-weight: bold;
+
+
+        }
+    </style>
+    
+    <script>
+        // Set up URL configuration for the JavaScript module
+        window.danhmucUrls = {
+            create: '@Url.Action("Create", "Danhmuc", new { area = "Admin" })',
+            update: '@Url.Action("Update", "Danhmuc", new { area = "Admin" })',
+            delete: '@Url.Action("Delete", "Danhmuc", new { area = "Admin" })',
+            getCategoryProducts: '@Url.Action("GetCategoryProducts", "Danhmuc", new { area = "Admin" })',
+            updateOrder: '@Url.Action("UpdateOrder", "Danhmuc", new { area = "Admin" })'
+        };
+    </script>
+    
+    <script src="~/js/Admin/danhmuc-index.js"></script>
+}

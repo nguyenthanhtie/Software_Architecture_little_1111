@@ -1,0 +1,261 @@
+@model IEnumerable<Final_VS1.Data.SanPham>
+@{
+    ViewData["Title"] = "QUẢN LÝ SẢN PHẨM";
+    ViewData["PageTitle"] = "QUẢN LÝ SẢN PHẨM";
+    ViewData["SearchPlaceholder"] = "Tìm kiếm sản phẩm...";
+}
+
+@Html.AntiForgeryToken()
+
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>DANH SÁCH QUẢN LÝ SẢN PHẨM</span>
+        <button class="btn btn-dark btn-sm" id="addProductBtn" data-bs-toggle="modal" data-bs-target="#addEditProductModal">
+            <i class="fas fa-plus me-1"></i> Thêm sản phẩm
+        </button>
+    </div>
+    <div class="card-body">
+        <table id="productTable" class="table table-hover table-striped" style="width:100%; table-layout: fixed;">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th style="width: 60px;">ID</th>
+                    <th style="width: 80px;">Hình ảnh</th>
+                    <th style="width: auto;">Tên sản phẩm</th>
+                    <th style="width: 200px;">Danh mục</th>
+                    <th style="width: 150px;">Giá</th>
+                    <th style="width: 120px;">Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sanPham in Model.OrderBy(x => x.IdSanPham))
+                {
+                    
+                    // Improved main image detection
+                    string[] mainImageTypes = new[] { "Chính", "Chinh", "Primary", "Main" };
+                    
+                    var anhChinh = sanPham.AnhSanPhams
+                        .Where(a => !string.IsNullOrEmpty(a.DuongDan))
+                        .FirstOrDefault(a => mainImageTypes.Contains(a.LoaiAnh))?.DuongDan;
+                    
+                    // Fallback to first available image
+                    if (string.IsNullOrEmpty(anhChinh) && sanPham.AnhSanPhams.Any())
+                    {
+                        anhChinh = sanPham.AnhSanPhams.First(a => !string.IsNullOrEmpty(a.DuongDan))?.DuongDan;
+                    }
+                    
+                    // Default image if no images found
+                    if (string.IsNullOrEmpty(anhChinh))
+                    {
+                        anhChinh = "/images/noimage.jpg";
+                    }
+                    
+                  
+                    var statusBadge = sanPham.TrangThai == true ? "bg-success" : "bg-warning text-dark";
+                    var statusText = sanPham.TrangThai == true ? "Đang bán" : "Ngừng bán";
+                    
+                    <tr class="clickable-row" data-id="@sanPham.IdSanPham">
+                        <td class="text-center align-middle" style="width: 60px;"><strong class="text-primary">@(sanPham.IdSanPham)</strong></td>
+                        <td class="text-center align-middle" style="width: 80px;">
+                            <div class="product-image-container">
+                                <img src="@anhChinh" alt="@sanPham.TenSanPham" class="product-thumbnail" 
+                                     onerror="this.src='/images/noimage.jpg'">
+                                @if (sanPham.AnhSanPhams.Count() > 1)
+                                {
+                                    <span class="image-count-badge">
+                                        +@(sanPham.AnhSanPhams.Count() - 1)
+                                    </span>
+                                }
+                            </div>
+                        </td>
+                        <td class="align-middle" style="width: auto; text-align: left; padding-left: 16px;">
+                            <div>
+                                <strong class="d-block">@sanPham.TenSanPham</strong>
+                                @if (!string.IsNullOrEmpty(sanPham.MoTa))
+                                {
+                                    <small class="text-muted d-block">
+                                        @(sanPham.MoTa.Length > 50 ? sanPham.MoTa.Substring(0, 50) + "..." : sanPham.MoTa)
+                                    </small>
+                                }
+                                @if (!string.IsNullOrEmpty(sanPham.Sku))
+                                {
+                                    <small class="text-info d-block">
+                                        <i class="fas fa-barcode me-1"></i>SKU: @sanPham.Sku
+                                    </small>
+                                }
+                            </div>
+                        </td>
+                        <td class="text-center align-middle" style="width: 200px;">
+                            <span class="badge bg-primary">
+                                <i class="fas fa-tag me-1"></i>@(sanPham.IdDanhMucNavigation?.TenDanhMuc ?? "Chưa phân loại")
+                            </span>
+                            @if (sanPham.SoLuongTonKho.HasValue)
+                            {
+                                <br><small class="text-muted mt-1">
+                                    <i class="fas fa-box me-1"></i>Tồn kho: @sanPham.SoLuongTonKho
+                                </small>
+                            }
+                        </td>
+                        <td class="text-center align-middle" style="width: 150px;">
+                            @if (sanPham.GiaBan.HasValue && sanPham.GiaBan > 0)
+                            {
+                                <strong class="text-success">@sanPham.GiaBan.Value.ToString("N0") ₫</strong>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa định giá</span>
+                            }
+                        </td>
+                        <td class="text-center align-middle" style="width: 120px;"><span class="badge @statusBadge">@statusText</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal hiển thị chi tiết sản phẩm -->
+<div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailModalLabel">Chi tiết sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div id="productDetailContent">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="text-muted mt-2">Đang tải dữ liệu...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Chỉnh sửa sản phẩm -->
+<div class="modal fade" id="addEditProductModal" tabindex="-1" aria-labelledby="addEditProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEditProductModalLabel">Thêm / Chỉnh sửa sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div id="addEditProductContent">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Admin/sanpham-index.css" />
+    
+    <style>
+        /* Căn chỉnh bảng cho đồng đều */
+        #productTable {
+            table-layout: fixed;
+            width: 100% !important;
+        }
+        
+        #productTable thead th,
+        #productTable tbody td {
+            vertical-align: middle !important;
+            text-align: center !important;
+            padding: 12px 8px !important;
+            word-wrap: break-word;
+            overflow: hidden;
+        }
+        
+        /* Căn chỉnh cột tên sản phẩm về trái cho dễ đọc */
+        #productTable tbody td:nth-child(3) {
+            text-align: left !important;
+            padding-left: 16px !important;
+        }
+        
+        /* Đảm bảo hình ảnh sản phẩm có kích thước cố định */
+        .product-thumbnail {
+            width: 60px !important;
+            height: 60px !important;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .product-image-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        /* Căn chỉnh badge */
+        .badge {
+            font-size: 0.75rem !important;
+            white-space: nowrap;
+        }
+        
+        /* Đảm bảo chiều cao dòng đồng đều */
+        #productTable tbody tr {
+            height: 80px;
+        }
+        
+        /* Tăng kích thước modal chi tiết sản phẩm, chỉnh sửa sản phẩm, biến thể và thuộc tính thêm 20% */
+        #productDetailModal .modal-dialog,
+        #addEditProductModal .modal-dialog {
+            max-width: calc(1140px * 1.2); /* Tăng 20% từ modal-xl (1140px) */
+        }
+        
+        /* Tối ưu hiển thị modal chi tiết sản phẩm */
+        #productDetailModal .modal-body {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        /* Tối ưu hiển thị modal chỉnh sửa sản phẩm */
+        #addEditProductModal .modal-body {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        /* Đảm bảo bảng trong modal hiển thị đầy đủ */
+        #productDetailModal .table,
+        #addEditProductModal .table {
+            min-width: 100%;
+            table-layout: auto;
+        }
+        
+        #productDetailModal .table td,
+        #productDetailModal .table th,
+        #addEditProductModal .table td,
+        #addEditProductModal .table th {
+            white-space: nowrap;
+            padding: 0.75rem 0.5rem;
+            vertical-align: middle;
+        }
+        
+        /* Responsive cho màn hình nhỏ */
+        @@media (max-width: 1200px) {
+            #productDetailModal .modal-dialog,
+            #addEditProductModal .modal-dialog {
+                max-width: 95%;
+                margin: 1rem auto;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        window.productUrls = {
+            detail: '@Url.Action("Detail", "Sanpham", new { area = "Admin" })',
+            addOrEdit: '@Url.Action("AddOrEdit", "Sanpham", new { area = "Admin" })',
+            delete: '@Url.Action("Delete", "Sanpham", new { area = "Admin" })'
+        };
+    </script>
+    
+    <script src="~/js/Admin/sanpham-index.js"></script>
+}
+ 

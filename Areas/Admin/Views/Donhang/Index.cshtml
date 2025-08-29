@@ -1,0 +1,209 @@
+@model List<Final_VS1.Data.DonHang>
+@{
+    ViewData["Title"] = "QUẢN LÝ ĐƠN HÀNG";
+    ViewData["PageTitle"] = "QUẢN LÝ ĐƠN HÀNG";
+    ViewData["SearchPlaceholder"] = "Tìm kiếm đơn hàng...";
+}
+
+<style>
+    .filter-controls .form-select,
+    .filter-controls .form-control {
+        border-radius: 8px !important;
+        border: 1px solid #dee2e6;
+    }
+    
+    .filter-controls .form-select:focus,
+    .filter-controls .form-control:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Cố định kích thước cột */
+    #orderTable {
+        table-layout: fixed;
+    }
+    
+    #orderTable th:nth-child(1),
+    #orderTable td:nth-child(1) {
+        width: 15%; /* Mã đơn hàng */
+    }
+    
+    #orderTable th:nth-child(2),
+    #orderTable td:nth-child(2) {
+        width: 25%; /* Khách hàng */
+    }
+    
+    #orderTable th:nth-child(3),
+    #orderTable td:nth-child(3) {
+        width: 20%; /* Ngày đặt */
+    }
+    
+    #orderTable th:nth-child(4),
+    #orderTable td:nth-child(4) {
+        width: 20%; /* Tổng tiền */
+    }
+    
+    #orderTable th:nth-child(5),
+    #orderTable td:nth-child(5) {
+        width: 20%; /* Trạng thái */
+    }
+
+    /* Đảm bảo text không bị tràn */
+    #orderTable td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Căn giữa header */
+    #orderTable th {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Căn giữa cột khách hàng */
+    #orderTable td:nth-child(2) {
+        white-space: normal;
+        text-align: center;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>QUẢN LÝ ĐƠN HÀNG</span>
+        <div class="d-flex gap-2 filter-controls">
+            <select class="form-select form-select-sm" id="statusFilter" style="width: auto;">
+                <option value="">Tất cả trạng thái</option>
+                <option value="Đang xử lý">Đang xử lý</option>
+                <option value="Đã xác nhận">Đã xác nhận</option>
+                <option value="Đang giao">Đang giao</option>
+                <option value="Hoàn thành">Hoàn thành</option>
+                <option value="Đã hủy">Đã hủy</option>
+            </select>
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Tìm kiếm đơn hàng..." style="width: 250px;">
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="orderTable" class="table table-hover" style="width:100%">
+             <thead class="table-dark">
+                <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var order in Model.OrderBy(x => x.IdDonHang))
+                    {
+                        <tr class="order-row" data-order-id="@order.IdDonHang" style="cursor: pointer;">
+                            <td class="text-center"><strong class="text-primary">HD-@order.IdDonHang</strong></td>
+                            <td class="text-start">
+                                <div>
+                                    <strong>@(order.IdTaiKhoanNavigation?.HoTen ?? "Khách vãng lai")</strong><br>
+                                </div>
+                            </td>
+                            <td class="text-center">@(order.NgayDat?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
+                            <td class="text-center"><strong class="text-success">@(order.TongTien?.ToString("N0") ?? "0") ₫</strong></td>
+                            <td class="text-center">
+                                @{
+                                    var statusClass = order.TrangThai switch
+                                    {
+                                        "Đang xử lý" => "bg-warning text-dark",
+                                        "Đã xác nhận" => "bg-info text-white",
+                                        "Đang giao" => "bg-primary text-white",
+                                        "Hoàn thành" => "bg-success text-white",
+                                        "Đã hủy" => "bg-danger text-white",
+                                        _ => "bg-secondary text-white"
+                                    };
+                                }
+                                <span class="badge @statusClass status-badge" data-order-id="@order.IdDonHang" style="cursor: pointer;" title="Click để thay đổi trạng thái">@(order.TrangThai ?? "Không xác định")</span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-4">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Chưa có đơn hàng nào</h5>
+                            <p class="text-muted">Các đơn hàng sẽ hiển thị ở đây khi có khách hàng đặt hàng</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Modals {
+    <!-- Modal: Chi tiết đơn hàng -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailModalLabel">Chi tiết đơn hàng #<span id="orderModalId"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Thông tin khách hàng</h6>
+                            <p class="mb-1"><strong>Tên:</strong> <span id="orderCustomerName"></span></p>
+                            <p class="mb-1"><strong>Email:</strong> <span id="orderCustomerEmail"></span></p>
+                            <p class="mb-1"><strong>SĐT:</strong> <span id="orderCustomerPhone"></span></p>
+                            <p class="mb-1"><strong>Địa chỉ:</strong> <span id="orderAddress"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Thông tin đơn hàng</h6>
+                            <p class="mb-1"><strong>Ngày đặt:</strong> <span id="orderDate"></span></p>
+                            <p class="mb-1"><strong>Phương thức TT:</strong> <span id="orderPaymentMethod"></span></p>
+                            <p class="mb-1"><strong>Tình trạng:</strong> <span id="orderStatus" class="badge"></span></p>
+                            <p class="mb-1"><strong>Tổng tiền:</strong> <span id="orderTotal" class="text-success fw-bold"></span></p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6>Chi tiết sản phẩm</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Biến thể</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderItemsList">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Set up URL configuration for the JavaScript module
+        window.donhangUrls = {
+            getOrderDetail: '@Url.Action("GetOrderDetail", "Donhang", new { area = "Admin" })',
+            updateStatus: '@Url.Action("UpdateStatus", "Donhang", new { area = "Admin" })'
+        };
+    </script>
+    
+    <script src="~/js/Admin/donhang-index.js"></script>
+}
