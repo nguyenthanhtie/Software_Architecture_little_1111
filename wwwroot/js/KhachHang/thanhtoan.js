@@ -849,7 +849,7 @@ function initializeOrderDisplay() {
     const isBuyNowMode = window.isBuyNow || false;
     const backButtonText = isBuyNowMode
       ? "Quay lại sản phẩm"
-      : "Quay lại giỏ hàng";
+      : "Quay lại mua hàng";
     const backButtonLink = isBuyNowMode
       ? "javascript:history.back()"
       : "/KhachHang/Sanpham";
@@ -861,7 +861,7 @@ function initializeOrderDisplay() {
         <p class="text-muted">${
           isBuyNowMode
             ? "Vui lòng thử lại."
-            : "Vui lòng quay lại giỏ hàng để chọn sản phẩm."
+            : "Vui lòng quay lại để chọn sản phẩm."
         }</p>
         <button onclick="window.location.href='${backButtonLink}'" class="btn btn-primary mt-2">
           <i class="fas fa-arrow-left me-2"></i>${backButtonText}

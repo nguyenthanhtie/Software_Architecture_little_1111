@@ -48,17 +48,8 @@
 @Html.AntiForgeryToken()
 
 <div class="payment-container" style="padding:0 !important; margin:0 !important;">
-    <!-- Modern Back Button -->
-    <a href="#" id="backToCartBtn" class="back-button">
-        <i class="fas fa-arrow-left"></i>
-        <span>Quay lại giỏ hàng</span>
-    </a>
+    
 
-    <!-- Hero Header -->
-    <div class="payment-header">
-        <h1>Thanh Toán Đơn Hàng</h1>
-        <p>Hoàn tất đơn hàng của bạn với quy trình thanh toán an toàn và nhanh chóng</p>
-    </div>
 
     <div class="row g-4">
         <div class="col-lg-8">
@@ -70,7 +61,7 @@
                 </div>
                 <div class="order-confirmation-info">
                     <div class="confirmation-message">
-                           <div class="receiver-info mb-4"></div>
+                          
         <div class="section-title">
             <i class="fas fa-user"></i>
             <span>Thông Tin Người Nhận</span>
@@ -117,8 +108,11 @@
                 </div>
 
                 <div id="orderItemsContainer" style="max-height: 350px; overflow-y: auto; margin-bottom: 2rem;">
-                    <!-- Products will be rendered by JS -->
-                </div>
+    <div id="emptyOrderItems" style="display:none; text-align:center; padding:2rem;">
+
+    </div>
+    <!-- Sản phẩm sẽ được render bằng JavaScript -->
+</div>
 
                 <div class="summary-details">
                     <div class="summary-row">
@@ -140,11 +134,8 @@
                     <span>Xác Nhận Đặt Hàng</span>
                 </button>
 
-                <div class="text-center" style="margin-top: 1rem;">
-                    <small class="text-muted">
-                        <i class="fas fa-lock" style="margin-right: 0.5rem;"></i>
-                        Thông tin được bảo mật 100%
-                    </small>
+                <div class="text-center" style="margin-top: 0.5rem;"></div>
+                   
                 </div>
             </div>
         </div>
