@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Final_VS1.Models;
 using Final_VS1.Areas.Admin.Models;
-using Final_VS1.Data;
 using Microsoft.AspNetCore.Authorization;
+using Final_VS1.Repositories;
 
 namespace Final_VS1.Areas.Admin.Controllers
 {
@@ -11,21 +10,16 @@ namespace Final_VS1.Areas.Admin.Controllers
     [Authorize(Roles = "admin")]
     public class DanhmucController : Controller
     {
-        private readonly LittleFishBeautyContext _context;
+        private readonly IDanhMucRepository _danhMucRepository;
 
-        public DanhmucController(LittleFishBeautyContext context)
+        public DanhmucController(IDanhMucRepository danhMucRepository)
         {
-            _context = context;
+            _danhMucRepository = danhMucRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            var categories = await _context.DanhMucs
-                .Include(d => d.SanPhams)
-                .Include(d => d.IdDanhMucChaNavigation)
-                .OrderBy(d => d.ThuTuHienThi)
-                .ToListAsync();
-
+            var categories = await _danhMucRepository.GetAllAsync();
             return View(categories);
         }
 
@@ -44,25 +38,20 @@ namespace Final_VS1.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Tên danh mục không được vượt quá 100 ký tự" });
                 }
 
-                // Kiểm tra trùng tên danh mục
-                var categoryNameLower = request.TenDanhMuc.Trim().ToLower();
-                var existingCategory = await _context.DanhMucs
-                    .FirstOrDefaultAsync(d => d.TenDanhMuc != null && d.TenDanhMuc.ToLower() == categoryNameLower);
-
-                if (existingCategory != null)
+                // Kiểm tra trùng tên danh mục qua repository
+                if (await _danhMucRepository.IsNameExistsAsync(request.TenDanhMuc))
                 {
                     return Json(new { success = false, message = "Tên danh mục đã tồn tại. Vui lòng chọn tên khác." });
                 }
 
-                var category = new DanhMuc
+                var category = new Final_VS1.Data.DanhMuc
                 {
                     TenDanhMuc = request.TenDanhMuc.Trim(),
                     MoTa = string.IsNullOrEmpty(request.MoTa) ? null : request.MoTa.Trim(),
-                    ThuTuHienThi = await GetNextDisplayOrder()
+                    ThuTuHienThi = await _danhMucRepository.GetNextDisplayOrderAsync()
                 };
 
-                _context.DanhMucs.Add(category);
-                await _context.SaveChangesAsync();
+                await _danhMucRepository.AddAsync(category);
 
                 return Json(new { success = true, message = "Thêm danh mục thành công" });
             }
@@ -77,7 +66,7 @@ namespace Final_VS1.Areas.Admin.Controllers
         {
             try
             {
-                var category = await _context.DanhMucs.FindAsync(request.Id);
+                var category = await _danhMucRepository.GetByIdAsync(request.Id);
                 if (category == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy danh mục" });
@@ -88,27 +77,20 @@ namespace Final_VS1.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Tên danh mục là bắt buộc" });
                 }
 
-                // Kiểm tra trùng tên danh mục (ngoại trừ chính nó)
-                var categoryNameLower = request.TenDanhMuc.Trim().ToLower();
-                var existingCategory = await _context.DanhMucs
-                    .FirstOrDefaultAsync(d => d.TenDanhMuc != null &&
-                                            d.TenDanhMuc.ToLower() == categoryNameLower &&
-                                            d.IdDanhMuc != request.Id);
-
-                if (existingCategory != null)
+                // Kiểm tra trùng tên danh mục (ngoại trừ chính nó) qua repository
+                if (await _danhMucRepository.IsNameExistsAsync(request.TenDanhMuc, request.Id))
                 {
                     return Json(new { success = false, message = "Tên danh mục đã tồn tại. Vui lòng chọn tên khác." });
                 }
 
                 category.TenDanhMuc = request.TenDanhMuc.Trim();
 
-                // Only update description if it's provided in the request
                 if (request.MoTa != null)
                 {
                     category.MoTa = string.IsNullOrEmpty(request.MoTa) ? null : request.MoTa.Trim();
                 }
 
-                await _context.SaveChangesAsync();
+                await _danhMucRepository.UpdateAsync(category);
 
                 return Json(new { success = true });
             }
@@ -123,7 +105,7 @@ namespace Final_VS1.Areas.Admin.Controllers
         {
             try
             {
-                var category = await _context.DanhMucs.Include(d => d.SanPhams).FirstOrDefaultAsync(d => d.IdDanhMuc == id);
+                var category = await _danhMucRepository.GetByIdAsync(id);
                 if (category == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy danh mục" });
@@ -134,8 +116,7 @@ namespace Final_VS1.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Không thể xóa danh mục có chứa sản phẩm. Vui lòng di chuyển hoặc xóa tất cả sản phẩm trong danh mục trước." });
                 }
 
-                _context.DanhMucs.Remove(category);
-                await _context.SaveChangesAsync();
+                await _danhMucRepository.DeleteAsync(id);
 
                 return Json(new { success = true, message = "Xóa danh mục thành công" });
             }
@@ -148,10 +129,7 @@ namespace Final_VS1.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCategoryProducts(int id)
         {
-            var category = await _context.DanhMucs
-                .Include(d => d.SanPhams)
-                    .ThenInclude(sp => sp.AnhSanPhams)
-                .FirstOrDefaultAsync(d => d.IdDanhMuc == id);
+            var category = await _danhMucRepository.GetByIdAsync(id);
 
             if (category == null)
             {
@@ -179,26 +157,20 @@ namespace Final_VS1.Areas.Admin.Controllers
             {
                 for (int i = 0; i < categoryIds.Count; i++)
                 {
-                    var category = await _context.DanhMucs.FindAsync(categoryIds[i]);
+                    var category = await _danhMucRepository.GetByIdAsync(categoryIds[i]);
                     if (category != null)
                     {
                         category.ThuTuHienThi = i + 1;
+                        await _danhMucRepository.UpdateAsync(category);
                     }
                 }
 
-                await _context.SaveChangesAsync();
                 return Json(new { success = true });
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, message = "Có lỗi xảy ra khi cập nhật thứ tự" });
             }
-        }
-
-        private async Task<int> GetNextDisplayOrder()
-        {
-            var maxOrder = await _context.DanhMucs.MaxAsync(d => (int?)d.ThuTuHienThi) ?? 0;
-            return maxOrder + 1;
         }
 
         public class CreateCategoryRequest
