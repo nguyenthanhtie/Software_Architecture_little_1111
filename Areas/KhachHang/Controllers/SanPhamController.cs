@@ -1,54 +1,53 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Final_VS1.Repositories;
+using Final_VS1.Helpers;
+using Final_VS1.Areas.KhachHang.Models;
 using Final_VS1.Data;
 using System.Threading.Tasks;
 using System.Linq;
-using Final_VS1.Helpers;
-using Final_VS1.Areas.KhachHang.Models;
 
 namespace Final_VS1.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
     public class SanPhamController : Controller
     {
-        private readonly LittleFishBeautyContext _context;
+        private readonly ISanPhamRepository _sanPhamRepository;
+        private readonly IDanhMucRepository _danhMucRepository;
 
-        public SanPhamController(LittleFishBeautyContext context)
+        public SanPhamController(ISanPhamRepository sanPhamRepository, IDanhMucRepository danhMucRepository)
         {
-            _context = context;
+            _sanPhamRepository = sanPhamRepository;
+            _danhMucRepository = danhMucRepository;
         }
 
         // Helper method để lấy ảnh sản phẩm theo thứ tự ưu tiên
         private List<string> GetProductImages(ICollection<AnhSanPham>? anhSanPhams)
         {
             var result = new List<string>();
-            
+
             if (anhSanPhams != null && anhSanPhams.Any())
             {
-                // Bước 1: Tìm ảnh chính
-                var anhChinh = anhSanPhams.FirstOrDefault(a => 
+                var anhChinh = anhSanPhams.FirstOrDefault(a =>
                     !string.IsNullOrEmpty(a.LoaiAnh) && !string.IsNullOrEmpty(a.DuongDan) &&
                     (a.LoaiAnh.Trim().ToLower() == "chinh" || a.LoaiAnh.Trim().ToLower() == "chính"));
-                    
+
                 if (anhChinh != null)
                 {
                     result.Add(anhChinh.DuongDan!);
                 }
                 else
                 {
-                    // Bước 2: Nếu không có ảnh chính, tìm ảnh phụ
-                    var anhPhu = anhSanPhams.FirstOrDefault(a => 
+                    var anhPhu = anhSanPhams.FirstOrDefault(a =>
                         !string.IsNullOrEmpty(a.LoaiAnh) && !string.IsNullOrEmpty(a.DuongDan) &&
                         (a.LoaiAnh.Trim().ToLower() == "phu" || a.LoaiAnh.Trim().ToLower() == "phụ"));
-                        
+
                     if (anhPhu != null)
                     {
                         result.Add(anhPhu.DuongDan!);
                     }
                 }
             }
-            
-            // Nếu không có ảnh nào, trả về list rỗng (sẽ dùng default trong View)
+
             return result;
         }
 
@@ -56,36 +55,37 @@ namespace Final_VS1.Areas.KhachHang.Controllers
         {
             const int pageSize = 12;
 
-            var query = _context.SanPhams
-                .Include(s => s.AnhSanPhams)
-                .Include(s => s.IdDanhMucNavigation)
-                .Where(s => s.TrangThai == true);
+            var sanPhams = await _sanPhamRepository.GetAllAsync();
+            var query = sanPhams.Where(s => s.TrangThai == true).AsQueryable();
 
-            // Tìm kiếm theo từ khóa - improved search
-            if (!string.IsNullOrEmpty(search))
-            {
-                string searchLower = search.ToLower();
-                query = query.Where(s =>
-                    (s.TenSanPham ?? "").ToLower().Contains(searchLower) ||
-                    (s.MoTa ?? "").ToLower().Contains(searchLower) ||
-                    (s.IdDanhMucNavigation.TenDanhMuc ?? "").ToLower().Contains(searchLower));
-                ViewBag.SearchQuery = search;
-            }
+            // Tìm kiếm theo từ khóa
+         if (!string.IsNullOrEmpty(search))
+{
+    string searchLower = search.ToLower();
+    query = query.Where(s =>
+        (s.TenSanPham ?? "").ToLower().Contains(searchLower) ||
+        (s.MoTa ?? "").ToLower().Contains(searchLower) ||
+        ((s.IdDanhMucNavigation != null && s.IdDanhMucNavigation.TenDanhMuc != null)
+            ? s.IdDanhMucNavigation.TenDanhMuc.ToLower()
+            : "").Contains(searchLower)
+    );
+    ViewBag.SearchQuery = search;
+}
 
             // Lọc theo danh mục
             DanhMuc? selectedCategory = null;
-if (!string.IsNullOrEmpty(category))
-{
-    if (int.TryParse(category, out int categoryId))
-    {
-        selectedCategory = await _context.DanhMucs.FirstOrDefaultAsync(d => d.IdDanhMuc == categoryId);
-        if (selectedCategory != null)
-        {
-            query = query.Where(s => s.IdDanhMuc == selectedCategory.IdDanhMuc);
-            ViewBag.CurrentCategory = selectedCategory;
-        }
-    }
-}
+            if (!string.IsNullOrEmpty(category))
+            {
+                if (int.TryParse(category, out int categoryId))
+                {
+                    selectedCategory = await _danhMucRepository.GetByIdAsync(categoryId);
+                    if (selectedCategory != null)
+                    {
+                        query = query.Where(s => s.IdDanhMuc == selectedCategory.IdDanhMuc);
+                        ViewBag.CurrentCategory = selectedCategory;
+                    }
+                }
+            }
 
             // Lọc theo giá
             if (minPrice.HasValue)
@@ -100,11 +100,6 @@ if (!string.IsNullOrEmpty(category))
             }
 
             // Sắp xếp
-            List<Areas.KhachHang.Models.SanPhamViewModel> sanPhamViewModels = new List<Areas.KhachHang.Models.SanPhamViewModel>();
-            int totalProducts = 0;
-            int totalPages = 0;
-            int skip = 0;
-
             switch (sortBy?.ToLower())
             {
                 case "newest":
@@ -117,16 +112,16 @@ if (!string.IsNullOrEmpty(category))
                     query = query.OrderByDescending(s => s.GiaBan);
                     break;
                 default:
-                    // Sắp xếp mặc định: mới nhất
                     query = query.OrderByDescending(s => s.NgayTao);
                     break;
             }
 
-            totalProducts = await query.CountAsync();
-            totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
-            skip = (page - 1) * pageSize;
-            var sanPhams = await query.Skip(skip).Take(pageSize).ToListAsync();
-            sanPhamViewModels = sanPhams.Select(sp => new Areas.KhachHang.Models.SanPhamViewModel
+            int totalProducts = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+            int skip = (page - 1) * pageSize;
+            var pagedSanPhams = query.Skip(skip).Take(pageSize).ToList();
+
+            var sanPhamViewModels = pagedSanPhams.Select(sp => new SanPhamViewModel
             {
                 IdSanPham = sp.IdSanPham,
                 TenSanPham = sp.TenSanPham,
@@ -141,21 +136,14 @@ if (!string.IsNullOrEmpty(category))
             }).ToList();
 
             // Lấy danh sách danh mục cho sidebar
-            var danhMucs = await _context.DanhMucs
-                .Where(d => d.IdDanhMucCha == null)
-                .OrderBy(d => d.ThuTuHienThi)
-                .ToListAsync();
+            var danhMucs = await _danhMucRepository.GetParentCategoriesAsync();
 
             ViewBag.DanhMucs = danhMucs;
             ViewBag.SortBy = sortBy;
-
-            // Thông tin phân trang
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
             ViewBag.TotalProducts = totalProducts;
             ViewBag.PageSize = pageSize;
-
-            // Giữ lại các tham số filter cho phân trang
             ViewBag.CurrentSearch = search;
             ViewBag.CurrentCategoryString = category;
             ViewBag.CurrentMinPrice = minPrice;
@@ -195,13 +183,11 @@ if (!string.IsNullOrEmpty(category))
                     return Json(new List<object>());
                 }
 
-                // Normalize search term
                 var normalizedTerm = VietnameseTextHelper.RemoveDiacritics(term.Trim().ToLower());
+                var sanPhams = await _sanPhamRepository.GetAllAsync();
 
-                var queryResults = await _context.SanPhams
-                    .Include(s => s.IdDanhMucNavigation)
-                    .Include(s => s.AnhSanPhams)
-                    .Where(s => s.TrangThai == true) // Only active products
+                var queryResults = sanPhams
+                    .Where(s => s.TrangThai == true)
                     .Select(s => new
                     {
                         s.IdSanPham,
@@ -213,14 +199,13 @@ if (!string.IsNullOrEmpty(category))
                             .Select(a => a.DuongDan)
                             .FirstOrDefault() ??
                             s.AnhSanPhams.Select(a => a.DuongDan).FirstOrDefault(),
-                        // Create normalized search field
                         NormalizedName = s.TenSanPham != null ? s.TenSanPham.ToLower() : ""
                     })
-                    .ToListAsync();
+                    .ToList();
 
                 var suggestions = queryResults
                     .Where(s => VietnameseTextHelper.RemoveDiacritics(s.NormalizedName).Contains(normalizedTerm))
-                    .Take(8) // Limit to 8 suggestions
+                    .Take(8)
                     .Select(s => new
                     {
                         name = s.TenSanPham,
@@ -233,12 +218,10 @@ if (!string.IsNullOrEmpty(category))
 
                 return Json(suggestions);
             }
-            catch (Exception ex)
+            catch
             {
-                // Log error if needed
                 return Json(new List<object>());
             }
         }
     }
 }
-        

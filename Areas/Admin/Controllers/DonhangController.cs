@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Final_VS1.Models;
-using Final_VS1.Data;
 using Microsoft.AspNetCore.Authorization;
-
+using Final_VS1.Repositories;
 
 namespace Final_VS1.Areas.Admin.Controllers
 {
@@ -11,33 +8,23 @@ namespace Final_VS1.Areas.Admin.Controllers
     [Authorize(Roles = "admin")]
     public class DonhangController : Controller
     {
-        private readonly LittleFishBeautyContext _context;
+        private readonly IDonHangRepository _donHangRepository;
 
-        public DonhangController(LittleFishBeautyContext context)
+        public DonhangController(IDonHangRepository donHangRepository)
         {
-            _context = context;
+            _donHangRepository = donHangRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            var orders = await _context.DonHangs
-                .Include(d => d.IdTaiKhoanNavigation)
-                .Include(d => d.ChiTietDonHangs)
-                    .ThenInclude(ct => ct.IdSanPhamNavigation)
-                .OrderByDescending(d => d.NgayDat)
-                .ToListAsync();
-
+            var orders = await _donHangRepository.GetAllAsync();
             return View(orders);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetOrderDetail(int id)
         {
-            var order = await _context.DonHangs
-                .Include(d => d.IdTaiKhoanNavigation)
-                .Include(d => d.ChiTietDonHangs)
-                    .ThenInclude(ct => ct.IdSanPhamNavigation)
-                .FirstOrDefaultAsync(d => d.IdDonHang == id);
+            var order = await _donHangRepository.GetByIdAsync(id);
 
             if (order == null)
             {
@@ -70,15 +57,7 @@ namespace Final_VS1.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(int id, string status)
         {
-            var order = await _context.DonHangs.FindAsync(id);
-            if (order == null)
-            {
-                return Json(new { success = false });
-            }
-
-            order.TrangThai = status;
-            await _context.SaveChangesAsync();
-
+            await _donHangRepository.UpdateStatusAsync(id, status);
             return Json(new { success = true });
         }
     }

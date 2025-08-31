@@ -145,7 +145,7 @@
             <!-- Product Info -->
             <div class="col-lg-6">
                 <div class="product-info">
-                    <h1 class="product-title">@Model?.TenSanPham</h1>
+                    <h1 class="product-title" style="height: auto;">@Model?.TenSanPham</h1>
                     <div class="product-meta">
                         <p class="sku">SKU: @Model?.Sku</p>
                         <p class="stock-status @(Model?.SoLuongTonKho > 0 ? "in-stock" : "out-of-stock")">
@@ -187,27 +187,7 @@
     </div>
 </div>
 
-<!-- Product Description -->
-<div class="container">
-    <div class="product-details-section">
-        <div class="product-description">
-            <h6 class="description-title">MÔ TẢ SẢN PHẨM</h6>
-            @if (!string.IsNullOrWhiteSpace(Model?.MoTa))
-            {
-                <div class="description-content">@Html.Raw(Model.MoTa)</div>
-            }
-            else
-            {
-                <p>Chưa có mô tả cho sản phẩm này</p>
-            }
 
-            @if (!string.IsNullOrWhiteSpace(Model?.CachSuDung))
-            {
-                <h6 class="usage-title mt-4">HƯỚNG DẪN SỬ DỤNG</h6>
-                <div class="usage-content">@Html.Raw(Model.CachSuDung)</div>
-            }
-        </div>
-    </div>
 
     <!-- Suggested Products -->
     <div class="suggested-products-section">
@@ -230,7 +210,7 @@
                                 <img src="@anhSp" alt="@sp.TenSanPham">
                             </div>
                             <div class="product-info">
-                                <h3 class="product-title">@sp.TenSanPham</h3>
+                                <h3 class="product-title" style="height: auto;">@sp.TenSanPham</h3>
                                 <p class="product-price">@(sp.GiaBan?.ToString("#,##0") ?? "0") đ</p>
                             </div>
                         </a>

@@ -109,8 +109,8 @@ namespace Final_VS1.Controllers
             // Chuyển hướng theo vai trò - ưu tiên admin
             if (normalizedRole == "admin")
             {
-                Console.WriteLine($"[DEBUG] Redirecting admin user to Admin/Baocao");
-                return RedirectToAction("Index", "Baocao", new { area = "Admin" });
+                Console.WriteLine($"[DEBUG] Redirecting admin user to Admin/Sanpham");
+                return RedirectToAction("Index", "Sanpham", new { area = "Admin" });
             }
             else if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {

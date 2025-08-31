@@ -63,5 +63,24 @@ namespace Final_VS1.Repositories
             var maxOrder = await _context.DanhMucs.MaxAsync(d => (int?)d.ThuTuHienThi) ?? 0;
             return maxOrder + 1;
         }
+
+   
+
+public async Task<List<DanhMuc>> GetParentCategoriesAsync()
+{
+    return await _context.DanhMucs
+        .Where(d => d.IdDanhMucCha == null)
+        .OrderBy(d => d.ThuTuHienThi)
+        .Take(6)
+        .ToListAsync();
+}
+
+public async Task<int> GetProductCountByCategoryAsync(int categoryId)
+{
+    return await _context.SanPhams
+        .Where(s => s.IdDanhMuc == categoryId && s.TrangThai == true)
+        .CountAsync();
+}
+
     }
 }

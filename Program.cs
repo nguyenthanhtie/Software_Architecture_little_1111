@@ -44,6 +44,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     });
 
+
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
+builder.Services.AddScoped<IDonHangRepository, DonHangRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -53,10 +58,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
-builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
-
 
 
 app.UseHttpsRedirection();
@@ -82,7 +83,5 @@ app.MapControllerRoute(
     name: "login",
     pattern: "{controller=DangNhap}/{action=Index}/{id?}"
 );
-
-
 
 app.Run();

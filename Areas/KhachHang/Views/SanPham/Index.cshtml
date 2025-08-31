@@ -152,9 +152,7 @@
                                         <div class="product-name product-col">
                                             @sanPham.TenSanPham
                                         </div>
-                                        <div class="product-description product-col">
-                                            @(sanPham.MoTa?.Length > 80 ? sanPham.MoTa.Substring(0, 80) + "..." : sanPham.MoTa)
-                                        </div>
+                                        
                                         <div class="product-rating product-col">
                                             @{
                                                 var diemDanhGia = sanPham.DiemDanhGia;

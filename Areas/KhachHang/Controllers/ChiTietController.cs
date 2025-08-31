@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using Final_VS1.Repositories;
 using Final_VS1.Data;
-using Final_VS1.Areas.KhachHang.Models;
 
 namespace Final_VS1.Areas.KhachHang.Controllers
 {
     [Area("KhachHang")]
     public class ChiTietController : Controller
     {
-        private readonly LittleFishBeautyContext _context;
+        private readonly ISanPhamRepository _sanPhamRepository;
 
-        public ChiTietController(LittleFishBeautyContext context)
+        public ChiTietController(ISanPhamRepository sanPhamRepository)
         {
-            _context = context;
+            _sanPhamRepository = sanPhamRepository;
         }
 
         // Helper method để lấy ảnh chính của sản phẩm theo thứ tự ưu tiên
@@ -26,53 +25,40 @@ namespace Final_VS1.Areas.KhachHang.Controllers
         {
             if (anhSanPhams != null && anhSanPhams.Any())
             {
-                // Bước 1: Tìm ảnh chính
-                var anhChinh = anhSanPhams.FirstOrDefault(a => 
+                var anhChinh = anhSanPhams.FirstOrDefault(a =>
                     !string.IsNullOrEmpty(a.LoaiAnh) && !string.IsNullOrEmpty(a.DuongDan) &&
                     (a.LoaiAnh.Trim().ToLower() == "chinh" || a.LoaiAnh.Trim().ToLower() == "chính"));
-                    
+
                 if (anhChinh != null)
                 {
                     return anhChinh.DuongDan!;
                 }
                 else
                 {
-                    // Bước 2: Nếu không có ảnh chính, tìm ảnh phụ
-                    var anhPhu = anhSanPhams.FirstOrDefault(a => 
+                    var anhPhu = anhSanPhams.FirstOrDefault(a =>
                         !string.IsNullOrEmpty(a.LoaiAnh) && !string.IsNullOrEmpty(a.DuongDan) &&
                         (a.LoaiAnh.Trim().ToLower() == "phu" || a.LoaiAnh.Trim().ToLower() == "phụ"));
-                        
+
                     if (anhPhu != null)
                     {
                         return anhPhu.DuongDan!;
                     }
                 }
             }
-            
-            // Nếu không có ảnh nào, trả về ảnh mặc định
+
             return "/images/noimage.jpg";
         }
 
         public async Task<IActionResult> Index(int id)
         {
-            var sanPham = await _context.SanPhams
-                .Include(s => s.AnhSanPhams)
-                .Include(s => s.IdDanhMucNavigation)
-                .FirstOrDefaultAsync(s => s.IdSanPham == id);
+            var sanPham = await _sanPhamRepository.GetByIdAsync(id);
 
             if (sanPham == null)
             {
                 return NotFound();
             }
 
-            // Get suggested products
-            var sanPhamGoiY = await _context.SanPhams
-                .Include(s => s.AnhSanPhams)
-                .Where(s => s.IdDanhMuc == sanPham.IdDanhMuc &&
-                           s.IdSanPham != id &&
-                           s.TrangThai == true)
-                .Take(4)
-                .ToListAsync();
+var sanPhamGoiY = await _sanPhamRepository.GetSuggestedProductsAsync(sanPham.IdDanhMuc ?? 0, id, 4);
 
             ViewBag.SanPhamGoiY = sanPhamGoiY;
             ViewBag.ProductId = id;
@@ -85,9 +71,7 @@ namespace Final_VS1.Areas.KhachHang.Controllers
         {
             try
             {
-                var sanPham = await _context.SanPhams
-                    .Include(s => s.AnhSanPhams)
-                    .FirstOrDefaultAsync(s => s.IdSanPham == productId);
+                var sanPham = await _sanPhamRepository.GetByIdAsync(productId);
 
                 if (sanPham == null)
                 {
@@ -113,18 +97,13 @@ namespace Final_VS1.Areas.KhachHang.Controllers
 
                 var jsonString = JsonSerializer.Serialize(buyNowItem);
                 TempData["BuyNowItem"] = jsonString;
-                
-                // Debug logging
-                Console.WriteLine($"ChiTietController - MuaNgay: {jsonString}");
-                
-                // Cũng lưu vào session để backup
+
                 HttpContext.Session.SetString("BuyNowItem", jsonString);
-                
+
                 return RedirectToAction("Index", "Pay", new { area = "KhachHang" });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"ChiTietController - MuaNgay Error: {ex.Message}");
                 TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
                 return RedirectToAction("Index", new { id = productId });
             }

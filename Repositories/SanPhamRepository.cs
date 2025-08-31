@@ -77,5 +77,42 @@ namespace Final_VS1.Repositories
             return await _context.SanPhams
                 .AnyAsync(s => s.Sku == sku && (!excludeId.HasValue || s.IdSanPham != excludeId.Value));
         }
+        public async Task<List<SanPham>> GetNewestProductsAsync(int count)
+        {
+            return await _context.SanPhams
+                .Include(s => s.AnhSanPhams)
+                .Where(s => s.TrangThai == true)
+                .OrderByDescending(s => s.NgayTao)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<List<SanPham>> GetBestSellingProductsAsync(int count)
+        {
+            var bestSellingIds = await _context.ChiTietDonHangs
+                .Include(ct => ct.IdDonHangNavigation)
+                .Where(ct => ct.IdDonHangNavigation != null && ct.IdDonHangNavigation.TrangThai != "Đã hủy")
+                .GroupBy(ct => ct.IdSanPham)
+                .Select(g => new { IdSanPham = g.Key, TotalSold = g.Sum(ct => ct.SoLuong ?? 0) })
+                .OrderByDescending(x => x.TotalSold)
+                .Take(count)
+                .ToListAsync();
+
+            var sanPhamIds = bestSellingIds.Select(x => x.IdSanPham).ToList();
+
+            return await _context.SanPhams
+                .Include(s => s.AnhSanPhams)
+                .Where(s => sanPhamIds.Contains(s.IdSanPham) && s.TrangThai == true)
+                .ToListAsync();
+        }
+
+public async Task<List<SanPham>> GetSuggestedProductsAsync(int categoryId, int excludeId, int count)
+{
+    return await _context.SanPhams
+        .Include(s => s.AnhSanPhams)
+        .Where(s => s.IdDanhMuc == categoryId && s.IdSanPham != excludeId && s.TrangThai == true)
+        .Take(count)
+        .ToListAsync();
+}
     }
 }

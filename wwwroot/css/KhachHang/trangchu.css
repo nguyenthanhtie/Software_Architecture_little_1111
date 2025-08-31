@@ -1385,7 +1385,8 @@ body {
 }
 
 .product-price {
-  margin-bottom: 15px;
+  margin-bottom: 0;
+  display: flex;
 }
 
 .current-price {

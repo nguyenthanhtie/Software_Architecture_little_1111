@@ -11,5 +11,7 @@ namespace Final_VS1.Repositories
         Task DeleteAsync(int id);
         Task<bool> IsNameExistsAsync(string tenDanhMuc, int? excludeId = null);
         Task<int> GetNextDisplayOrderAsync();
+        Task<List<DanhMuc>> GetParentCategoriesAsync();
+        Task<int> GetProductCountByCategoryAsync(int categoryId);
     }
 }

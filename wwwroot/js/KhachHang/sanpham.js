@@ -395,7 +395,6 @@ function createProductCard(product) {
             </div>
             <div class="product-info">
                 <h6 class="product-name">${product.name}</h6>
-                <p class="product-description">${product.description}</p>
                 <div class="product-rating">
                     ${stars.split('').map(star => `<span class="star${star === '⭐' ? ' filled' : ''}">${star}</span>`).join('')}
                     <span class="review-count">(${product.reviewCount})</span>

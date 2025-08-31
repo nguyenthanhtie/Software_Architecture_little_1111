@@ -148,9 +148,8 @@
                         <div class="row justify-content-center">
                             @foreach (var item in sanPhams.Skip(i * perSlide).Take(perSlide))
                             {
-                                var sanPham = item.SanPham;
-                                var reviewCount = item.ReviewCount;
-                                var avgRating = item.AverageRating;
+                                var sanPham = item;
+                                
                                 <div class="col-md-3 col-sm-6 mb-4">
                                     <a href="@Url.Action("Index", "ChiTiet", new { area = "KhachHang", id = sanPham.IdSanPham })" class="text-decoration-none">
                                         <div class="product-card">
@@ -199,7 +198,6 @@
                                         </div>
                                         <div class="product-info">
                                             <h6 class="product-name">@sanPham.TenSanPham</h6>
-                                            <p class="product-description">@(sanPham.MoTa?.Length > 50 ? sanPham.MoTa.Substring(0, 50) + "..." : sanPham.MoTa)</p>
                                             <!-- rating removed -->
                                             <div class="product-price">
                                                 <span class="current-price">@sanPham.GiaBan.ToString("N0")₫</span>
@@ -230,7 +228,6 @@
                                     </div>
                                     <div class="product-info">
                                         <h6 class="product-name">Kem chống nắng SPF 50</h6>
-                                        <p class="product-description">Kem chống nắng vật lý an toàn cho da</p>
                                         <!-- rating removed -->
                                         <div class="product-price">
                                             <span class="current-price">320.000₫</span>
@@ -252,7 +249,6 @@
                                     </div>
                                     <div class="product-info">
                                         <h6 class="product-name">Kem dưỡng ẩm thiên nhiên</h6>
-                                        <p class="product-description">Kem dưỡng ẩm từ chiết xuất lô hội và vitamin E</p>
                                         <!-- rating removed -->
                                         <div class="product-price">
                                             <span class="current-price">350.000₫</span>
@@ -274,7 +270,6 @@
                                     </div>
                                     <div class="product-info">
                                         <h6 class="product-name">Sữa rửa mặt tạo bọt</h6>
-                                        <p class="product-description">Sữa rửa mặt tạo bọt nhẹ nhàng</p>
                                         <!-- rating removed -->
                                         <div class="product-price">
                                             <span class="current-price">180.000₫</span>
@@ -296,7 +291,6 @@
                                     </div>
                                     <div class="product-info">
                                         <h6 class="product-name">Son môi organic</h6>
-                                        <p class="product-description">Son môi từ thành phần hữu cơ 100%</p>
                                         <div class="product-rating">
                                             <span class="star">☆</span>
                                             <span class="star">☆</span>
