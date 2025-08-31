@@ -9,6 +9,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Final_VS1.Data;
 using Microsoft.AspNetCore.Authorization;
+using Final_VS1.Repositories; // Thêm namespace repository
+
 
 namespace Final_VS1.Areas.Admin.Controllers
 {
@@ -16,21 +18,18 @@ namespace Final_VS1.Areas.Admin.Controllers
     [Authorize(Roles = "admin")]
     public class SanphamController : Controller
     {
+        private readonly ISanPhamRepository _sanPhamRepository;
         private readonly LittleFishBeautyContext _context;
 
-        public SanphamController(LittleFishBeautyContext context)
+        public SanphamController(ISanPhamRepository sanPhamRepository, LittleFishBeautyContext context)
         {
+            _sanPhamRepository = sanPhamRepository;
             _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
-            var sanPhams = await _context.SanPhams
-                .Include(s => s.IdDanhMucNavigation)
-                .Include(s => s.AnhSanPhams)
-                .OrderByDescending(s => s.NgayTao)
-                .ToListAsync();
-
+            var sanPhams = await _sanPhamRepository.GetAllAsync();
             var danhMucs = await _context.DanhMucs
                 .OrderBy(d => d.ThuTuHienThi)
                 .ToListAsync();
@@ -42,10 +41,7 @@ namespace Final_VS1.Areas.Admin.Controllers
 
         public async Task<IActionResult> Detail(int id)
         {
-            var sanPham = await _context.SanPhams
-                .Include(s => s.IdDanhMucNavigation)
-                .Include(s => s.AnhSanPhams)
-                .FirstOrDefaultAsync(s => s.IdSanPham == id);
+            var sanPham = await _sanPhamRepository.GetByIdAsync(id);
 
             if (sanPham == null)
                 return NotFound();
@@ -63,9 +59,7 @@ namespace Final_VS1.Areas.Admin.Controllers
             }
             else
             {
-                model = await _context.SanPhams
-                    .Include(s => s.AnhSanPhams)
-                    .FirstOrDefaultAsync(s => s.IdSanPham == id.Value);
+                model = await _sanPhamRepository.GetByIdAsync(id.Value);
                 if (model == null)
                     return NotFound();
             }
@@ -89,25 +83,19 @@ namespace Final_VS1.Areas.Admin.Controllers
         public async Task<IActionResult> AddOrEdit(int? id, [Bind("IdSanPham,TenSanPham,MoTa,GiaBan,SoLuongTonKho,Sku,TrangThai,IdDanhMuc,CachSuDung")] SanPham sanPham,
             List<IFormFile> ImageFiles, string? mainImage, List<string> RemovedImageIds)
         {
-            // Remove any price validation constraints
             if (sanPham.GiaBan < 0)
             {
-                sanPham.GiaBan = 0; // Set negative prices to 0 if needed, or remove this check to allow negative prices
+                sanPham.GiaBan = 0;
             }
 
             if (ModelState.IsValid)
             {
                 bool isNewProduct = id == null || id == 0;
 
-                // Kiểm tra SKU trùng lặp
-                Console.WriteLine($"DEBUG: Checking SKU '{sanPham.Sku}' for product ID {sanPham.IdSanPham}");
+                // Kiểm tra SKU trùng lặp qua repository
                 if (!string.IsNullOrEmpty(sanPham.Sku))
                 {
-                    var existingSku = await _context.SanPhams
-                        .Where(s => s.Sku == sanPham.Sku && s.IdSanPham != sanPham.IdSanPham)
-                        .AnyAsync();
-                    
-                    Console.WriteLine($"DEBUG: Existing SKU found: {existingSku}");
+                    var existingSku = await _sanPhamRepository.IsSkuExistsAsync(sanPham.Sku, sanPham.IdSanPham);
                     if (existingSku)
                     {
                         return Json(new { success = false, message = $"SKU '{sanPham.Sku}' đã tồn tại. Vui lòng sử dụng SKU khác." });
@@ -120,12 +108,11 @@ namespace Final_VS1.Areas.Admin.Controllers
                     {
                         sanPham.IdSanPham = 0;
                         sanPham.NgayTao = DateTime.Now;
-                        _context.Add(sanPham);
-                        await _context.SaveChangesAsync(); // Save first to get ID
+                        await _sanPhamRepository.AddAsync(sanPham);
                     }
                     else
                     {
-                        var existingProduct = await _context.SanPhams.FindAsync(id);
+                        var existingProduct = await _sanPhamRepository.GetByIdAsync(id.Value);
                         if (existingProduct == null)
                         {
                             return Json(new { success = false, message = "Sản phẩm không tồn tại" });
@@ -139,9 +126,9 @@ namespace Final_VS1.Areas.Admin.Controllers
                         existingProduct.TrangThai = sanPham.TrangThai;
                         existingProduct.IdDanhMuc = sanPham.IdDanhMuc;
                         existingProduct.CachSuDung = sanPham.CachSuDung;
-                        
-                        sanPham = existingProduct; // Use existing product for image processing
-                        await _context.SaveChangesAsync();
+
+                        sanPham = existingProduct;
+                        await _sanPhamRepository.UpdateAsync(sanPham);
                     }
 
                     // Xử lý xóa ảnh cũ nếu có
@@ -154,7 +141,6 @@ namespace Final_VS1.Areas.Admin.Controllers
                                 var imageToRemove = await _context.AnhSanPhams.FindAsync(removedId);
                                 if (imageToRemove != null && imageToRemove.IdSanPham == sanPham.IdSanPham)
                                 {
-                                    // Xóa file khỏi server nếu là ảnh upload
                                     if (!string.IsNullOrEmpty(imageToRemove.DuongDan) && imageToRemove.DuongDan.StartsWith("/images/products/"))
                                     {
                                         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imageToRemove.DuongDan.TrimStart('/'));
@@ -163,7 +149,6 @@ namespace Final_VS1.Areas.Admin.Controllers
                                             System.IO.File.Delete(filePath);
                                         }
                                     }
-                                    
                                     _context.AnhSanPhams.Remove(imageToRemove);
                                 }
                             }
@@ -174,7 +159,6 @@ namespace Final_VS1.Areas.Admin.Controllers
                     // Xử lý lưu ảnh mới
                     List<string> newImageUrls = new List<string>();
 
-                    // Xử lý file upload
                     if (ImageFiles != null && ImageFiles.Count > 0)
                     {
                         string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products");
@@ -185,7 +169,6 @@ namespace Final_VS1.Areas.Admin.Controllers
                         {
                             if (file != null && file.Length > 0)
                             {
-                                // Validate file type
                                 var allowedTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
                                 var fileExtension = Path.GetExtension(file.FileName).ToLower();
                                 if (!allowedTypes.Contains(fileExtension))
@@ -193,7 +176,6 @@ namespace Final_VS1.Areas.Admin.Controllers
                                     return Json(new { success = false, message = $"File {file.FileName} không được hỗ trợ. Chỉ cho phép: jpg, jpeg, png, gif, webp" });
                                 }
 
-                                // Validate file size (5MB max)
                                 if (file.Length > 5 * 1024 * 1024)
                                 {
                                     return Json(new { success = false, message = $"File {file.FileName} quá lớn. Kích thước tối đa: 5MB" });
@@ -217,11 +199,9 @@ namespace Final_VS1.Areas.Admin.Controllers
                     {
                         var (mainType, otherType) = await GetValidImageTypes();
 
-                        // Kiểm tra xem đã có ảnh chính chưa
                         var hasMainImage = await _context.AnhSanPhams
                             .AnyAsync(a => a.IdSanPham == sanPham.IdSanPham && a.LoaiAnh == mainType);
 
-                        // Xác định ảnh chính
                         string? primaryImageUrl = !string.IsNullOrEmpty(mainImage) && newImageUrls.Contains(mainImage)
                             ? mainImage
                             : (!hasMainImage ? newImageUrls.First() : null);
@@ -262,7 +242,6 @@ namespace Final_VS1.Areas.Admin.Controllers
                 }
                 catch (DbUpdateException ex)
                 {
-                    // Xử lý lỗi database constraint
                     if (ex.InnerException?.Message?.Contains("UNIQUE KEY constraint") == true)
                     {
                         if (ex.InnerException.Message.Contains("UQ__SanPham__CA1ECF0D"))
@@ -280,15 +259,14 @@ namespace Final_VS1.Areas.Admin.Controllers
             }
 
             ViewBag.DanhMucs = await _context.DanhMucs.OrderBy(d => d.ThuTuHienThi).ToListAsync();
-            
-            // Lấy chi tiết lỗi validation
+
             var validationErrors = ModelState
                 .Where(x => x.Value?.Errors?.Count > 0)
                 .Select(x => new { Field = x.Key, Errors = x.Value?.Errors?.Select(e => e.ErrorMessage) ?? new List<string>() })
                 .ToList();
-            
+
             var errorMessage = "Dữ liệu không hợp lệ: " + string.Join("; ", validationErrors.SelectMany(x => x.Errors));
-            
+
             var html = await RenderViewToStringAsync("_ThemSuaSanPhamPartial", sanPham, true);
             return Json(new { success = false, html, message = errorMessage, validationErrors });
         }
@@ -298,14 +276,12 @@ namespace Final_VS1.Areas.Admin.Controllers
         {
             try
             {
-                // Lấy danh sách giá trị LoaiAnh đã tồn tại
                 var existingTypes = await _context.AnhSanPhams
                     .Where(a => a.LoaiAnh != null)
                     .Select(a => a.LoaiAnh)
                     .Distinct()
                     .ToListAsync();
 
-                // Kiểm tra một số giá trị phổ biến
                 var testValues = new List<string> { "Chinh", "Phu", "Primary", "Secondary", "Main", "Other" };
                 var validValues = new List<string>();
 
@@ -315,7 +291,7 @@ namespace Final_VS1.Areas.Admin.Controllers
                     {
                         var testEntity = new AnhSanPham
                         {
-                            IdSanPham = 1, // Sử dụng ID sản phẩm đã tồn tại để test
+                            IdSanPham = 1,
                             DuongDan = "/test-path.jpg",
                             LoaiAnh = value
                         };
@@ -323,10 +299,8 @@ namespace Final_VS1.Areas.Admin.Controllers
                         _context.AnhSanPhams.Add(testEntity);
                         await _context.SaveChangesAsync();
 
-                        // Nếu lưu thành công, thêm vào danh sách giá trị hợp lệ
                         validValues.Add(value);
 
-                        // Xóa dữ liệu test
                         _context.AnhSanPhams.Remove(testEntity);
                         await _context.SaveChangesAsync();
                     }
@@ -349,7 +323,6 @@ namespace Final_VS1.Areas.Admin.Controllers
             }
         }
 
-        // Thêm helper method để chuẩn hóa giá trị LoaiAnh
         private async Task<(string MainType, string OtherType)> GetValidImageTypes()
         {
             var defaultPairs = new List<(string Main, string Other)>
@@ -361,7 +334,6 @@ namespace Final_VS1.Areas.Admin.Controllers
 
             try
             {
-                // Kiểm tra database xem có giá trị nào đã được sử dụng chưa
                 var existingTypes = await _context.AnhSanPhams
                     .Where(a => a.LoaiAnh != null)
                     .Select(a => a.LoaiAnh)
@@ -370,7 +342,6 @@ namespace Final_VS1.Areas.Admin.Controllers
 
                 if (existingTypes.Any())
                 {
-                    // Tìm cặp giá trị đã tồn tại trong database
                     foreach (var pair in defaultPairs)
                     {
                         if (existingTypes.Contains(pair.Main))
@@ -383,7 +354,6 @@ namespace Final_VS1.Areas.Admin.Controllers
                         }
                     }
 
-                    // Sử dụng giá trị có sẵn nếu không khớp với pattern
                     if (existingTypes.Count >= 2)
                     {
                         var first = existingTypes[0] ?? defaultPairs[0].Main;
@@ -403,7 +373,6 @@ namespace Final_VS1.Areas.Admin.Controllers
                 // Bỏ qua lỗi và sử dụng giá trị mặc định
             }
 
-            // Mặc định trả về cặp giá trị đầu tiên
             return defaultPairs[0];
         }
 
@@ -413,45 +382,7 @@ namespace Final_VS1.Areas.Admin.Controllers
         {
             try
             {
-                var sanPham = await _context.SanPhams
-                    .Include(s => s.AnhSanPhams)
-                    .Include(s => s.ChiTietDonHangs)
-                    .FirstOrDefaultAsync(s => s.IdSanPham == id);
-
-                if (sanPham == null)
-                {
-                    return Json(new { success = false, message = "Sản phẩm không tồn tại" });
-                }
-
-                // Check if product is used in orders
-                if (sanPham.ChiTietDonHangs.Any())
-                {
-                    return Json(new { success = false, message = "Sản phẩm đã có trong đơn hàng, không thể xóa" });
-                }
-
-                // Xóa các ảnh sản phẩm trước
-                if (sanPham.AnhSanPhams.Any())
-                {
-                    // Xóa file ảnh khỏi server (chỉ xóa ảnh upload, không xóa URL)
-                    foreach (var anh in sanPham.AnhSanPhams)
-                    {
-                        if (!string.IsNullOrEmpty(anh.DuongDan) && anh.DuongDan.StartsWith("/images/products/"))
-                        {
-                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", anh.DuongDan.TrimStart('/'));
-                            if (System.IO.File.Exists(filePath))
-                            {
-                                System.IO.File.Delete(filePath);
-                            }
-                        }
-                    }
-
-                    _context.AnhSanPhams.RemoveRange(sanPham.AnhSanPhams);
-                }
-
-                // Xóa sản phẩm
-                _context.SanPhams.Remove(sanPham);
-                await _context.SaveChangesAsync();
-
+                await _sanPhamRepository.DeleteAsync(id);
                 return Json(new { success = true, message = "Xóa sản phẩm thành công!" });
             }
             catch (Exception)
@@ -460,7 +391,6 @@ namespace Final_VS1.Areas.Admin.Controllers
             }
         }
 
-        // Helper method để render view thành string
         private async Task<string> RenderViewToStringAsync<TModel>(string viewName, TModel model, bool partial = false)
         {
             if (string.IsNullOrEmpty(viewName))

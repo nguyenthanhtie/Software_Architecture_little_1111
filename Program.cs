@@ -5,6 +5,7 @@ using Final_VS1.Helper;
 using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Final_VS1.Repositories; 
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -29,6 +30,8 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -50,6 +53,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
 
 
 
