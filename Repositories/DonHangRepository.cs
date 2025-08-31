@@ -39,5 +39,57 @@ namespace Final_VS1.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<DonHang> CreateOrderAsync(DonHang donHang, List<ChiTietDonHang> chiTietDonHangs)
+        {
+            _context.DonHangs.Add(donHang);
+            await _context.SaveChangesAsync();
+
+            foreach (var chiTiet in chiTietDonHangs)
+            {
+                chiTiet.IdDonHang = donHang.IdDonHang;
+                _context.ChiTietDonHangs.Add(chiTiet);
+            }
+            await _context.SaveChangesAsync();
+            return donHang;
+        }
+
+        public async Task<List<DonHang>> GetByUserAsync(int userId, string? status)
+        {
+            var query = _context.DonHangs
+                .Include(d => d.ChiTietDonHangs)
+                    .ThenInclude(ct => ct.IdSanPhamNavigation)
+                        .ThenInclude(sp => sp.AnhSanPhams)
+                .Include(d => d.IdTaiKhoanNavigation)
+                .Where(d => d.IdTaiKhoan == userId);
+
+            if (!string.IsNullOrEmpty(status))
+                query = query.Where(d => d.TrangThai == status);
+
+            return await query.OrderByDescending(d => d.NgayDat).ToListAsync();
+        }
+
+        public async Task<int> CountByUserAsync(int userId, string? status = null)
+        {
+            var query = _context.DonHangs.Where(d => d.IdTaiKhoan == userId);
+            if (!string.IsNullOrEmpty(status))
+                query = query.Where(d => d.TrangThai == status);
+            return await query.CountAsync();
+        }
+
+        public async Task<DonHang?> GetByIdAndUserAsync(int orderId, int userId)
+        {
+            return await _context.DonHangs.FirstOrDefaultAsync(d => d.IdDonHang == orderId && d.IdTaiKhoan == userId);
+        }
+
+        public async Task<bool> CancelOrderAsync(int orderId, int userId)
+        {
+            var donHang = await GetByIdAndUserAsync(orderId, userId);
+            if (donHang == null || donHang.TrangThai != "Chờ xác nhận")
+                return false;
+            donHang.TrangThai = "Đã hủy";
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

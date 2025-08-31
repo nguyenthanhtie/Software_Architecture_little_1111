@@ -11,6 +11,7 @@ namespace Final_VS1.Repositories
         Task UpdateAsync(SanPham sanPham);
         Task DeleteAsync(int id);
         Task<bool> IsSkuExistsAsync(string sku, int? excludeId = null);
+        Task<bool> UpdateStockAsync(int id, int newStock);
         Task<List<SanPham>> GetNewestProductsAsync(int count);
         Task<List<SanPham>> GetBestSellingProductsAsync(int count);
         Task<List<SanPham>> GetSuggestedProductsAsync(int categoryId, int excludeId, int count);

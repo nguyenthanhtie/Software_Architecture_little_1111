@@ -29,6 +29,15 @@ namespace Final_VS1.Repositories
                 .FirstOrDefaultAsync(s => s.IdSanPham == id);
         }
 
+         public async Task<bool> UpdateStockAsync(int id, int newStock)
+    {
+        var product = await _context.SanPhams.FindAsync(id);
+        if (product == null) return false;
+        product.SoLuongTonKho = newStock;
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
         public async Task AddAsync(SanPham sanPham)
         {
             _context.SanPhams.Add(sanPham);
