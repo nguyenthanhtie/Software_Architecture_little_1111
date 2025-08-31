@@ -13,5 +13,9 @@ namespace Final_VS1.Areas.KhachHang.ViewModels
         public int ShippingOrders { get; set; } // "Đang giao"
         public int DeliveredOrders { get; set; } // "Hoàn thành"
         public int CancelledOrders { get; set; } // "Đã hủy"
+
+public string? HoTenNguoiNhan { get; set; } // phải khớp với HoTenNguoiNhan
+public string? SoDienThoai { get; set; }    // phải khớp với SoDienThoai
+public string? DiaChi { get; set; }         // Đổi từ DiaChiNguoiNhan thành DiaChi
     }
 }

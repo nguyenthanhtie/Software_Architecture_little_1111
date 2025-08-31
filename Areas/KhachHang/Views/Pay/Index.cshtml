@@ -70,31 +70,24 @@
                 </div>
                 <div class="order-confirmation-info">
                     <div class="confirmation-message">
-                        <h5 class="fw-bold mb-3" style="color: var(--text-primary);">
-                            <i class="fas fa-shopping-bag me-2"></i>
-                            Đơn hàng của bạn đã sẵn sàng
-                        </h5>
-                        <p class="text-muted mb-3">
-                            Vui lòng kiểm tra lại thông tin đơn hàng bên phải và nhấn "Xác nhận đặt hàng" để hoàn tất.
-                        </p>
-                        <div class="delivery-info bg-light p-3 rounded">
-                            <h6 class="fw-bold mb-2">
-                                <i class="fas fa-truck me-2 text-primary"></i>
-                                Thông tin giao hàng
-                            </h6>
-                            <p class="mb-1">
-                                <i class="fas fa-clock me-2 text-success"></i>
-                                Thời gian giao hàng: 2-3 ngày làm việc
-                            </p>
-                            <p class="mb-1">
-                                <i class="fas fa-money-bill-wave me-2 text-info"></i>
-                                Thanh toán khi nhận hàng (COD)
-                            </p>
-                            <p class="mb-0">
-                                <i class="fas fa-shield-alt me-2 text-warning"></i>
-                                Kiểm tra hàng trước khi thanh toán
-                            </p>
-                        </div>
+                           <div class="receiver-info mb-4"></div>
+        <div class="section-title">
+            <i class="fas fa-user"></i>
+            <span>Thông Tin Người Nhận</span>
+        </div>
+        <div class="form-group mb-2">
+            <label for="receiverName" class="form-label">Tên người nhận</label>
+            <input type="text" id="receiverName" class="form-control" placeholder="Nhập tên người nhận" required>
+        </div>
+        <div class="form-group mb-2">
+            <label for="receiverPhone" class="form-label">Số điện thoại</label>
+            <input type="text" id="receiverPhone" class="form-control" placeholder="Nhập số điện thoại" required>
+        </div>
+        <div class="form-group mb-2">
+            <label for="receiverAddress" class="form-label">Địa chỉ</label>
+            <input type="text" id="receiverAddress" class="form-control" placeholder="Nhập địa chỉ nhận hàng" required>
+        </div>
+
                     </div>
                 </div>
             </div>
@@ -205,54 +198,51 @@
     
     // Fallback processOrder function nếu thanhtoan.js chưa load
     function processOrder() {
-        console.log('Fallback processOrder called');
-        
-        if (typeof window.processOrderFromJS === 'function') {
-            // Nếu hàm từ thanhtoan.js đã sẵn sàng
-            window.processOrderFromJS();
-            return;
-        }
-        
-        // Fallback: gửi form đơn giản
-        const orderItems = window.isBuyNow && window.buyNowData ? [window.buyNowData] : [];
-        
-        if (orderItems.length === 0) {
-            alert('Không có sản phẩm nào để đặt hàng');
-            return;
-        }
-        
-        // Tạo form ẩn để submit
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '@Url.Action("ProcessOrder", "Pay", new { area = "KhachHang" })';
-        
-        // Thêm anti-forgery token
-        const token = document.querySelector('input[name="__RequestVerificationToken"]');
-        if (token) {
-            const tokenInput = document.createElement('input');
-            tokenInput.type = 'hidden';
-            tokenInput.name = '__RequestVerificationToken';
-            tokenInput.value = token.value;
-            form.appendChild(tokenInput);
-        }
-        
-        // Thêm dữ liệu order
-        const orderInput = document.createElement('input');
-        orderInput.type = 'hidden';
-        orderInput.name = 'orderData';
-        orderInput.value = JSON.stringify({
-            PaymentMethod: 'COD',
-            IsBuyNow: window.isBuyNow || false,
-            OrderItems: orderItems
-        });
-        form.appendChild(orderInput);
-        
-        // Submit form
-        document.body.appendChild(form);
-        console.log('Submitting fallback order form...');
-        form.submit();
+    // Lấy thông tin người nhận từ form
+    var hoTen = document.getElementById('receiverName').value;
+    var soDienThoai = document.getElementById('receiverPhone').value;
+    var diaChi = document.getElementById('receiverAddress').value;
+
+    // Kiểm tra dữ liệu
+    if (!hoTen || !soDienThoai || !diaChi) {
+        alert('Vui lòng nhập đầy đủ thông tin người nhận!');
+        return;
     }
-    
+
+    // Lấy thông tin sản phẩm và các trường khác như PaymentMethod...
+    var orderItems = window.isBuyNow && window.buyNowData ? [window.buyNowData] : []; // hoặc lấy từ giỏ hàng
+
+    var data = {
+        HoTen: hoTen,
+        SoDienThoai: soDienThoai,
+        DiaChi: diaChi,
+        PaymentMethod: 'COD',
+        OrderItems: orderItems
+    };
+
+    // Gửi dữ liệu qua AJAX tới /KhachHang/Pay/ProcessOrder
+    fetch('@Url.Action("ProcessOrder", "Pay", new { area = "KhachHang" })', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            // Hiển thị modal thành công hoặc chuyển trang
+            document.getElementById('paymentSuccessModal').classList.remove('d-none');
+        } else {
+            alert(result.message || 'Đặt hàng thất bại!');
+        }
+    })
+    .catch(error => {
+        alert('Có lỗi xảy ra khi đặt hàng!');
+        console.error(error);
+    });
+}
     // Xử lý dữ liệu "mua ngay" từ server
     @if (ViewBag.IsBuyNow != null && (bool)ViewBag.IsBuyNow)
     {
