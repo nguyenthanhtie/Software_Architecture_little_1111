@@ -590,20 +590,21 @@
                     const highlightedName = highlightText(item.name || '', query);
                     
                     html += `
-                        <div class="suggestion-item" data-url="${item.url || '#'}" data-name="${item.name || ''}" data-index="${index}">
-                            <div class="suggestion-image">
-                                <img src="${imageUrl}" alt="${item.name || 'Sản phẩm'}" 
-                                     onerror="this.src='/images/no-image.png'">
-                            </div>
-                            <div class="suggestion-content">
-                                <div class="suggestion-name">${highlightedName}</div>
-                                <div class="suggestion-meta">
-                                    <span class="suggestion-category">${item.category || 'Chưa phân loại'}</span>
-                                    <span class="suggestion-price">${price}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+    <div class="suggestion-item" data-url="${item.url || '#'}" data-name="${item.name || ''}" data-index="${index}">
+        <!-- Ẩn ảnh sản phẩm -->
+        <!--<div class="suggestion-image">
+            <img src="${imageUrl}" alt="${item.name || 'Sản phẩm'}" 
+                 onerror="this.src='/images/no-image.png'">
+        </div>-->
+        <div class="suggestion-content">
+            <div class="suggestion-name">${highlightedName}</div>
+            <div class="suggestion-meta">
+                <span class="suggestion-category">${item.category || 'Chưa phân loại'}</span>
+                <span class="suggestion-price">${price}</span>
+            </div>
+        </div>
+    </div>
+`;
                 });
 
                 suggestionsContainer.innerHTML = html;
