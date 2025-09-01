@@ -6,6 +6,7 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Final_VS1.Repositories; 
+using Final_VS1.Services;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -48,6 +49,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
 builder.Services.AddScoped<IDonHangRepository, DonHangRepository>();
+builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
+
+// Register Services
+builder.Services.AddScoped<ISanPhamService, SanPhamService>();
+builder.Services.AddScoped<IDanhMucService, DanhMucService>();
+builder.Services.AddScoped<IDonHangService, DonHangService>();
+builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
