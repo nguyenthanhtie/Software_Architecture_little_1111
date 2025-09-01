@@ -51,12 +51,21 @@ builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
 builder.Services.AddScoped<IDonHangRepository, DonHangRepository>();
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
 
+// Register Repository Factory
+builder.Services.AddScoped<IRepositoryFactory, RepositoryFactory>();
+
+// Register Repository Factory
+builder.Services.AddScoped<IRepositoryFactory, RepositoryFactory>();
+
 // Register Services
 builder.Services.AddScoped<ISanPhamService, SanPhamService>();
 builder.Services.AddScoped<IDanhMucService, DanhMucService>();
 builder.Services.AddScoped<IDonHangService, DonHangService>();
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Register Service Factory
+builder.Services.AddScoped<IServiceFactory, ServiceFactory>();
 
 var app = builder.Build();
 

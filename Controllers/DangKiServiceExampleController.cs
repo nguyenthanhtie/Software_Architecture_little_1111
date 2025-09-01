@@ -9,13 +9,11 @@ namespace Final_VS1.Controllers
 {
     public class DangKiServiceExampleController : Controller
     {
-        private readonly ITaiKhoanService _taiKhoanService;
-        private readonly IEmailService _emailService;
+        private readonly IServiceFactory _serviceFactory;
 
-        public DangKiServiceExampleController(ITaiKhoanService taiKhoanService, IEmailService emailService)
+        public DangKiServiceExampleController(IServiceFactory serviceFactory)
         {
-            _taiKhoanService = taiKhoanService;
-            _emailService = emailService;
+            _serviceFactory = serviceFactory;
         }
 
         public IActionResult Index()
@@ -35,8 +33,12 @@ namespace Final_VS1.Controllers
 
             try
             {
+                // Sử dụng service factory để tạo services
+                var taiKhoanService = _serviceFactory.CreateTaiKhoanService();
+                var emailService = _serviceFactory.CreateEmailService();
+
                 // Sử dụng service để kiểm tra email đã tồn tại
-                if (await _taiKhoanService.IsEmailExistsAsync(model.Email))
+                if (await taiKhoanService.IsEmailExistsAsync(model.Email))
                 {
                     ModelState.AddModelError("Email", "Email này đã được sử dụng");
                     return View("Index", model);
@@ -51,7 +53,7 @@ namespace Final_VS1.Controllers
                     VaiTro = "Khach"
                 };
 
-                var createdAccount = await _taiKhoanService.CreateAsync(taiKhoan);
+                var createdAccount = await taiKhoanService.CreateAsync(taiKhoan);
 
                 // Tạo token xác nhận
                 var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
@@ -64,7 +66,7 @@ namespace Final_VS1.Controllers
                 HttpContext.Session.SetString($"{sessionKey}_CreatedAt", DateTime.Now.ToString());
 
                 // Gửi email xác nhận thông qua EmailService
-                var emailSent = await _emailService.SendConfirmationEmailAsync(model.Email, confirmationLink);
+                var emailSent = await emailService.SendConfirmationEmailAsync(model.Email, confirmationLink);
                 
                 if (emailSent)
                 {
@@ -101,7 +103,8 @@ namespace Final_VS1.Controllers
         {
             try
             {
-                var exists = await _taiKhoanService.IsEmailExistsAsync(email);
+                var taiKhoanService = _serviceFactory.CreateTaiKhoanService();
+                var exists = await taiKhoanService.IsEmailExistsAsync(email);
                 return Json(!exists); // Trả về true nếu email chưa tồn tại
             }
             catch
@@ -140,7 +143,9 @@ namespace Final_VS1.Controllers
                 }
 
                 // Kích hoạt tài khoản thông qua service
-                var activated = await _taiKhoanService.ActivateAccountAsync(email);
+                var taiKhoanService = _serviceFactory.CreateTaiKhoanService();
+                var emailService = _serviceFactory.CreateEmailService();
+                var activated = await taiKhoanService.ActivateAccountAsync(email);
 
                 if (activated)
                 {
@@ -149,10 +154,10 @@ namespace Final_VS1.Controllers
                     HttpContext.Session.Remove($"{sessionKey}_CreatedAt");
 
                     // Gửi email chào mừng
-                    var user = await _taiKhoanService.GetByEmailAsync(email);
+                    var user = await taiKhoanService.GetByEmailAsync(email);
                     if (user != null)
                     {
-                        await _emailService.SendWelcomeEmailAsync(user.Email, user.HoTen ?? "Khách hàng");
+                        await emailService.SendWelcomeEmailAsync(user.Email, user.HoTen ?? "Khách hàng");
                     }
 
                     TempData["SuccessMessage"] = "Xác nhận email thành công! Tài khoản của bạn đã được kích hoạt.";

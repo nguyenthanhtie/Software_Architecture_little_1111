@@ -6,16 +6,19 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Final_VS1.Services;
 
 namespace Final_VS1.Controllers
 {
     public class DangNhapController : Controller
     {
         private readonly LittleFishBeautyContext _context;
+        private readonly IServiceFactory _serviceFactory;
 
-        public DangNhapController(LittleFishBeautyContext context)
+        public DangNhapController(LittleFishBeautyContext context, IServiceFactory serviceFactory)
         {
             _context = context;
+            _serviceFactory = serviceFactory;
         }
 
         [HttpGet]
