@@ -76,6 +76,7 @@
         <div class="d-flex gap-2 filter-controls">
             <select class="form-select form-select-sm" id="statusFilter" style="width: auto;">
                 <option value="">Tất cả trạng thái</option>
+                <option value="Chờ xác nhận">Chờ xác nhận</option>
                 <option value="Đang xử lý">Đang xử lý</option>
                 <option value="Đã xác nhận">Đã xác nhận</option>
                 <option value="Đang giao">Đang giao</option>
@@ -114,6 +115,7 @@
                                 @{
                                     var statusClass = order.TrangThai switch
                                     {
+                                        "Chờ xác nhận" => "bg-warning text-dark",
                                         "Đang xử lý" => "bg-warning text-dark",
                                         "Đã xác nhận" => "bg-info text-white",
                                         "Đang giao" => "bg-primary text-white",
@@ -124,7 +126,7 @@
                                     
                                     var canChangeStatus = order.TrangThai != "Đã hủy" && order.TrangThai != "Hoàn thành";
                                     var cursorStyle = canChangeStatus ? "cursor: pointer;" : "cursor: not-allowed;";
-                                    var titleText = canChangeStatus ? "Click để thay đổi trạng thái" : "Không thể thay đổi trạng thái";
+                                    var titleText = canChangeStatus ? "Click để chuyển trạng thái tiếp theo" : "Không thể thay đổi trạng thái";
                                 }
                                 <span class="badge @statusClass status-badge" data-order-id="@order.IdDonHang" style="@cursorStyle" title="@titleText">@(order.TrangThai ?? "Không xác định")</span>
                             </td>

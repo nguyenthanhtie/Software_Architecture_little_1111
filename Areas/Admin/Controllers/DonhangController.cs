@@ -81,6 +81,7 @@ namespace Final_VS1.Areas.Admin.Controllers
                 // Kiểm tra luồng trạng thái hợp lệ
                 var validTransitions = new Dictionary<string, List<string>>
                 {
+                    ["Chờ xác nhận"] = new List<string> { "Đã xác nhận", "Đã hủy" },
                     ["Đang xử lý"] = new List<string> { "Đã xác nhận", "Đã hủy" },
                     ["Đã xác nhận"] = new List<string> { "Đang giao", "Đã hủy" },
                     ["Đang giao"] = new List<string> { "Hoàn thành", "Đã hủy" }
