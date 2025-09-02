@@ -89,6 +89,94 @@
             from { width: 100%; }
             to { width: 0%; }
         }
+
+        /* Enhanced Description Styles */
+        .product-description {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .description-title, .usage-title, .info-title {
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e74c3c;
+            display: inline-block;
+        }
+
+        .description-content, .usage-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .description-text, .usage-text {
+            line-height: 1.8;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .no-description {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            border: 2px dashed #bdc3c7;
+        }
+
+        .no-description i {
+            font-size: 3rem;
+            color: #95a5a6;
+            margin-bottom: 1rem;
+        }
+
+        .no-description p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-info-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .product-info-table .table {
+            margin-bottom: 0;
+        }
+
+        .product-info-table .info-label {
+            background: #ecf0f1;
+            width: 30%;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .product-info-table td {
+            padding: 1rem;
+            border-color: #dee2e6;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .badge-success {
+            background: #27ae60;
+        }
+
+        .badge-danger {
+            background: #e74c3c;
+        }
     </style>
 }
 
@@ -145,7 +233,7 @@
             <!-- Product Info -->
             <div class="col-lg-6">
                 <div class="product-info">
-                    <h1 class="product-title" style="height: auto;">@Model?.TenSanPham</h1>
+                    <h1 class="product-title">@Model?.TenSanPham</h1>
                     <div class="product-meta">
                         <p class="sku">SKU: @Model?.Sku</p>
                         <p class="stock-status @(Model?.SoLuongTonKho > 0 ? "in-stock" : "out-of-stock")">
@@ -187,7 +275,101 @@
     </div>
 </div>
 
+<!-- Product Description -->
+<div class="container">
+    <div class="product-details-section">
+        <div class="product-description">
+            <h6 class="description-title">MÔ TẢ SẢN PHẨM</h6>
+            
+            @if (!string.IsNullOrEmpty(Model?.MoTa) && Model.MoTa.Trim().Length > 0)
+            {
+                <div class="description-content">
+                    <div class="description-text">
+                        @Html.Raw(Model.MoTa.Replace("\n", "<br>").Replace("\r\n", "<br>"))
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="no-description">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Chưa có mô tả chi tiết cho sản phẩm này.</p>
+                    <small class="text-muted">Mô tả sẽ được cập nhật sớm nhất có thể.</small>
+                </div>
+            }
 
+            @if (!string.IsNullOrEmpty(Model?.CachSuDung) && Model.CachSuDung.Trim().Length > 0)
+            {
+                <h6 class="usage-title mt-4">HƯỚNG DẪN SỬ DỤNG</h6>
+                <div class="usage-content">
+                    <div class="usage-text">
+                        @Html.Raw(Model.CachSuDung.Replace("\n", "<br>").Replace("\r\n", "<br>"))
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="no-usage-info mt-4">
+                    <h6 class="usage-title">HƯỚNG DẪN SỬ DỤNG</h6>
+                    <div class="no-description">
+                        <i class="fas fa-book-open"></i>
+                        <p>Chưa có hướng dẫn sử dụng chi tiết.</p>
+                        <small class="text-muted">Vui lòng liên hệ để được tư vấn chi tiết.</small>
+                    </div>
+                </div>
+            }
+
+            <!-- Product Information Table -->
+            <div class="product-info-table mt-4">
+                <h6 class="info-title">THÔNG TIN SẢN PHẨM</h6>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td class="info-label"><strong>Tên sản phẩm:</strong></td>
+                            <td>@(Model?.TenSanPham ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label"><strong>Danh mục:</strong></td>
+                            <td>@(Model?.IdDanhMucNavigation?.TenDanhMuc ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label"><strong>Giá bán:</strong></td>
+                            <td class="text-primary font-weight-bold">
+                                @if (Model?.GiaBan != null)
+                                {
+                                    @Model.GiaBan.Value.ToString("#,##0") <span>đ</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Liên hệ</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="info-label"><strong>Tình trạng:</strong></td>
+                            <td>
+                                @if (Model?.SoLuongTonKho > 0)
+                                {
+                                    <span class="badge badge-success">Còn hàng (@Model.SoLuongTonKho sản phẩm)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">Hết hàng</span>
+                                }
+                            </td>
+                        </tr>
+                        @if (Model?.NgayTao != null)
+                        {
+                            <tr>
+                                <td class="info-label"><strong>Ngày tạo:</strong></td>
+                                <td>@Model.NgayTao.Value.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <!-- Suggested Products -->
     <div class="suggested-products-section">
@@ -210,7 +392,7 @@
                                 <img src="@anhSp" alt="@sp.TenSanPham">
                             </div>
                             <div class="product-info">
-                                <h3 class="product-title" style="height: auto;">@sp.TenSanPham</h3>
+                                <h3 class="product-title">@sp.TenSanPham</h3>
                                 <p class="product-price">@(sp.GiaBan?.ToString("#,##0") ?? "0") đ</p>
                             </div>
                         </a>
