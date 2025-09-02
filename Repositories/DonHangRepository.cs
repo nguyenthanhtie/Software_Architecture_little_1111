@@ -15,6 +15,7 @@ namespace Final_VS1.Repositories
         {
             return await _context.DonHangs
                 .Include(d => d.IdTaiKhoanNavigation)
+                .Include(d => d.IdDiaChiNavigation)
                 .Include(d => d.ChiTietDonHangs)
                     .ThenInclude(ct => ct.IdSanPhamNavigation)
                 .OrderByDescending(d => d.NgayDat)
@@ -25,6 +26,7 @@ namespace Final_VS1.Repositories
         {
             return await _context.DonHangs
                 .Include(d => d.IdTaiKhoanNavigation)
+                .Include(d => d.IdDiaChiNavigation)
                 .Include(d => d.ChiTietDonHangs)
                     .ThenInclude(ct => ct.IdSanPhamNavigation)
                 .FirstOrDefaultAsync(d => d.IdDonHang == id);
@@ -57,8 +59,9 @@ namespace Final_VS1.Repositories
         public async Task<List<DonHang>> GetByUserAsync(int userId, string? status)
         {
             var query = _context.DonHangs
+                .Include(d => d.IdDiaChiNavigation)
                 .Include(d => d.ChiTietDonHangs)
-                    .ThenInclude(ct => ct.IdSanPhamNavigation)
+                    .ThenInclude(ct => ct.IdSanPhamNavigation!)
                         .ThenInclude(sp => sp.AnhSanPhams)
                 .Include(d => d.IdTaiKhoanNavigation)
                 .Where(d => d.IdTaiKhoan == userId);

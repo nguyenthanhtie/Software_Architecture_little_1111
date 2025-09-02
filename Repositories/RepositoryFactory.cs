@@ -31,5 +31,10 @@ namespace Final_VS1.Repositories
         {
             return new DonHangRepository(_context);
         }
+
+        public IDiaChiRepository CreateDiaChiRepository()
+        {
+            return new DiaChiRepository(_context);
+        }
     }
 }

@@ -50,9 +50,7 @@ builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
 builder.Services.AddScoped<IDonHangRepository, DonHangRepository>();
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
-
-// Register Repository Factory
-builder.Services.AddScoped<IRepositoryFactory, RepositoryFactory>();
+builder.Services.AddScoped<IDiaChiRepository, DiaChiRepository>();
 
 // Register Repository Factory
 builder.Services.AddScoped<IRepositoryFactory, RepositoryFactory>();
@@ -63,6 +61,7 @@ builder.Services.AddScoped<IDanhMucService, DanhMucService>();
 builder.Services.AddScoped<IDonHangService, DonHangService>();
 builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IDiaChiService, DiaChiService>();
 
 // Register Service Factory
 builder.Services.AddScoped<IServiceFactory, ServiceFactory>();

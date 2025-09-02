@@ -7,10 +7,12 @@ namespace Final_VS1.Services
     public class DonHangService : IDonHangService
     {
         private readonly IDonHangRepository _donHangRepository;
+        private readonly IDiaChiService _diaChiService;
 
-        public DonHangService(IDonHangRepository donHangRepository)
+        public DonHangService(IDonHangRepository donHangRepository, IDiaChiService diaChiService)
         {
             _donHangRepository = donHangRepository;
+            _diaChiService = diaChiService;
         }
 
         public async Task<List<DonHang>> GetAllOrdersAsync()
@@ -37,14 +39,8 @@ namespace Final_VS1.Services
                 throw new ArgumentException("Đơn hàng phải có ít nhất một sản phẩm", nameof(chiTietDonHangs));
 
             // Validate required fields
-            if (string.IsNullOrWhiteSpace(donHang.HoTenNguoiNhan))
-                throw new ArgumentException("Họ tên người nhận là bắt buộc", nameof(donHang.HoTenNguoiNhan));
-
-            if (string.IsNullOrWhiteSpace(donHang.SoDienThoai))
-                throw new ArgumentException("Số điện thoại là bắt buộc", nameof(donHang.SoDienThoai));
-
-            if (string.IsNullOrWhiteSpace(donHang.DiaChi))
-                throw new ArgumentException("Địa chỉ là bắt buộc", nameof(donHang.DiaChi));
+            if (donHang.IdDiaChi == null || donHang.IdDiaChi <= 0)
+                throw new ArgumentException("Địa chỉ giao hàng là bắt buộc", nameof(donHang.IdDiaChi));
 
             // Set default values
             donHang.NgayDat = DateTime.Now;
@@ -53,6 +49,28 @@ namespace Final_VS1.Services
 
             // Calculate total amount
             donHang.TongTien = chiTietDonHangs.Sum(ct => (ct.SoLuong ?? 0) * (ct.GiaLucDat ?? 0));
+
+            return await _donHangRepository.CreateOrderAsync(donHang, chiTietDonHangs);
+        }
+
+        public async Task<DonHang> CreateOrderWithAddressAsync(int userId, string hoTen, string soDienThoai, string diaChi, string? paymentMethod, List<ChiTietDonHang> chiTietDonHangs)
+        {
+            if (chiTietDonHangs == null || chiTietDonHangs.Count == 0)
+                throw new ArgumentException("Đơn hàng phải có ít nhất một sản phẩm", nameof(chiTietDonHangs));
+
+            // Create address first
+            var newAddress = await _diaChiService.CreateAddressFromOrderDataAsync(userId, hoTen, soDienThoai, diaChi);
+
+            // Create order
+            var donHang = new DonHang
+            {
+                IdTaiKhoan = userId,
+                IdDiaChi = newAddress.IdDiaChi,
+                NgayDat = DateTime.Now,
+                TrangThai = "Chờ xác nhận",
+                PhuongThucThanhToan = paymentMethod ?? "COD",
+                TongTien = chiTietDonHangs.Sum(ct => (ct.SoLuong ?? 0) * (ct.GiaLucDat ?? 0)) + 30000 // Add shipping fee
+            };
 
             return await _donHangRepository.CreateOrderAsync(donHang, chiTietDonHangs);
         }

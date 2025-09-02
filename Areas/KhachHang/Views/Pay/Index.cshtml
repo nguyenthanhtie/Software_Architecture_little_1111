@@ -42,6 +42,411 @@
             background: #2d3748 !important;
             border-color: #4a5568;
         }
+        
+        .saved-address-info {
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .saved-address-info:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.15);
+            transform: translateY(-1px);
+        }
+        
+        .form-check-input:checked ~ .form-check-label .saved-address-info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: #1976d2;
+            box-shadow: 0 4px 16px rgba(25,118,210,0.25);
+        }
+        
+        .address-selection {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .address-selection .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            font-size: 1.1em;
+        }
+        
+        .form-check {
+            margin-bottom: 12px;
+            padding: 0;
+        }
+        
+        .form-check-input {
+            margin-top: 0;
+            margin-right: 12px;
+        }
+        
+        .new-address-option {
+            padding: 12px 16px;
+            border: 2px dashed #6c757d;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .new-address-option:hover {
+            border-color: #007bff;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
+        }
+        
+        .form-check-input:checked ~ .form-check-label .new-address-option {
+            border-color: #007bff;
+            border-style: solid;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        }
+        
+        .address-form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-top: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 12px 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+        
+        .badge-default {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+        
+        [data-bs-theme="dark"] .saved-address-info {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            border-color: #4b5563;
+        }
+        
+        [data-bs-theme="dark"] .form-check-input:checked ~ .form-check-label .saved-address-info {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            border-color: #3b82f6;
+        }
+        
+        [data-bs-theme="dark"] .address-selection,
+        [data-bs-theme="dark"] .address-form {
+            background: #374151;
+            border-color: #4b5563;
+        }
+        
+        .complete-order-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 50%, #17a2b8 100%);
+            color: white;
+            border: none;
+            padding: 1.25rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(40, 167, 69, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .complete-order-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .complete-order-btn:hover::before {
+            left: 100%;
+        }
+
+        .complete-order-btn:hover {
+            background: linear-gradient(135deg, #218838 0%, #1e7e34 50%, #155724 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(40, 167, 69, 0.5);
+        }
+
+        .complete-order-btn:active {
+            transform: translateY(-1px) scale(1.01);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .order-summary {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .section-title i {
+            color: #007bff;
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .section-title span {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #2c3e50;
+        }
+        
+        .summary-details {
+            padding: 1rem 0;
+            border-top: 1px solid #e9ecef;
+            margin-top: 1rem;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+        
+        .summary-row:last-child {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #28a745;
+            padding-top: 0.75rem;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .address-form {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: top;
+        }
+        
+        .address-form.show {
+            animation: slideDown 0.4s ease;
+        }
+        
+        .address-form.hide {
+            animation: slideUp 0.3s ease;
+        }
+        
+        @@keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px) scaleY(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scaleY(1);
+            }
+        }
+        
+        @@keyframes slideUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scaleY(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20px) scaleY(0.8);
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+        
+        .form-control:focus + .form-label,
+        .form-control:focus ~ .form-label {
+            color: #007bff;
+        }
+        
+        .payment-container {
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        @@keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .order-summary {
+            animation: fadeInRight 0.6s ease 0.2s both;
+        }
+        
+        @@keyframes fadeInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .complete-order-btn:disabled {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .complete-order-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive design improvements */
+        @@media (max-width: 768px) {
+            .complete-order-btn {
+                font-size: 1.1rem;
+                padding: 1rem 1.5rem;
+                letter-spacing: 1px;
+            }
+            
+            .order-summary {
+                margin-top: 2rem;
+                position: static;
+            }
+            
+            .saved-address-info {
+                padding: 12px;
+            }
+            
+            .section-title span {
+                font-size: 1.1rem;
+            }
+            
+            .summary-row {
+                font-size: 1rem;
+            }
+            
+            .summary-row:last-child {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @@media (max-width: 576px) {
+            .complete-order-btn {
+                font-size: 1rem;
+                padding: 0.875rem 1.25rem;
+                letter-spacing: 0.5px;
+            }
+            
+            .address-selection,
+            .address-form {
+                padding: 15px;
+                margin-bottom: 1rem;
+            }
+            
+            .form-control {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Accessibility improvements */
+        .complete-order-btn:focus {
+            outline: 3px solid rgba(40, 167, 69, 0.5);
+            outline-offset: 2px;
+        }
+        
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+        
+        /* Dark mode support */
+        @@media (prefers-color-scheme: dark) {
+            .order-summary {
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+                color: #e2e8f0;
+            }
+            
+            .section-title span {
+                color: #e2e8f0;
+            }
+            
+            .summary-row:last-child {
+                color: #68d391;
+            }
+        }
     </style>
 }
 
@@ -56,27 +461,123 @@
             <!-- Order Confirmation -->
             <div class="modern-card">
                 <div class="section-title">
-                    <i class="fas fa-check-circle"></i>
+                   
                     <span>Xác Nhận Đơn Hàng</span>
                 </div>
                 <div class="order-confirmation-info">
                     <div class="confirmation-message">
                           
-        <div class="section-title">
-            <i class="fas fa-user"></i>
-            <span>Thông Tin Người Nhận</span>
+        <div class="section-title mb-4">
+            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+            <span>Thông Tin Giao Hàng</span>
         </div>
-        <div class="form-group mb-2">
-            <label for="receiverName" class="form-label">Tên người nhận</label>
-            <input type="text" id="receiverName" class="form-control" placeholder="Nhập tên người nhận" required>
+        
+        @{
+            var addressList = ViewBag.UserAddresses as List<Final_VS1.Data.DiaChi> ?? new List<Final_VS1.Data.DiaChi>();
+            var hasDefault = addressList.Any(a => a.MacDinh == true);
+        }
+        
+        <!-- Debug information -->
+        <div style="background: #f0f0f0; padding: 10px; margin-bottom: 15px; font-size: 12px;">
+            <strong>Debug Info:</strong><br>
+            - ViewBag.HasAddresses: @ViewBag.HasAddresses<br>
+            - Address Count: @addressList.Count<br>
+            - Has Default: @hasDefault<br>
+            @if (addressList.Any())
+            {
+                <br><strong>Addresses:</strong><br>
+                @foreach (var addr in addressList)
+                {
+                    <span>- ID: @addr.IdDiaChi, Name: @addr.HoTenNguoiNhan, Default: @addr.MacDinh</span><br>
+                }
+            }
         </div>
-        <div class="form-group mb-2">
-            <label for="receiverPhone" class="form-label">Số điện thoại</label>
-            <input type="text" id="receiverPhone" class="form-control" placeholder="Nhập số điện thoại" required>
-        </div>
-        <div class="form-group mb-2">
-            <label for="receiverAddress" class="form-label">Địa chỉ</label>
-            <input type="text" id="receiverAddress" class="form-control" placeholder="Nhập địa chỉ nhận hàng" required>
+        
+        @if (ViewBag.HasAddresses == true)
+        {
+            <!-- Address selection for users with saved addresses -->
+            <div class="address-selection">
+                <label class="form-label">
+                    <i class="fas fa-address-book text-info me-2"></i>
+                    Chọn địa chỉ giao hàng:
+                </label>
+                
+                @foreach (var address in addressList)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="addressOption" id="address_@address.IdDiaChi" value="@address.IdDiaChi" @(address.MacDinh == true ? "checked" : "") onchange="toggleAddressForm()">
+                        <label class="form-check-label w-100" for="address_@address.IdDiaChi">
+                            <div class="saved-address-info">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-bold text-dark mb-1">
+                                            <i class="fas fa-user me-2 text-primary"></i>
+                                            @address.HoTenNguoiNhan
+                                        </div>
+                                        <div class="text-muted small mb-1">
+                                            <i class="fas fa-phone me-2"></i>
+                                            @address.SoDienThoai
+                                        </div>
+                                        <div class="text-muted small">
+                                            <i class="fas fa-map-marker-alt me-2"></i>
+                                            @address.DiaChi1
+                                        </div>
+                                    </div>
+                                    @if (address.MacDinh == true)
+                                    {
+                                        <span class="badge-default">
+                                            <i class="fas fa-star me-1"></i>Mặc định
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                }
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="addressOption" id="useNewAddress" value="new" @(!hasDefault ? "checked" : "") onchange="toggleAddressForm()">
+                    <label class="form-check-label w-100" for="useNewAddress">
+                        <div class="new-address-option">
+                            <i class="fas fa-plus-circle text-primary me-2"></i>
+                            <strong>Sử dụng địa chỉ mới</strong>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        }
+        
+        <!-- Address form (shown for new users or when "new address" is selected) -->
+        <div id="addressForm" class="address-form @(ViewBag.HasAddresses == true && hasDefault ? "d-none" : "")">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="receiverName" class="form-label">
+                            <i class="fas fa-user text-primary me-2"></i>
+                            Tên người nhận
+                        </label>
+                        <input type="text" id="receiverName" class="form-control" placeholder="Nhập họ tên người nhận" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="receiverPhone" class="form-label">
+                            <i class="fas fa-phone text-success me-2"></i>
+                            Số điện thoại
+                        </label>
+                        <input type="text" id="receiverPhone" class="form-control" placeholder="Nhập số điện thoại" required>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="receiverAddress" class="form-label">
+                            <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                            Địa chỉ giao hàng
+                        </label>
+                        <input type="text" id="receiverAddress" class="form-control" placeholder="Nhập địa chỉ chi tiết (số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố)" required>
+                    </div>
+                </div>
+            </div>
         </div>
 
                     </div>
@@ -144,6 +645,70 @@
 
 <!-- Force reload JavaScript by adding timestamp -->
 <script>
+    // Function to toggle address form based on selection with smooth animation
+    function toggleAddressForm() {
+        const addressForm = document.getElementById('addressForm');
+        const useNewAddress = document.getElementById('useNewAddress');
+        
+        if (useNewAddress && useNewAddress.checked) {
+            // Show with enhanced animation
+            addressForm.classList.remove('d-none');
+            addressForm.classList.add('show');
+            addressForm.classList.remove('hide');
+            
+            // Focus on first input for better UX
+            setTimeout(() => {
+                const firstInput = addressForm.querySelector('input');
+                if (firstInput) firstInput.focus();
+            }, 200);
+        } else {
+            // Hide with enhanced animation
+            addressForm.classList.add('hide');
+            addressForm.classList.remove('show');
+            
+            setTimeout(() => {
+                addressForm.classList.add('d-none');
+                addressForm.classList.remove('hide');
+            }, 300);
+        }
+    }
+    
+    // Initialize page with smooth transitions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add transition styles to address form
+        const addressForm = document.getElementById('addressForm');
+        if (addressForm) {
+            addressForm.style.transition = 'all 0.3s ease';
+        }
+        
+        // Add hover effects to saved addresses
+        const savedAddresses = document.querySelectorAll('.saved-address-info');
+        savedAddresses.forEach(address => {
+            address.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            address.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+        
+        // Add loading animation to complete order button
+        const completeBtn = document.getElementById('completeOrderBtn');
+        if (completeBtn) {
+            completeBtn.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                const span = this.querySelector('span');
+                
+                if (icon && span) {
+                    icon.className = 'fas fa-spinner fa-spin';
+                    span.textContent = 'Đang xử lý...';
+                    this.disabled = true;
+                }
+            });
+        }
+    });
+    
     // Đặt flag để JavaScript biết trang đã được load
     window.pageLoaded = true;
     
@@ -189,51 +754,135 @@
     
     // Fallback processOrder function nếu thanhtoan.js chưa load
     function processOrder() {
-    // Lấy thông tin người nhận từ form
-    var hoTen = document.getElementById('receiverName').value;
-    var soDienThoai = document.getElementById('receiverPhone').value;
-    var diaChi = document.getElementById('receiverAddress').value;
+        // Thêm hiệu ứng loading
+        const completeBtn = document.getElementById('completeOrderBtn');
+        const originalText = completeBtn.innerHTML;
+        completeBtn.disabled = true;
+        completeBtn.classList.add('loading');
+        completeBtn.innerHTML = '<span style="opacity: 0;">Đang xử lý...</span>';
+        
+        // Get selected address option
+        const selectedAddressOption = document.querySelector('input[name="addressOption"]:checked');
+        let selectedAddressId = null;
+        let hoTen = '';
+        let soDienThoai = '';
+        let diaChi = '';
 
-    // Kiểm tra dữ liệu
-    if (!hoTen || !soDienThoai || !diaChi) {
-        alert('Vui lòng nhập đầy đủ thông tin người nhận!');
-        return;
-    }
-
-    // Lấy thông tin sản phẩm và các trường khác như PaymentMethod...
-    var orderItems = window.isBuyNow && window.buyNowData ? [window.buyNowData] : []; // hoặc lấy từ giỏ hàng
-
-    var data = {
-        HoTen: hoTen,
-        SoDienThoai: soDienThoai,
-        DiaChi: diaChi,
-        PaymentMethod: 'COD',
-        OrderItems: orderItems
-    };
-
-    // Gửi dữ liệu qua AJAX tới /KhachHang/Pay/ProcessOrder
-    fetch('@Url.Action("ProcessOrder", "Pay", new { area = "KhachHang" })', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            // Hiển thị modal thành công hoặc chuyển trang
-            document.getElementById('paymentSuccessModal').classList.remove('d-none');
-        } else {
-            alert(result.message || 'Đặt hàng thất bại!');
+        // Validate address selection
+        if (!selectedAddressOption) {
+            completeBtn.disabled = false;
+            completeBtn.classList.remove('loading');
+            completeBtn.innerHTML = originalText;
+            alert('Vui lòng chọn địa chỉ giao hàng!');
+            return;
         }
-    })
-    .catch(error => {
-        alert('Có lỗi xảy ra khi đặt hàng!');
-        console.error(error);
-    });
-}
+
+        if (selectedAddressOption) {
+            if (selectedAddressOption.value === 'new') {
+                // Using new address - get from form
+                hoTen = document.getElementById('receiverName').value;
+                soDienThoai = document.getElementById('receiverPhone').value;
+                diaChi = document.getElementById('receiverAddress').value;
+
+                // Validate new address data
+                if (!hoTen || !soDienThoai || !diaChi) {
+                    // Reset button state
+                    completeBtn.disabled = false;
+                    completeBtn.classList.remove('loading');
+                    completeBtn.innerHTML = originalText;
+                    alert('Vui lòng nhập đầy đủ thông tin người nhận!');
+                    return;
+                }
+            } else {
+                // Using existing address - get ID only
+                selectedAddressId = parseInt(selectedAddressOption.value);
+                // Set empty strings for address fields when using existing address
+                hoTen = '';
+                soDienThoai = '';
+                diaChi = '';
+            }
+        } else {
+            // Fallback for users without saved addresses
+            hoTen = document.getElementById('receiverName').value;
+            soDienThoai = document.getElementById('receiverPhone').value;
+            diaChi = document.getElementById('receiverAddress').value;
+
+            if (!hoTen || !soDienThoai || !diaChi) {
+                // Reset button state
+                completeBtn.disabled = false;
+                completeBtn.classList.remove('loading');
+                completeBtn.innerHTML = originalText;
+                alert('Vui lòng nhập đầy đủ thông tin người nhận!');
+                return;
+            }
+        }
+
+        // Lấy thông tin sản phẩm từ buyNow hoặc giỏ hàng
+        var orderItems = [];
+        
+        if (window.isBuyNow && window.buyNowData) {
+            // Chế độ mua ngay
+            orderItems = [window.buyNowData];
+            console.log('Using BuyNow data:', orderItems);
+        } else {
+            // Chế độ giỏ hàng - cần implement logic lấy từ giỏ hàng
+            // Tạm thời để trống, cần thêm logic lấy từ session hoặc localStorage
+            console.log('Cart mode - need to implement cart items retrieval');
+            
+            // Thông báo lỗi nếu không có sản phẩm
+            if (orderItems.length === 0) {
+                completeBtn.disabled = false;
+                completeBtn.classList.remove('loading');
+                completeBtn.innerHTML = originalText;
+                alert('Không có sản phẩm nào để đặt hàng. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.');
+                return;
+            }
+        }
+
+        var data = {
+            SelectedAddressId: selectedAddressId,
+            HoTen: hoTen,
+            SoDienThoai: soDienThoai,
+            DiaChi: diaChi,
+            PaymentMethod: 'COD',
+            OrderItems: orderItems
+        };
+
+        console.log('Sending order data:', data);
+
+        // Gửi dữ liệu qua AJAX tới /KhachHang/Pay/ProcessOrder
+        fetch('@Url.Action("ProcessOrder", "Pay", new { area = "KhachHang" })', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            // Reset button state
+            completeBtn.disabled = false;
+            completeBtn.classList.remove('loading');
+            completeBtn.innerHTML = originalText;
+            
+            if (result.success) {
+                // Hiển thị modal thành công hoặc chuyển trang
+                document.getElementById('paymentSuccessModal').classList.remove('d-none');
+            } else {
+                alert(result.message || 'Đặt hàng thất bại!');
+            }
+        })
+        .catch(error => {
+            // Reset button state on error
+            completeBtn.disabled = false;
+            completeBtn.classList.remove('loading');
+            completeBtn.innerHTML = originalText;
+            
+            alert('Có lỗi xảy ra khi đặt hàng!');
+            console.error(error);
+        });
+    }
     // Xử lý dữ liệu "mua ngay" từ server
     @if (ViewBag.IsBuyNow != null && (bool)ViewBag.IsBuyNow)
     {
@@ -391,4 +1040,5 @@
 @section Scripts {
     <script src="~/js/KhachHang/thanhtoan.js" asp-append-version="true"></script>
 }
+
 

@@ -9,5 +9,6 @@ namespace Final_VS1.Services
         IDanhMucService CreateDanhMucService();
         IDonHangService CreateDonHangService();
         IEmailService CreateEmailService();
+        IDiaChiService CreateDiaChiService();
     }
 }

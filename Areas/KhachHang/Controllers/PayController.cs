@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Final_VS1.Data;
 using Final_VS1.Repositories;
+using Final_VS1.Services;
 using System.Security.Claims;
 
 namespace Final_VS1.Areas.KhachHang.Controllers
@@ -11,16 +12,34 @@ namespace Final_VS1.Areas.KhachHang.Controllers
     public class PayController : Controller
     {
         private readonly ISanPhamRepository _sanPhamRepo;
-        private readonly IDonHangRepository _donHangRepo;
+        private readonly IDonHangService _donHangService;
+        private readonly IDiaChiService _diaChiService;
 
-        public PayController(ISanPhamRepository sanPhamRepo, IDonHangRepository donHangRepo)
+        public PayController(ISanPhamRepository sanPhamRepo, IDonHangService donHangService, IDiaChiService diaChiService)
         {
             _sanPhamRepo = sanPhamRepo;
-            _donHangRepo = donHangRepo;
+            _donHangService = donHangService;
+            _diaChiService = diaChiService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "DangNhap");
+            }
+
+            // Load user's addresses
+            var userAddresses = await _diaChiService.GetAddressesByUserAsync(userId.Value);
+            Console.WriteLine($"PayController: Found {userAddresses.Count} addresses for user {userId.Value}");
+            foreach (var addr in userAddresses)
+            {
+                Console.WriteLine($"- Address ID: {addr.IdDiaChi}, Name: {addr.HoTenNguoiNhan}, Default: {addr.MacDinh}");
+            }
+            ViewBag.UserAddresses = userAddresses;
+            ViewBag.HasAddresses = userAddresses.Any();
+
             if (TempData["BuyNowItem"] != null)
             {
                 try
@@ -80,15 +99,38 @@ namespace Final_VS1.Areas.KhachHang.Controllers
                     return Json(new { success = false, message = "Chưa đăng nhập" });
                 }
                 Console.WriteLine($"User ID: {userId}");
+                Console.WriteLine($"SelectedAddressId: {request.SelectedAddressId}");
+                Console.WriteLine($"HoTen: '{request.HoTen}'");
+                Console.WriteLine($"SoDienThoai: '{request.SoDienThoai}'");
+                Console.WriteLine($"DiaChi: '{request.DiaChi}'");
 
-                if (string.IsNullOrWhiteSpace(request.HoTen))
-                    return Json(new { success = false, message = "Vui lòng nhập họ tên người nhận" });
+                // Check if user selected an existing address or wants to use new address info
+                bool usingExistingAddress = request.SelectedAddressId.HasValue && request.SelectedAddressId > 0;
+                
+                if (usingExistingAddress)
+                {
+                    // Using existing address - validate that address exists and belongs to user
+                    var selectedAddress = await _diaChiService.GetAddressByIdAsync(request.SelectedAddressId.Value);
+                    if (selectedAddress == null || selectedAddress.IdTaiKhoan != userId.Value)
+                    {
+                        return Json(new { success = false, message = "Địa chỉ được chọn không hợp lệ" });
+                    }
+                    Console.WriteLine($"Using existing address ID: {request.SelectedAddressId.Value}");
+                }
+                else
+                {
+                    // Using new address - validate all required fields
+                    if (string.IsNullOrWhiteSpace(request.HoTen))
+                        return Json(new { success = false, message = "Vui lòng nhập họ tên người nhận" });
 
-                if (string.IsNullOrWhiteSpace(request.SoDienThoai))
-                    return Json(new { success = false, message = "Vui lòng nhập số điện thoại người nhận" });
+                    if (string.IsNullOrWhiteSpace(request.SoDienThoai))
+                        return Json(new { success = false, message = "Vui lòng nhập số điện thoại người nhận" });
 
-                if (string.IsNullOrWhiteSpace(request.DiaChi))
-                    return Json(new { success = false, message = "Vui lòng nhập địa chỉ người nhận" });
+                    if (string.IsNullOrWhiteSpace(request.DiaChi))
+                        return Json(new { success = false, message = "Vui lòng nhập địa chỉ người nhận" });
+                    
+                    Console.WriteLine("Using new address from form data");
+                }
 
                 if (request.OrderItems == null || !request.OrderItems.Any())
                     return Json(new { success = false, message = "Không có sản phẩm nào để đặt hàng" });
@@ -118,18 +160,6 @@ namespace Final_VS1.Areas.KhachHang.Controllers
 
                 Console.WriteLine($"Total amount calculated: {totalAmount}");
 
-                var donHang = new DonHang
-                {
-                    IdTaiKhoan = userId,
-                    NgayDat = DateTime.Now,
-                    TrangThai = "Chờ xác nhận",
-                    PhuongThucThanhToan = request.PaymentMethod ?? "COD",
-                    TongTien = totalAmount + 30000,
-                    HoTenNguoiNhan = request.HoTen.Trim(),
-                    SoDienThoai = request.SoDienThoai.Trim(),
-                    DiaChi = request.DiaChi.Trim()
-                };
-
                 var chiTietDonHangs = new List<ChiTietDonHang>();
                 foreach (var item in validatedItems)
                 {
@@ -148,7 +178,43 @@ namespace Final_VS1.Areas.KhachHang.Controllers
                     Console.WriteLine($"Updated stock for {item.Product.TenSanPham}: New stock = {newStock}");
                 }
 
-                var createdOrder = await _donHangRepo.CreateOrderAsync(donHang, chiTietDonHangs);
+                DonHang createdOrder;
+                
+                // Check if using existing address or creating new one
+                if (usingExistingAddress)
+                {
+                    // Use existing address (already validated above)
+                    Console.WriteLine($"Creating order with existing address ID: {request.SelectedAddressId!.Value}");
+                    
+                    // Set as default address
+                    await _diaChiService.SetDefaultAddressAsync(request.SelectedAddressId!.Value, userId.Value);
+
+                    // Create order with existing address
+                    var donHang = new DonHang
+                    {
+                        IdTaiKhoan = userId.Value,
+                        IdDiaChi = request.SelectedAddressId.Value,
+                        NgayDat = DateTime.Now,
+                        TrangThai = "Chờ xác nhận",
+                        PhuongThucThanhToan = request.PaymentMethod ?? "COD",
+                        TongTien = totalAmount + 30000 // Add shipping fee
+                    };
+
+                    createdOrder = await _donHangService.CreateOrderAsync(donHang, chiTietDonHangs);
+                }
+                else
+                {
+                    // Create order with new address (already validated above)
+                    Console.WriteLine($"Creating order with new address for: {request.HoTen}");
+                    createdOrder = await _donHangService.CreateOrderWithAddressAsync(
+                        userId.Value,
+                        request.HoTen!.Trim(),
+                        request.SoDienThoai!.Trim(),
+                        request.DiaChi!.Trim(),
+                        request.PaymentMethod,
+                        chiTietDonHangs
+                    );
+                }
 
                 Console.WriteLine("=== ORDER PROCESSED SUCCESSFULLY ===");
 
@@ -175,10 +241,17 @@ namespace Final_VS1.Areas.KhachHang.Controllers
             if (User.Identity?.IsAuthenticated == true)
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                Console.WriteLine($"PayController GetCurrentUserId: UserIdClaim = {userIdClaim}");
                 if (int.TryParse(userIdClaim, out int userId))
                 {
+                    Console.WriteLine($"PayController GetCurrentUserId: Parsed UserId = {userId}");
                     return userId;
                 }
+                Console.WriteLine("PayController GetCurrentUserId: Failed to parse UserId");
+            }
+            else
+            {
+                Console.WriteLine("PayController GetCurrentUserId: User not authenticated");
             }
             return null;
         }
@@ -187,6 +260,7 @@ namespace Final_VS1.Areas.KhachHang.Controllers
         {
             public string? PaymentMethod { get; set; }
             public decimal TotalAmount { get; set; }
+            public int? SelectedAddressId { get; set; }
             public string? HoTen { get; set; }
             public string? SoDienThoai { get; set; }
             public string? DiaChi { get; set; }

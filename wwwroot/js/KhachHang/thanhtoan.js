@@ -591,30 +591,59 @@ async function processOrder() {
   try {
     console.log("=== STARTING PROCESS ORDER ===");
 
-    const hoTen = document.getElementById("receiverName")?.value?.trim();
-    const soDienThoai = document.getElementById("receiverPhone")?.value?.trim();
-    const diaChi = document.getElementById("receiverAddress")?.value?.trim();
+    // Check if user selected an existing address or wants to use new address
+    const selectedAddressOption = document.querySelector('input[name="addressOption"]:checked');
+    let selectedAddressId = null;
+    let hoTen = '';
+    let soDienThoai = '';
+    let diaChi = '';
 
-    console.log("Form data:", { hoTen, soDienThoai, diaChi });
-
-    // Validation
-    if (!hoTen || !soDienThoai || !diaChi) {
+    // Validate address selection
+    if (!selectedAddressOption) {
       showAlertModal(
         "Thiếu thông tin",
-        "Vui lòng nhập đầy đủ thông tin người nhận!",
+        "Vui lòng chọn địa chỉ giao hàng!",
         "fas fa-exclamation-triangle"
       );
       return;
     }
 
-    // Validate phone number
-    if (!/^[0-9]{10,11}$/.test(soDienThoai)) {
-      showAlertModal(
-        "Lỗi",
-        "Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.",
-        "fas fa-exclamation-triangle"
-      );
-      return;
+    if (selectedAddressOption.value === 'new') {
+      // Using new address - get from form
+      hoTen = document.getElementById("receiverName")?.value?.trim() || '';
+      soDienThoai = document.getElementById("receiverPhone")?.value?.trim() || '';
+      diaChi = document.getElementById("receiverAddress")?.value?.trim() || '';
+
+      console.log("Using new address - Form data:", { hoTen, soDienThoai, diaChi });
+
+      // Validate new address data
+      if (!hoTen || !soDienThoai || !diaChi) {
+        showAlertModal(
+          "Thiếu thông tin",
+          "Vui lòng nhập đầy đủ thông tin người nhận!",
+          "fas fa-exclamation-triangle"
+        );
+        return;
+      }
+
+      // Validate phone number
+      if (!/^[0-9]{10,11}$/.test(soDienThoai)) {
+        showAlertModal(
+          "Lỗi",
+          "Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.",
+          "fas fa-exclamation-triangle"
+        );
+        return;
+      }
+    } else {
+      // Using existing address - get ID only
+      selectedAddressId = parseInt(selectedAddressOption.value);
+      console.log("Using existing address ID:", selectedAddressId);
+      
+      // Set empty strings for address fields when using existing address
+      hoTen = '';
+      soDienThoai = '';
+      diaChi = '';
     }
 
     const paymentMethod =
@@ -654,15 +683,13 @@ async function processOrder() {
     });
 
     const requestData = {
+      SelectedAddressId: selectedAddressId,
       PaymentMethod: paymentMethod,
       HoTen: hoTen,
       SoDienThoai: soDienThoai,
       DiaChi: diaChi,
       OrderItems: orderItemsForServer,
     };
-
-    console.log("=== SENDING ORDER DATA ===");
-    console.log(JSON.stringify(requestData, null, 2));
 
     const response = await fetch("/KhachHang/Pay/ProcessOrder", {
       method: "POST",
