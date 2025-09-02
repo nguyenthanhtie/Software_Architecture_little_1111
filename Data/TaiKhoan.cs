@@ -25,5 +25,7 @@ public partial class TaiKhoan
 
     public DateTime? NgayTao { get; set; }
 
+    public virtual ICollection<DiaChi> DiaChis { get; set; } = new List<DiaChi>();
+
     public virtual ICollection<DonHang> DonHangs { get; set; } = new List<DonHang>();
 }

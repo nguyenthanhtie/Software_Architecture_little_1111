@@ -8,5 +8,6 @@ namespace Final_VS1.Repositories
         ISanPhamRepository CreateSanPhamRepository();
         IDanhMucRepository CreateDanhMucRepository();
         IDonHangRepository CreateDonHangRepository();
+        IDiaChiRepository CreateDiaChiRepository();
     }
 }

@@ -128,11 +128,15 @@
                                                     <div class="col-md-6">
                                                         <small class="text-muted">
                                                             <i class="bi bi-person me-1"></i>
-                                                            Người nhận: @order.HoTenNguoiNhan
+                                                            Người nhận: @order.IdDiaChiNavigation?.HoTenNguoiNhan
                                                         </small><br />
                                                         <small class="text-muted">
                                                             <i class="bi bi-telephone me-1"></i>
-                                                            SĐT: @order.SoDienThoai
+                                                            SĐT: @order.IdDiaChiNavigation?.SoDienThoai
+                                                        </small><br />
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-geo-alt me-1"></i>
+                                                            Địa chỉ: @order.IdDiaChiNavigation?.DiaChi1
                                                         </small>
                                                     </div>
                                                     <div class="col-md-6 text-md-end">

@@ -101,6 +101,9 @@
                                     <span id="headerProfileName">@(User?.Identity?.Name ?? "Tài khoản")</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" asp-area="KhachHang" asp-controller="DiaChi" asp-action="Index">
+                                        <i class="bi bi-bag-check me-2"></i>Địa chỉ của tôi</a>
+                                    </li>
                                     <li><a class="dropdown-item" asp-area="KhachHang" asp-controller="DonHang" asp-action="Index">
                                         <i class="bi bi-bag-check me-2"></i>Đơn hàng của tôi</a>
                                     </li>

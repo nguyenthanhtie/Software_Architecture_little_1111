@@ -1,0 +1,262 @@
+@model Final_VS1.Areas.KhachHang.ViewModels.DiaChiCreateViewModel
+@{
+    ViewData["Title"] = "Thêm địa chỉ mới";
+    Layout = "~/Areas/KhachHang/Views/Shared/_Layout_KhachHang.cshtml";
+}
+
+<style>
+    .create-address-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1.5rem 1rem;
+    }
+
+    .page-header {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .form-container {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+    }
+
+    .form-label i {
+        margin-right: 0.5rem;
+        color: #6c757d;
+        width: 16px;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: border-color 0.2s ease;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .form-check-container {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 1rem;
+        border: 1px solid #e9ecef;
+        margin-top: 0.5rem;
+    }
+
+    .form-check-container:hover {
+        background: #e9ecef;
+    }
+
+    .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: #495057;
+        margin-left: 0.5rem;
+    }
+
+    .btn-container {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: space-between;
+    }
+
+    .btn-action {
+        padding: 0.75rem 2rem;
+        border-radius: 6px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.95rem;
+        min-width: 120px;
+        justify-content: center;
+    }
+
+    .btn-action i {
+        margin-right: 0.5rem;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #545b62;
+        color: white;
+    }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .validation-error i {
+        margin-right: 0.3rem;
+        font-size: 0.8rem;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .demo-notice {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .demo-notice i {
+        color: #856404;
+        margin-right: 0.5rem;
+    }
+
+    .demo-notice span {
+        color: #856404;
+        font-weight: 500;
+    }
+
+    @@media (max-width: 768px) {
+        .create-address-container {
+            padding: 1rem 0.5rem;
+        }
+
+        .form-container {
+            padding: 1.5rem 1rem;
+        }
+
+        .btn-container {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="create-address-container">
+    <div class="page-header">
+        <h1><i class="fas fa-plus-circle"></i> Thêm địa chỉ mới</h1>
+    </div>
+
+    <div class="demo-notice">
+        <i class="fas fa-info-circle"></i>
+        <span>Demo: Giao diện thêm địa chỉ - chưa có chức năng thực tế</span>
+    </div>
+
+    <div class="form-container">
+        @using (Html.BeginForm("Create", "DiaChi", FormMethod.Post, new { @area = "KhachHang" }))
+        {
+            @Html.AntiForgeryToken()
+            
+            <div class="form-group">
+                <label class="form-label" for="HoTen">
+                    <i class="fas fa-user"></i>
+                    @Html.DisplayNameFor(model => model.HoTen)
+                </label>
+                @Html.TextBoxFor(model => model.HoTen, new { @class = "form-control", placeholder = "Nhập họ tên người nhận" })
+                @Html.ValidationMessageFor(model => model.HoTen, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="SoDienThoai">
+                    <i class="fas fa-phone"></i>
+                    @Html.DisplayNameFor(model => model.SoDienThoai)
+                </label>
+                @Html.TextBoxFor(model => model.SoDienThoai, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
+                @Html.ValidationMessageFor(model => model.SoDienThoai, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="DiaChi1">
+                    <i class="fas fa-map-marker-alt"></i>
+                    @Html.DisplayNameFor(model => model.DiaChi1)
+                </label>
+                @Html.TextAreaFor(model => model.DiaChi1, new { @class = "form-control", rows = "3", placeholder = "Nhập địa chỉ chi tiết" })
+                @Html.ValidationMessageFor(model => model.DiaChi1, "", new { @class = "validation-error" })
+            </div>
+
+            <div class="form-group">
+                <div class="form-check-container">
+                    @Html.CheckBoxFor(model => model.LaMacDinh, new { @class = "form-check-input" })
+                    <label class="form-check-label" for="LaMacDinh">
+                        <i class="fas fa-star"></i>
+                        @Html.DisplayNameFor(model => model.LaMacDinh)
+                    </label>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <a href="@Url.Action("Index", "DiaChi", new { area = "KhachHang" })" class="btn-action btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Quay lại
+                </a>
+                <button type="submit" class="btn-action btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Thêm địa chỉ
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

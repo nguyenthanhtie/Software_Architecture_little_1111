@@ -35,5 +35,10 @@ namespace Final_VS1.Services
         {
             return _serviceProvider.GetRequiredService<IEmailService>();
         }
+
+        public IDiaChiService CreateDiaChiService()
+        {
+            return _serviceProvider.GetRequiredService<IDiaChiService>();
+        }
     }
 }
