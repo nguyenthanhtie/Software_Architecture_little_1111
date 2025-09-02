@@ -477,22 +477,6 @@
             var hasDefault = addressList.Any(a => a.MacDinh == true);
         }
         
-        <!-- Debug information -->
-        <div style="background: #f0f0f0; padding: 10px; margin-bottom: 15px; font-size: 12px;">
-            <strong>Debug Info:</strong><br>
-            - ViewBag.HasAddresses: @ViewBag.HasAddresses<br>
-            - Address Count: @addressList.Count<br>
-            - Has Default: @hasDefault<br>
-            @if (addressList.Any())
-            {
-                <br><strong>Addresses:</strong><br>
-                @foreach (var addr in addressList)
-                {
-                    <span>- ID: @addr.IdDiaChi, Name: @addr.HoTenNguoiNhan, Default: @addr.MacDinh</span><br>
-                }
-            }
-        </div>
-        
         @if (ViewBag.HasAddresses == true)
         {
             <!-- Address selection for users with saved addresses -->

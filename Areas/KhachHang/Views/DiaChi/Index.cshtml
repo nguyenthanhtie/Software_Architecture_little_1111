@@ -5,32 +5,16 @@
 }
 
 <style>
-    .address-management-container {
-        max-width: 1000px;
+    .main-container {
+        max-width: 2300px;
         margin: 0 auto;
-        padding: 1.5rem 1rem;
+        padding: 20px 15px;
     }
-
-    .page-header {
+    
+    .address-management-container {
         background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-
-    .page-header h1 {
-        margin: 0;
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #495057;
-    }
-
-    .page-header .subtitle {
-        margin-top: 0.5rem;
-        font-size: 1rem;
-        color: #6c757d;
+        min-height: calc(100vh - 200px);
+        padding: 20px 0;
     }
 
     .add-address-btn {
@@ -45,7 +29,6 @@
         display: inline-flex;
         align-items: center;
         transition: background-color 0.2s ease;
-        margin-bottom: 1.5rem;
     }
 
     .add-address-btn:hover {
@@ -73,15 +56,25 @@
     }
 
     .address-card.default {
-        border-color: #28a745;
+       
         background: #f8fff9;
+    }
+
+    [data-bs-theme="dark"] .address-card {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+
+    [data-bs-theme="dark"] .address-card.default {
+        background: #2f4f3f;
+        border-color: #28a745;
     }
 
     .default-badge {
         position: absolute;
         top: 1rem;
         right: 1rem;
-        background: #28a745;
+       
         color: white;
         padding: 0.2rem 0.6rem;
         border-radius: 12px;
@@ -144,16 +137,6 @@
         font-size: 0.8rem;
     }
 
-    .btn-edit {
-        background: #007bff;
-        color: white;
-    }
-
-    .btn-edit:hover {
-        background: #0056b3;
-        color: white;
-    }
-
     .btn-default {
         background: #ffc107;
         color: #212529;
@@ -182,6 +165,11 @@
         border: 1px solid #dee2e6;
     }
 
+    [data-bs-theme="dark"] .empty-state {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+
     .empty-state i {
         font-size: 3rem;
         color: #adb5bd;
@@ -195,23 +183,23 @@
         font-weight: 600;
     }
 
+    [data-bs-theme="dark"] .empty-state h3 {
+        color: #e2e8f0;
+    }
+
     .empty-state p {
         color: #6c757d;
         margin-bottom: 1.5rem;
         font-size: 0.95rem;
     }
 
+    [data-bs-theme="dark"] .empty-state p {
+        color: #a0aec0;
+    }
+
     @@media (max-width: 768px) {
-        .address-management-container {
+        .main-container {
             padding: 1rem 0.5rem;
-        }
-
-        .page-header {
-            padding: 1rem;
-        }
-
-        .page-header h1 {
-            font-size: 1.5rem;
         }
 
         .address-card {
@@ -251,11 +239,21 @@
         border: 1px solid #dee2e6;
     }
 
+    [data-bs-theme="dark"] .address-modal .modal-content {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+
     .address-modal .modal-header {
         background: #f8f9fa;
         border-bottom: 1px solid #dee2e6;
         border-radius: 8px 8px 0 0;
         padding: 1rem 1.5rem;
+    }
+
+    [data-bs-theme="dark"] .address-modal .modal-header {
+        background: #1a202c;
+        border-bottom-color: #4a5568;
     }
 
     .address-modal .modal-title {
@@ -397,91 +395,103 @@
 </style>
 
 <div class="address-management-container">
-    <div class="page-header">
-        <h1><i class="fas fa-map-marker-alt me-2"></i>Quản lý địa chỉ</h1>
-        <p class="subtitle">Quản lý các địa chỉ giao hàng của bạn</p>
-    </div>
+    <div class="main-container">
+        <div class="row justify-content-center">
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i>
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>
-            @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
-    <a href="javascript:void(0)" onclick="openCreateModal()" class="add-address-btn">
-        <i class="fas fa-plus"></i>
-        Thêm địa chỉ mới
-    </a>
-
-    @if (Model.DiaChiList != null && Model.DiaChiList.Any())
-    {
-        @foreach (var diaChi in Model.DiaChiList)
-        {
-            <div class="address-card @(diaChi.MacDinh == true ? "default" : "")">
-                @if (diaChi.MacDinh == true)
-                {
-                    <div class="default-badge">
-                        Mặc định
+            <!-- Main Content -->
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="p-4">
+                <div class="card h-100 position-relative">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="fas fa-map-marker-alt me-2"></i>Quản lý địa chỉ</h5>
                     </div>
-                }
+                    <div class="card-body">
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                @TempData["SuccessMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
 
-                <div class="address-info">
-                    <h5>@(diaChi.HoTenNguoiNhan ?? "Chưa có tên")</h5>
-                    
-                    <div class="address-detail">
-                        <i class="fas fa-phone"></i>
-                        <span>@diaChi.SoDienThoai</span>
-                    </div>
-                    
-                    <div class="address-detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>@diaChi.DiaChi1</span>
-                    </div>
-                </div>
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                @TempData["ErrorMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
 
-                <div class="address-actions">
-                   
-                    
-                    @if (diaChi.MacDinh != true)
-                    {
-                        <button type="button" class="btn-action btn-default" onclick="setDefault(@diaChi.IdDiaChi)">
-                            <i class="fas fa-star"></i>
-                            Mặc định
-                        </button>
-                    }
-                    
-                    <button type="button" class="btn-action btn-delete" onclick="deleteAddress(@diaChi.IdDiaChi)">
-                        <i class="fas fa-trash"></i>
-                        Xóa
-                    </button>
+                        <div class="mb-4">
+                            <a href="javascript:void(0)" onclick="openCreateModal()" class="add-address-btn">
+                                <i class="fas fa-plus"></i>
+                                Thêm địa chỉ mới
+                            </a>
+                        </div>
+
+                        @if (Model.DiaChiList != null && Model.DiaChiList.Any())
+                        {
+                            @foreach (var diaChi in Model.DiaChiList)
+                            {
+                                <div class="address-card @(diaChi.MacDinh == true ? "default" : "")">
+                                    @if (diaChi.MacDinh == true)
+                                    {
+                                        <div style="background: #28a745; border: 2px solid #218838;">
+                                            Mặc định
+                                        </div>
+                                    }
+
+                                    <div class="address-info">
+                                        <h5>@(diaChi.HoTenNguoiNhan ?? "Chưa có tên")</h5>
+                                        
+                                        <div class="address-detail">
+                                            <i class="fas fa-phone"></i>
+                                            <span>@diaChi.SoDienThoai</span>
+                                        </div>
+                                        
+                                        <div class="address-detail">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            <span>@diaChi.DiaChi1</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="address-actions">
+                                        @if (diaChi.MacDinh != true)
+                                        {
+                                            <button type="button" class="btn-action btn-default" onclick="setDefault(@diaChi.IdDiaChi)">
+                                                <i class="fas fa-star"></i>
+                                                Mặc định
+                                            </button>
+                                        }
+                                        
+                                        <button type="button" class="btn-action btn-delete" onclick="deleteAddress(@diaChi.IdDiaChi)">
+                                            <i class="fas fa-trash"></i>
+                                            Xóa
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="empty-state">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <h3>Chưa có địa chỉ nào</h3>
+                                <p>Hãy thêm địa chỉ đầu tiên để thuận tiện cho việc đặt hàng.</p>
+                                <a href="javascript:void(0)" onclick="openCreateModal()" class="add-address-btn">
+                                    <i class="fas fa-plus"></i>
+                                    Thêm địa chỉ đầu tiên
+                                </a>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-        }
-    }
-    else
-    {
-        <div class="empty-state">
-            <i class="fas fa-map-marker-alt"></i>
-            <h3>Chưa có địa chỉ nào</h3>
-            <p>Hãy thêm địa chỉ đầu tiên để thuận tiện cho việc đặt hàng.</p>
-            <a href="javascript:void(0)" onclick="openCreateModal()" class="add-address-btn">
-                <i class="fas fa-plus"></i>
-                Thêm địa chỉ đầu tiên
-            </a>
+            </div>
         </div>
-    }
+    </div>
 </div>
 
 <!-- Create Address Modal -->
@@ -563,105 +573,9 @@
     </div>
 </div>
 
-<!-- Edit Address Modal -->
-<div class="modal fade address-modal" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editAddressModalLabel">
-                    <i class="fas fa-edit"></i>
-                    Chỉnh sửa địa chỉ
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="address-id-info mb-3">
-                    <div style="font-weight: 600; color: #6c757d; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">
-                        Mã địa chỉ
-                    </div>
-                    <div style="font-weight: 700; color: #2c3e50; font-size: 1.1rem;" id="editAddressId">
-                        #--
-                    </div>
-                </div>
-
-                <form id="editAddressForm">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" id="editIdDiaChi" name="IdDiaChi" />
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-user"></i>
-                            Họ tên
-                        </label>
-                        <input type="text" id="editHoTen" name="HoTen" class="form-control" 
-                               placeholder="Nhập họ tên người nhận" required />
-                        <div class="validation-error" id="editHoTenError" style="display: none;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <span></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-phone"></i>
-                            Số điện thoại
-                        </label>
-                        <input type="tel" id="editSoDienThoai" name="SoDienThoai" class="form-control" 
-                               placeholder="Nhập số điện thoại" required />
-                        <div class="validation-error" id="editSoDienThoaiError" style="display: none;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <span></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Địa chỉ
-                        </label>
-                        <textarea id="editDiaChi1" name="DiaChi1" class="form-control" rows="3" 
-                                  placeholder="Nhập địa chỉ chi tiết (số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố)" required></textarea>
-                        <div class="validation-error" id="editDiaChi1Error" style="display: none;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <span></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="form-check">
-                            <input type="checkbox" id="editLaMacDinh" name="LaMacDinh" class="form-check-input" />
-                            <label for="editLaMacDinh" class="form-check-label">
-                                <i class="fas fa-star"></i>
-                                Đặt làm địa chỉ mặc định
-                            </label>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="modal-btn modal-btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-arrow-left"></i>
-                    Đóng
-                </button>
-                <button type="button" class="modal-btn modal-btn-danger" onclick="deleteAddressFromModal()">
-                    <i class="fas fa-trash"></i>
-                    Xóa
-                </button>
-                <button type="button" class="modal-btn modal-btn-primary" onclick="submitEditForm()">
-                    <i class="fas fa-save"></i>
-                    Cập nhật
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @Html.AntiForgeryToken()
 
 <script>
-// Global variables
-let currentEditingId = null;
-
 // Open Create Modal
 function openCreateModal() {
     clearCreateForm();
@@ -672,49 +586,6 @@ function openCreateModal() {
     setTimeout(() => {
         document.getElementById('createHoTen').focus();
     }, 300);
-}
-
-// Open Edit Modal
-function openEditModal(addressId) {
-    currentEditingId = addressId;
-    
-    // Fetch address data
-    fetch(`@Url.Action("GetAddressData", "DiaChi", new { area = "KhachHang" })?id=${addressId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(result => {
-            if (result.success) {
-                const data = result.data;
-                
-                // Populate edit modal
-                document.getElementById('editIdDiaChi').value = data.IdDiaChi;
-                document.getElementById('editAddressId').textContent = `#${data.IdDiaChi}`;
-                document.getElementById('editHoTen').value = data.HoTen;
-                document.getElementById('editSoDienThoai').value = data.SoDienThoai;
-                document.getElementById('editDiaChi1').value = data.DiaChi1;
-                document.getElementById('editLaMacDinh').checked = data.LaMacDinh;
-                
-                clearEditValidation();
-                
-                const modal = new bootstrap.Modal(document.getElementById('editAddressModal'));
-                modal.show();
-                
-                // Auto focus on first input
-                setTimeout(() => {
-                    document.getElementById('editHoTen').focus();
-                }, 300);
-            } else {
-                showToast(result.message || 'Có lỗi xảy ra khi tải thông tin địa chỉ.', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra khi tải thông tin địa chỉ!');
-        });
 }
 
 // Submit Create Form
@@ -795,94 +666,6 @@ function submitCreateForm() {
     });
 }
 
-// Submit Edit Form
-function submitEditForm() {
-    clearEditValidation();
-    
-    const formData = {
-        IdDiaChi: parseInt(document.getElementById('editIdDiaChi').value),
-        HoTen: document.getElementById('editHoTen').value.trim(),
-        SoDienThoai: document.getElementById('editSoDienThoai').value.trim(),
-        DiaChi1: document.getElementById('editDiaChi1').value.trim(),
-        LaMacDinh: document.getElementById('editLaMacDinh').checked
-    };
-    
-    // Client-side validation
-    let hasErrors = false;
-    
-    if (!formData.HoTen) {
-        showEditError('HoTen', 'Vui lòng nhập họ tên');
-        hasErrors = true;
-    }
-    
-    if (!formData.SoDienThoai) {
-        showEditError('SoDienThoai', 'Vui lòng nhập số điện thoại');
-        hasErrors = true;
-    } else if (!/^[0-9+\-\s()]{10,15}$/.test(formData.SoDienThoai)) {
-        showEditError('SoDienThoai', 'Số điện thoại không hợp lệ');
-        hasErrors = true;
-    }
-    
-    if (!formData.DiaChi1) {
-        showEditError('DiaChi1', 'Vui lòng nhập địa chỉ');
-        hasErrors = true;
-    }
-    
-    if (hasErrors) return;
-    
-    // Show loading
-    const submitBtn = document.querySelector('#editAddressModal .modal-btn-primary');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang cập nhật...';
-    
-    // Submit to server
-    const formDataToSend = new FormData();
-    formDataToSend.append('IdDiaChi', formData.IdDiaChi);
-    formDataToSend.append('HoTen', formData.HoTen);
-    formDataToSend.append('SoDienThoai', formData.SoDienThoai);
-    formDataToSend.append('DiaChi1', formData.DiaChi1);
-    formDataToSend.append('LaMacDinh', formData.LaMacDinh);
-    formDataToSend.append('__RequestVerificationToken', document.querySelector('input[name="__RequestVerificationToken"]').value);
-
-    fetch('@Url.Action("EditAjax", "DiaChi", new { area = "KhachHang" })', {
-        method: 'POST',
-        body: formDataToSend
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            bootstrap.Modal.getInstance(document.getElementById('editAddressModal')).hide();
-            location.reload(); // Refresh page to show updated address
-        } else {
-            if (result.errors) {
-                Object.keys(result.errors).forEach(field => {
-                    showEditError(field, result.errors[field][0]);
-                });
-            } else {
-                alert(result.message || 'Có lỗi xảy ra khi cập nhật địa chỉ!');
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra khi cập nhật địa chỉ!');
-    })
-    .finally(() => {
-        // Reset button
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    });
-}
-
-// Delete from modal
-function deleteAddressFromModal() {
-    if (currentEditingId && confirm('Bạn có chắc muốn xóa địa chỉ này? Hành động này không thể hoàn tác.')) {
-        deleteAddress(currentEditingId);
-        bootstrap.Modal.getInstance(document.getElementById('editAddressModal')).hide();
-    }
-}
-
 // Validation helper functions
 function showCreateError(field, message) {
     const input = document.getElementById(`create${field}`);
@@ -893,29 +676,10 @@ function showCreateError(field, message) {
     error.style.display = 'flex';
 }
 
-function showEditError(field, message) {
-    const input = document.getElementById(`edit${field}`);
-    const error = document.getElementById(`edit${field}Error`);
-    
-    input.classList.add('is-invalid');
-    error.querySelector('span').textContent = message;
-    error.style.display = 'flex';
-}
-
 function clearCreateValidation() {
     ['HoTen', 'SoDienThoai', 'DiaChi1'].forEach(field => {
         const input = document.getElementById(`create${field}`);
         const error = document.getElementById(`create${field}Error`);
-        
-        input.classList.remove('is-invalid');
-        error.style.display = 'none';
-    });
-}
-
-function clearEditValidation() {
-    ['HoTen', 'SoDienThoai', 'DiaChi1'].forEach(field => {
-        const input = document.getElementById(`edit${field}`);
-        const error = document.getElementById(`edit${field}Error`);
         
         input.classList.remove('is-invalid');
         error.style.display = 'none';

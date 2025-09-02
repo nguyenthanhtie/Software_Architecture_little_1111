@@ -121,8 +121,12 @@
                                         "Đã hủy" => "bg-danger text-white",
                                         _ => "bg-secondary text-white"
                                     };
+                                    
+                                    var canChangeStatus = order.TrangThai != "Đã hủy" && order.TrangThai != "Hoàn thành";
+                                    var cursorStyle = canChangeStatus ? "cursor: pointer;" : "cursor: not-allowed;";
+                                    var titleText = canChangeStatus ? "Click để thay đổi trạng thái" : "Không thể thay đổi trạng thái";
                                 }
-                                <span class="badge @statusClass status-badge" data-order-id="@order.IdDonHang" style="cursor: pointer;" title="Click để thay đổi trạng thái">@(order.TrangThai ?? "Không xác định")</span>
+                                <span class="badge @statusClass status-badge" data-order-id="@order.IdDonHang" style="@cursorStyle" title="@titleText">@(order.TrangThai ?? "Không xác định")</span>
                             </td>
                         </tr>
                     }
