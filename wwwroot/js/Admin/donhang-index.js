@@ -69,8 +69,13 @@ $(document).ready(function() {
             return;
         }
         
-        // Hiển thị menu tùy chọn cho trạng thái
-        showStatusMenu(e, orderId, currentStatus);
+        // Tự động chuyển sang trạng thái tiếp theo
+        var nextStatus = getNextStatus(currentStatus);
+        if (nextStatus) {
+            updateOrderStatus(orderId, nextStatus);
+        } else {
+            alert('Không thể chuyển trạng thái từ: ' + currentStatus);
+        }
     });
 });
 
@@ -134,50 +139,10 @@ function loadOrderDetail(orderId) {
     });
 }
 
-function showStatusMenu(event, orderId, currentStatus) {
-    // Xóa menu cũ nếu có
-    $('.status-menu').remove();
-    
-    // Lấy các trạng thái có thể chuyển đổi
-    var availableStatuses = getAvailableStatuses(currentStatus);
-    
-    if (availableStatuses.length === 0) {
-        alert('Không thể thay đổi trạng thái từ: ' + currentStatus);
-        return;
-    }
-    
-    // Tạo menu
-    var menu = $('<div class="status-menu" style="position: absolute; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 1000; min-width: 150px;"></div>');
-    
-    availableStatuses.forEach(function(status) {
-        var item = $('<div style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #eee;" class="status-menu-item">' + status + '</div>');
-        item.hover(
-            function() { $(this).css('background-color', '#f8f9fa'); },
-            function() { $(this).css('background-color', 'white'); }
-        );
-        item.click(function() {
-            updateOrderStatus(orderId, status);
-            $('.status-menu').remove();
-        });
-        menu.append(item);
-    });
-    
-    // Đặt vị trí menu
-    menu.css({
-        left: event.pageX,
-        top: event.pageY + 10
-    });
-    
-    $('body').append(menu);
-    
-    // Đóng menu khi click bên ngoài
-    $(document).one('click', function() {
-        $('.status-menu').remove();
-    });
-}
-
 function getAvailableStatuses(currentStatus) {
+    // Giữ function này để tương thích với code khác nếu cần
     var statusOptions = {
+        'Chờ xác nhận': ['Đã xác nhận', 'Đã hủy'],
         'Đang xử lý': ['Đã xác nhận', 'Đã hủy'],
         'Đã xác nhận': ['Đang giao', 'Đã hủy'],
         'Đang giao': ['Hoàn thành', 'Đã hủy'],
@@ -189,8 +154,9 @@ function getAvailableStatuses(currentStatus) {
 }
 
 function getNextStatus(currentStatus) {
-    // Định nghĩa flow trạng thái hợp lệ - giữ để tương thích
+    // Định nghĩa flow trạng thái tự động
     var statusFlow = {
+        'Chờ xác nhận': 'Đã xác nhận',
         'Đang xử lý': 'Đã xác nhận',
         'Đã xác nhận': 'Đang giao', 
         'Đang giao': 'Hoàn thành',
@@ -234,6 +200,7 @@ function updateOrderStatus(orderId, status) {
 
 function getStatusClass(status) {
     switch(status) {
+        case 'Chờ xác nhận': return 'bg-warning text-dark';
         case 'Đang xử lý': return 'bg-warning text-dark';
         case 'Đã xác nhận': return 'bg-info text-white';
         case 'Đang giao': return 'bg-primary text-white';

@@ -65,6 +65,17 @@
             box-shadow: 0 4px 16px rgba(25,118,210,0.25);
         }
         
+        .saved-address-info.address-selected {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+            border-color: #1976d2 !important;
+            box-shadow: 0 4px 16px rgba(25,118,210,0.25) !important;
+            transform: scale(1.02);
+        }
+        
+        .saved-address-info {
+            transition: all 0.3s ease;
+        }
+        
         .address-selection {
             background: #ffffff;
             padding: 20px;
@@ -149,6 +160,15 @@
             border-radius: 6px;
             font-size: 0.75em;
             font-weight: 500;
+            position: relative;
+        }
+        
+        .badge-default::after {
+            content: none !important;
+        }
+        
+        .badge-default::before {
+            content: none !important;
         }
         
         [data-bs-theme="dark"] .saved-address-info {
@@ -489,9 +509,9 @@
                 @foreach (var address in addressList)
                 {
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="addressOption" id="address_@address.IdDiaChi" value="@address.IdDiaChi" @(address.MacDinh == true ? "checked" : "") onchange="toggleAddressForm()">
-                        <label class="form-check-label w-100" for="address_@address.IdDiaChi">
-                            <div class="saved-address-info">
+                        <input class="form-check-input" type="radio" name="addressOption" id="address_@address.IdDiaChi" value="@address.IdDiaChi" onchange="toggleAddressForm()" style="display: none;" @(address.MacDinh == true ? "checked" : "")>
+                        <label class="form-check-label w-100" for="address_@address.IdDiaChi" style="cursor: pointer;" onclick="selectAddress(@address.IdDiaChi)">
+                            <div class="saved-address-info @(address.MacDinh == true ? "address-selected" : "")">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <div class="fw-bold text-dark mb-1">
@@ -532,7 +552,7 @@
         }
         
         <!-- Address form (shown for new users or when "new address" is selected) -->
-        <div id="addressForm" class="address-form @(ViewBag.HasAddresses == true && hasDefault ? "d-none" : "")">
+        <div id="addressForm" class="address-form @(hasDefault ? "d-none" : "")">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -629,10 +649,39 @@
 
 <!-- Force reload JavaScript by adding timestamp -->
 <script>
+    // Function to select address
+    function selectAddress(addressId) {
+        // Uncheck all radio buttons
+        document.querySelectorAll('input[name="addressOption"]').forEach(radio => {
+            radio.checked = false;
+        });
+        
+        // Check the selected address
+        const selectedRadio = document.getElementById('address_' + addressId);
+        if (selectedRadio) {
+            selectedRadio.checked = true;
+        }
+        
+        // Remove active class from all address cards
+        document.querySelectorAll('.saved-address-info').forEach(card => {
+            card.classList.remove('address-selected');
+        });
+        
+        // Add active class to selected address card
+        const selectedCard = selectedRadio.parentElement.querySelector('.saved-address-info');
+        if (selectedCard) {
+            selectedCard.classList.add('address-selected');
+        }
+        
+        // Hide address form when existing address is selected
+        toggleAddressForm();
+    }
+
     // Function to toggle address form based on selection with smooth animation
     function toggleAddressForm() {
         const addressForm = document.getElementById('addressForm');
         const useNewAddress = document.getElementById('useNewAddress');
+        const selectedExistingAddress = document.querySelector('input[name="addressOption"]:checked:not(#useNewAddress)');
         
         if (useNewAddress && useNewAddress.checked) {
             // Show with enhanced animation
@@ -640,13 +689,18 @@
             addressForm.classList.add('show');
             addressForm.classList.remove('hide');
             
+            // Remove selection from all address cards
+            document.querySelectorAll('.saved-address-info').forEach(card => {
+                card.classList.remove('address-selected');
+            });
+            
             // Focus on first input for better UX
             setTimeout(() => {
                 const firstInput = addressForm.querySelector('input');
                 if (firstInput) firstInput.focus();
             }, 200);
-        } else {
-            // Hide with enhanced animation
+        } else if (selectedExistingAddress) {
+            // Hide with enhanced animation when existing address is selected
             addressForm.classList.add('hide');
             addressForm.classList.remove('show');
             
